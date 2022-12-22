@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ESIR Poreska uprava RS</string>
+    <string name="remember_switch">Zapamti me"\n"(less secure)</string>
+    <string name="Login">Prijavi se</string>
+    <string name="password">Lozinka</string>
+    <string name="user_name">Korisničko ime</string>
+    <string name="pac">PAK</string>
+    <string name="create_pin">Unesi PIN</string>
+    <string name="confirm_pin">Potvrdi PIN</string>
+    <string name="date_and_time">PFR vreme:</string>
+    <string name="total">Ukupno:</string>
+    <string name="rec_no">Ref. broj:</string>
+    <string name="label_sdc_num">PFR br. računa:</string>
+    <string name="price">Cena po jedinici:</string>
+    <string name="name">Naziv:</string>
+    <string name="vat">Poreske oznake:</string>
+    <string name="vat_code_f">Poreska oznaka: F</string>
+    <string name="vat_code_e">Poreska oznaka: E</string>
+    <string name="vat_code_a">Poreska oznaka: A</string>
+    <string name="barcode">EAN:</string>
+    <string name="update">Ažuriraj</string>
+    <string name="account">Nalog</string>
+    <string name="mail">Email</string>
+    <string name="settings">Postavke</string>
+    <string name="title_journal">Žurnal</string>
+
+    <string name="action_settings">Podešavanja</string>
+    <string name="certificates">Sertifikati</string>
+    <string name="taxes">Porez</string>
+    <string name="v_cdc_server">PFR Lokacija</string>
+    <string name="add_v_cdc_server">Podešavanja PFR servera</string>
+    <string name="receipt">Račun</string>
+    <string name="logout">Odjavi se</string>
+    <string name="address">Adresa:</string>
+    <string name="address_esdc">primer: http://192.168.1.1:8800</string>
+    <string name="item">Artikal</string>
+    <string name="add_item">Dodaj artikal</string>
+    <string name="edit_item">Izmeni artikal</string>
+    <string name="inetcpos">Napravi račun</string>
+    <string name="delete">Obriši</string>
+    <string name="edit">Izmeni</string>
+    <string name="store">Mesto prodaje:</string>
+    <string name="state">Savezna država:</string>
+    <string name="country">Država</string>
+    <string name="cashier">Kasir:</string>
+    <string name="invoice_no">Br. računa:</string>
+    <string name="invoice_time">Vreme izdavanja:</string>
+    <string name="normal_sale">Promet Prodaja</string>
+    <string name="items">Artikli:</string>
+    <string name="qty">Kol.:</string>
+    <string name="percent">%</string>
+    <string name="search">pretraga</string>
+    <string name="search_title">Pretraga</string>
+    <string name="ref">Referentni broj</string>
+    <string name="invoice_type">Vrsta računa:</string>
+    <string name="transaction_type">Tip transakcije:</string>
+    <string name="payment">Plaćanje:</string>
+    <string name="normal">Promet</string>
+    <string name="finish_receipt">Završi račun</string>
+    <string name="add_items">Napravi račun</string>
+    <string name="proforma">Predračun</string>
+    <string name="training">Obuka</string>
+    <string name="cash">Gotovina</string>
+    <string name="card">Platna kartica</string>
+    <string name="other">Drugo bezgotovinsko plaćanje</string>
+    <string name="enter_pin">Unesi PIN</string>
+    <string name="repeat_pin">Ponovi PIN</string>
+    <string name="no_itemss">Pritisni + da bi uneo artikle</string>
+    <string name="catalog">Katalog</string>
+    <string name="enter_by_pin">Unesi/Promeni PIN</string>
+    <string name="use_pin_code">Koristi PIN</string>
+    <string name="cashiers">Iden. kasira</string>
+    <string name="cashier_one">Prvi kasir</string>
+    <string name="cashier_two">Drugi kasir</string>
+    <string name="cashier_three">Treći kasir</string>
+    <string name="copy">Kopija</string>
+    <string name="refund">Refundacija</string>
+    <string name="invoice">Račun</string>
+    <string name="check">Ček</string>
+    <string name="wiretransfer">Prenos na račun</string>
+    <string name="voucher">Vaučer</string>
+    <string name="mobile_money">Instant plaćanje</string>
+    <string name="buyer_id">ID kupca</string>
+    <string name="sale">Prodaja</string>
+    <string name="html"><![CDATA[This <i>is</i> a <b>test</b> of]]></string>
+    <string name="no_journals">Nema žurnala</string>
+    <string name="exit_app">Pritisni ponovo za izlaz</string>
+    <string name="remove_all">ukloni sve</string>
+    <string name="create_edit_pin">Unesi/promeni PIN</string>
+    <string name="count">Zaliha</string>
+    <string name="the_list_is_empty">Spisak je prazan</string>
+    <string name="no_products">Moraš da uneseš artikle pre</string>
+    <string name="tax_labels_code">Poreske oznake:</string>
+    <string name="buyer_cost_center">Opciono polje kupca</string>
+    <string name="export_catalog">Izvoz kataloga</string>
+    <string name="import_catalog">Unos kataloga</string>
+    <string name="export_invoices">Izvoz računa</string>
+    <string name="import_invoices">Unos računa</string>
+    <string name="scan_barcode">Skeniraj bar-kod</string>
+    <string name="ean_barcode">EAN:</string>
+    <string name="reset">poništi</string>
+    <string name="date_and_time_title">Datum i vreme</string>
+    <string name="from">Od:</string>
+    <string name="time">Vreme</string>
+    <string name="date">Datum</string>
+    <string name="select_date">Izaberi datum</string>
+    <string name="select_time">Izaberi vreme</string>
+    <string name="to">Do:</string>
+    <string name="sdc_invoice">PFR br. računa</string>
+    <string name="buyer_tin">ID kupca</string>
+    <string name="payment_type">Način plaćanja:</string>
+    <string name="transaction_type_spinner">Tip tansakcije:</string>
+    <string name="invoice_type_spinner">Vrsta računa:</string>
+    <string name="filter">filter</string>
+    <string name="denied_permission">Moraš da daš SVE dozvole da bi aplikacija ispravno radila</string>
+    <string name="vsdc_server_title"> Podešavanja VPFR servera</string>
+    <string name="vsdc_server">VPFR server</string>
+    <string name="esdc_server_title">Podešavanja LPFR servera</string>
+    <string name="esdc_server">LPFR server</string>
+    <string name="app_info">O aplikaciji</string>
+    <string name="mobile_pos_for_android">TaxCore mobile POS za Android</string>
+    <string name="taxes_info">Porezi se automatski podešavaju iz sertifikata</string>
+    <string name="vsdc_server_info">Adresa VPFR servera se podešava iz sertifikata</string>
+    <string name="switch_enable_vsdc">Omogući VPFR</string>
+    <string name="switch_enable_esdc">Omogući LPFR</string>
+    <string name="not_configured">Aplikacija nije podešena</string>
+    <string name="configure">Podesi</string>
+
+    <string name="the_list_is_empty_add_items">Pritisni + da bi uneo artikle</string>
+
+    <string name="about_all_rights_reserved">Sva prava zadržana</string>
+    <string name="about_more_information_link">Za više informacija poseti www.dti.rs</string>
+
+    <string name="catalog_add_item">Dodaj artikal</string>
+    <string name="catalog_search_items">Pretraži artikle</string>
+
+    <string name="exit">Izađi</string>
+
+    <string name="settings_sdc_server">PFR server</string>
+
+    <string name="title_enter_pac">Unesi PAK</string>
+    <string name="title_enter_pin">Unesi PIN</string>
+    <string name="title_app_not_configured">Aplikacija nije podešena</string>
+    <string name="title_finish_configuration">Završi podešavanje aplikacije</string>
+    <string name="title_view_items">Pogledaj artikle</string>
+    <string name="title_import">Unos</string>
+    <string name="title_export">Izvoz</string>
+    <string name="title_export_catalog">Izvoz kataloga</string>
+    <string name="title_export_journal">Izvoz žurnala</string>
+    <string name="title_journal_items">Stavke žurnala</string>
+    <string name="title_invoices">Računi</string>
+    <string name="title_search_journal">Pretraži račune</string>
+    <string name="title_about">Info</string>
+    <string name="title_pref_section_vsdc">Podešavanja VPFR servera</string>
+    <string name="title_pref_section_esdc">Podešavanja LPFR servera</string>
+    <string name="title_manage_cashiers">Upravljaj listom kasira</string>
+    <string name="title_add_cashiers">Dodaj novog kasira</string>
+    <string name="title_view_cashiers">Pregledaj kasire</string>
+    <string name="title_search_catalog">Pretraži katalog</string>
+    <string name="title_settings">Podešavanja</string>
+    <string name="title_taxes">Porezi</string>
+    <string name="title_notifications">Obaveštenja</string>
+    <string name="title_cashiers">Kasiri</string>
+
+    <string name="label_item_details">Detalji artikla</string>
+    <string name="label_tax_labels">Poreske oznake</string>
+    <string name="label_tax_label">Poreska oznaka</string>
+    <string name="label_other">Ostalo</string>
+    <string name="label_add_to_favorites">Dodaj u favorite</string>
+    <string name="label_invoice_details">Detalji računa</string>
+    <string name="label_date_and_time">Datum i vreme</string>
+    <string name="label_try_again">Pokušaj ponovo</string>
+    <string name="label_no_results">Nema rezultata</string>
+    <string name="label_no_results_msg">Koristi druge kriterijume za\n pretragu i pokušaj ponovo</string>
+    <string name="label_favorites">Favoriti</string>
+    <string name="label_invoice_items">Artikli na računu</string>
+
+    <string name="error_no_internet_title">Nema internet veze</string>
+    <string name="error_no_internet_message">Aplikacija zahteva internet vezu da bi radila ispravno. Proveri internet vezu i pokušaj ponovo.</string>
+    <string name="error_require_internet_message">Podešavanje aplikacije nije moguće bez internet veze. Omogući vezu i pokušaj ponovo.</string>
+    <string name="error_invalid_url">URL nije moguće otvoriti</string>
+    <string name="error_general">Nešto nije u redu. Pokušaj ponovo.</string>
+    <string name="error_item_name">Naziv artikla mora imati najmanje 2 karaktera</string>
+    <string name="error_title">Greška!</string>
+    <string name="error_minimum_one_character">Najmanje jedan karakter</string>
+    <string name="error_minimum_eight_characters">Najmanje osam karaktera</string>
+    <string name="error_minimum_one_number_or_too_long">Minimum jedan broj ili je broj predugačak</string>
+    <string name="error_unit_price">Jedinična cena ne može biti manja od 0.01 ili je broj preveliki</string>
+    <string name="error_invalid_ref_doc_format">Ref. broj treba da bude u formatu Zahtevao-Potpisao-Brojač</string>
+    <string name="error_provide_valid_pac">Neispravan PAK</string>
+    <string name="error_invalid_vsdc">Adresa V-PFR servisa je neispravna</string>
+
+    <string name="text_add_edit_item">Dodaj/promeni artikal</string>
+    <string name="text_loading_settings">Učitavanje podešavanja aplikacije…</string>
+    <string name="text_uid">JID</string>
+    <string name="text_location_name">Naziv lokacije</string>
+    <string name="text_currently_active_cashier">Trenutni kasir</string>
+    <string name="text_no_items">Nema artikala</string>
+
+    <string name="tooltip_apply_filter">Primeni filter</string>
+    <string name="tooltip_save_item">Sačuvaj artikal</string>
+    <string name="tooltip_add_to_favorites">Dodaj u favorite</string>
+
+    <string name="vsdc_server_address">Adresa VPFR servera (nepromenjiva)</string>
+
+    <string name="esdc_server_name">Naziv LPFR servera</string>
+    <string name="esdc_dialog_name_title">Unesi naziv LPFR servera</string>
+    <string name="esdc_dialog_name_message">Ovo ime je za tvoju evidenciju</string>
+    <string name="esdc_server_address">Adresa LPFR servera</string>
+
+    <string name="hint_search">Pretraga</string>
+    <string name="hint_cashier_id">Iden. kasira</string>
+    <string name="hint_cashier_name">Ime kasira</string>
+    <string name="hint_item_name">Naziv artikla</string>
+    <string name="hint_unit_price">Cena po jedinici</string>
+    <string name="hint_gtin">EAN</string>
+
+    <string name="toast_invalid_certificate">Nevalidan sertifikat</string>
+    <string name="toast_esdc_address_invalid">E-PFR adresa nije validna</string>
+    <string name="toast_pin_invalid">PIN je nevalidan. Pokušaj ponovo sa ispravnim PIN-om</string>
+    <string name="toast_catalog_imported">Katalog unešen</string>
+    <string name="toast_file_is_empty">Dodavanje kataloga nije moguć! Datoteka je prazna.</string>
+    <string name="toast_item_updated">Artikal je uspešno ažuriran</string>
+    <string name="toast_journal_imported">Žurnal unešen</string>
+
+    <string name="dialog_title_add_cashier">Dodaj novog kasira</string>
+    <string name="dialog_title_edit_cashier">Izmeni detalje kasira</string>
+    <string name="dialog_title_delete_cashier">Obriši kasira</string>
+    <string name="dialog_title_important">VAŽNO</string>
+
+    <string name="dialog_message_confirm_cashier_delete">Da li sigurno želiš da obrišeš ovog kasira?</string>
+    <string name="dialog_message_confirm_catalog_import">Već imaš artikle u katalogu - ako nastaviš sa unosom, trenutni artikli iz kataloga biće trajno obrisani, uključujući i sačuvane favorite.\n\nDa li želiš da nastaviš sa unosom?</string>
+    <string name="dialog_message_confirm_journal_import">U aplikaciji već imaš stavke u žurnalu -  ako nastaviš sa unosom, trenutne stavke u žurnalu biće trajno obrisane.\n\nDa li želiš da nastaviš sa unosom?</string>
+
+    <string name="msg_product_already_exists">Ovaj artikal već postoji</string>
+    <string name="msg_configure_application">Da bi omogućio sve funkcije, potrebno je da podesiš aplikaciju i instaliraš odgovarajući sertifikat.</string>
+    <string name="msg_exit_without_configuration">Aplikacija nije potpuno podešena. Da li želiš da zatvoriš aplikaciju bez podešavanja?</string>
+
+    <string name="dialog_button_import">Unesi</string>
+    <string name="dialog_button_save">Sačuvaj</string>
+
+    <string name="btn_change_cert">Promeni sertifikat</string>
+    <string name="btn_configure_now">Podesi sada</string>
+    <string name="btn_not_now">Ne sada</string>
+    <string name="btn_sign_invoice">Potpiši račun</string>
+    <string name="btn_reset_filter">Resetuj filter</string>
+    <string name="btn_add_cashier">Dodaj novog kasira</string>
+    <string name="btn_delete_cashier">Obriši kasira</string>
+    <string name="btn_edit_cashier">Izmeni kasira</string>
+    <string name="btn_add_invoice_item">Dodaj artikal na račun</string>
+    <string name="btn_remove_item">Obriši artikal</string>
+    <string name="btn_close">Zatvori</string>
+    <string name="btn_reset_invoice">Poništi račun</string>
+
+    <string name="title_view_invoices">Pregledaj račune</string>
+    <string name="catalog_search_invoices">Pretraži račune</string>
+    <string name="loading_please_wait">Sačekajte…</string>
+
+    <string name="error_ref_doc_required">Broj ref. dokumenta je obavezan</string>
+
+    <string name="hint_quantity">Količina</string>
+    <string name="title_catalog_items">Artikli iz kataloga</string>
+    <string name="title_active_taxes">Aktivni porezi</string>
+    <string name="label_total_purchase">Ukupna cena:</string>
+
+    <string name="server_name">Naziv LPFR servisa</string>
+    <string name="http">HTTP</string>
+    <string name="protocol">Protokol</string>
+    <string name="ip_address">IP adresa</string>
+    <string name="port">Port (naznačeno od proizvođača)</string>
+    <string name="set">SAČUVAJ</string>
+    <string name="ping">PROVERI</string>
+    <string name="all_ok">SVE U REDU</string>
+    <string name="server_unreachable">SERVER NEDOSTUPAN</string>
+
+    <string name="add">Dodaj</string>
+    <string name="create_new_tax">Dodaj novi porez</string>
+    <string name="please_enter_name_of_tax">Unesi naziv poreza</string>
+    <string name="save">Sačuvaj</string>
+    <string name="cancel">Odustani</string>
+    <string name="delete_tax">Obriši porez</string>
+    <string name="are_you_sure_delete_tax_item">Da li sigurno želiš da obrišeš ovu poresku stavku?</string>
+    <string name="edit_tax">Izmeni porez</string>
+    <string name="error">Greška</string>
+    <string name="something_went_wrong">Nešto nije u redu</string>
+    <string name="ok">OK</string>
+    <string name="taxes_are_automatically_configured_from_server_settings">Porezi se automatski konfigurišu iz podešavanja servera</string>
+    <string name="app_is_configured_with_esdc">Aplikacija je podešena sa LPFR</string>
+    <string name="switching_will_reset_app">Prebacivanjem na drugačije podešavanje aplikacija će se resetovati. Da li sigurno želiš da nastaviš?</string>
+    <string name="warning">Upozorenje</string>
+    <string name="i_am_sure">Nastavi</string>
+    <string name="previously_selected_certificate_not_exist">Prethodno izabrani sertifikat više ne postoji.</string>
+    <string name="enter_file_name">Unesi ime datoteke</string>
+    <string name="export_format">Format izvoza</string>
+    <string name="dev_mode">Dev režim rada</string>
+    <string name="environment">Okruženje</string>
+    <string name="configuration_endpoint">URL za konfiguraciju</string>
+
+    <string name="valid_tax_labels">Validne poreske oznake</string>
+    <string name="invalid_tax_labels">Nevalidne poreske oznake</string>
+    <string name="selected_environment">Okruženje</string>
+    <string name="environment_description">Opis okruženje</string>
+    <string name="ping_description">PROVERI se koristi za proveru dostupnosti LPFR-a. Nakon što od LPFR-a dobiješ poruku „SVE U REDU“, pritisni SAČUVAJ da bi se sačuvala podešavanja konfiguracije</string>
+    <string name="esdc_not_configured">Nije podešeno</string>
+    <string name="invoice_copy">Kopija</string>
+    <string name="invoice_refund">Refundacija</string>
+    <string name="invoice_reset_message">Ova radnja će obrisati sve što si uneo. Da li sigurno želiš da poništiš račun?</string>
+    <string name="invoice_create_invoice">Napravi račun</string>
+    <string name="invoice_create_invoice_copy">Napravi kopiju računa</string>
+    <string name="invoice_create_invoice_refund">Napravi refundaciju računa</string>
+    <string name="paste_and_sign">Nalepi i potpiši</string>
+    <string name="catalog_import_in_progress">Unošenje kataloga, sačekajte…</string>
+    <string name="title_language">Jezik</string>
+
+    <string name="update_date">Datum ažuriranja: </string>
+    <string name="app_version">Verzija: </string>
+
+    <string name="switch_sdc_server">Promena aktivnog PFR servisa</string>
+    <string name="search_by_name_or_EAN">Pretraži po imenu ili EAN-u</string>
+    <string name="using_vsdc_server">V-PFR servis u upotrebi (podrazumevano)</string>
+    <string name="using_esdc_server">LPFR server izabran</string>
+
+    <string name="tax_rate">Stopa:</string>
+    <string name="advance">Avans</string>
+    <string name="date_from">Od</string>
+    <string name="date_to">Do</string>
+
+    <string name="toast_fill_date_from">Unesi vrednost za polje \"dateFrom\"</string>
+    <string name="toast_fill_date_to">Unesi vrednost za polje \"dateTo\"</string>
+    <string name="toast_new_item_created">Dodat je novi artikal</string>
+    <string name="toast_item_marked_favorite">Artikal dodat u favorite</string>
+    <string name="toast_item_removed_favorite">Artikal obrisan iz favorita</string>
+
+    <string name="title_caution">Upozorenje</string>
+    <string name="title_enter_file_name">Unesi ime fajla</string>
+    <string name="title_confirm_remove_item">Da li sigurno želiš da ukoniš artikal sa računa?</string>
+    <string name="title_enter_quantity">Unesi količinu</string>
+    <string name="title_confirm_remove_item_name">Da li sigurno želiš da ukloniš artikal %1$s iz kataloga?</string>
+
+    <string name="error_minimum_quantity">Količina ne može biti manja od 0.001</string>
+
+    <string name="cashier_search">Pretraži po imenu ili ID-u</string>
+
+    <string name="toast_cashier_updated">Kasir ažuriran</string>
+    <string name="toast_cashier_deleted">Kasir obrisan</string>
+    <string name="msg_enter_name_and_export_type">Unesite ime datoteke i izaberite tip izvoza</string>
+    <string name="msg_select_json_or_csv">Izaberite .json ili .csv datoteku za uvoz</string>
+    <string name="msg_select_json">Izaberite .json datoteku za uvoz</string>
+    <string name="toast_nothing_to_import">Nema podataka za uvoz</string>
+    <string name="toast_catalog_exported">Katalog uspešno izvezen</string>
+    <string name="toast_journal_exported">Žurnal uspešno izvezen</string>
+    <string name="toast_item_removed_from_fav">Artikal uklonjen iz favorita</string>
+    <string name="toast_item_added_to_fav">Artikal dodat u favorite</string>
+    <string name="toast_item_with_name_removed">Artikal `%1$s` uklinjen</string>
+    <string name="toast_inv_no_copied">Broj računa \n%1$s\n kopiran</string>
+    <string name="title_select_app">Izaberi aplikaciju</string>
+    <string name="toast_configuration_changed">Uspešno ste izmenili konfiguraciju</string>
+
+    <string name="title_cert_password">Unesi lozinku sertifikata</string>
+    <string name="title_select_certificate">Izaberi sertifikat</string>
+    <string name="title_download_cert">Preuzimanje sertifikata</string>
+
+    <string name="ref_dt">Referentno vreme</string>
+    <string name="esdc_api_address">API adresa</string>
+    <string name="paste_and_continue">Nalepi i nastavi</string>
+    <string name="add_new_cert">Novi</string>
+
+    <string name="btn_allow">Dozvoli</string>
+    <string name="btn_download">Preuzmi</string>
+
+    <string name="msg_file_downloaded">Uspesno preuzimanje</string>
+    <string name="msg_nothing_to_download">Veza za preuzimanje je loša ili već iskorišćena</string>
+    <string name="msg_downloading">Preuzimanje u toku…</string>
+    <string name="msg_pending">Na čekanju</string>
+    <string name="msg_paused">Pauzirano</string>
+    <string name="msg_failed_try_again">Preuzimanje nije uspelo, pokušajte ponovo</string>
+
+    <string name="error_no_cert_files_found">Nema sertifikata u folderu</string>
+    <string name="error_wrong_pass_or_file">Pogrešna lozinka ili je datoteka sertifikata oštećena</string>
+
+    <string name="esdc_status_0000">Sve je u redu</string>
+    <string name="esdc_status_0100">Ispravan PIN</string>
+    <string name="esdc_status_0210">Internet veza dostupna</string>
+    <string name="esdc_status_0220">Internet beza nedostupna</string>
+    <string name="esdc_status_1100">Memmorija popunjena 90%</string>
+    <string name="esdc_status_1300">Nema pametne kartice</string>
+    <string name="esdc_status_1400">Morate izvršiti iščitavanje</string>
+    <string name="esdc_status_1500">Morate uneti PIN</string>
+    <string name="esdc_status_2100">Neispravan PIN</string>
+    <string name="esdc_status_2110">Kartica blokirana</string>
+    <string name="esdc_status_2210">Bezbednosni element blikiran</string>
+    <string name="esdc_status_2400">L-PFR nije konfigurisan</string>
+</resources>

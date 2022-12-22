@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/bottom_fragment_normal_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/information_variant" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_normal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_normal_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/normal"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/bottom_fragment_proforma_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_normal_icon"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/information_variant" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_proforma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_normal"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_proforma_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/proforma"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/bottom_fragment_copy_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_proforma_icon"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/information_variant" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_copy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_proforma"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_copy_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/copy"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+
+<!--    <androidx.appcompat.widget.AppCompatImageButton-->
+<!--        android:id="@+id/bottom_fragment_advance_icon"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/bottom_fragment_copy_icon"-->
+<!--        android:background="?attr/selectableItemBackground"-->
+<!--        android:padding="12dp"-->
+<!--        android:src="@drawable/information_variant" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/bottom_fragment_advance"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/bottom_fragment_copy"-->
+<!--        android:layout_marginStart="22dp"-->
+<!--        android:layout_toEndOf="@+id/bottom_fragment_advance_icon"-->
+<!--        android:gravity="start"-->
+<!--        android:padding="12dp"-->
+<!--        android:text="@string/advance"-->
+<!--        android:textColor="@android:color/black"-->
+<!--        android:textSize="@dimen/title_size" />-->
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/bottom_fragment_training_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_copy_icon"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/information_variant" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_training"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_copy"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_training_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/training"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+</RelativeLayout>

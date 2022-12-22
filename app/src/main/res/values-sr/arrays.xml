@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="invoice_type">
+        <item>Nijedan</item>
+        <item>Promet</item>
+        <item>Predračun</item>
+        <item>Kopija</item>
+        <item>Obuka</item>
+    </string-array>
+
+    <string-array name="transaction_type">
+        <item>Nijedan</item>
+        <item>Prodaja</item>
+        <item>Refundacija</item>
+    </string-array>
+
+    <string-array name="date_sort">
+        <item>Najnoviji</item>
+        <item>Najstariji</item>
+    </string-array>
+
+    <string-array name="languages">
+        <item>Engleski</item>
+        <item>Francuski</item>
+        <item>Srpski (Lat)</item>
+    </string-array>
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Updated color palette-->
+    <color name="primary">#3F51B5</color>
+    <color name="primaryDark">#303F9F</color>
+    <color name="primaryLight">#C5CAE9</color>
+    <color name="accent">#FFC107</color>
+
+    <color name="primaryText">#212121</color>
+    <color name="secondaryText">#757575</color>
+
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#BDBDBD</color>
+    <color name="disabled">#BDBDBD</color>
+
+    <!-- Old color palette -->
+    <color name="colorPrimary">#137DEE</color>
+    <color name="colorPrimaryDark">#137DEE</color>
+    <color name="colorAccent">#265FE5</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorRed">#FF5722</color>
+    <color name="colorRedis">#FF867C</color>
+    <color name="colorBlue">#536DFE</color>
+    <color name="color_view_line">#EEEEEE</color>
+    <color name="colorDisabled">#BDBDBD</color>
+    <color name="colorRipple">#BDBDBD</color>
+    <color name="colorChecked">#EAE9E9</color>
+    <color name="colorTransparent">#00000000</color>
+    <color name="colorBlack">#000000</color>
+
+    <color name="text_selected">#b0003a</color>
+    <color name="text_focused">#E91E63</color>
+    <color name="text_default">#F8BBD0</color>
+    <color name="text_hint_default">#BDBDBD</color>
+
+    <color name="line_selected">#E91E63</color>
+    <color name="line_focused">#3F51B5</color>
+    <color name="line_default">#C5CAE9</color>
+
+</resources>

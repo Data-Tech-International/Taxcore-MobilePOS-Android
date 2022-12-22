@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/actionItemFavorite"
+        android:checkable="true"
+        android:contentDescription="@string/tooltip_add_to_favorites"
+        android:icon="@drawable/ic_star_empty"
+        android:title="@string/tooltip_add_to_favorites"
+        android:visible="true"
+        app:actionLayout="@layout/action_layout_star_checkbox"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/actionItemSave"
+        android:contentDescription="@string/tooltip_save_item"
+        android:icon="@drawable/selector_confirm"
+        android:title="@string/tooltip_save_item"
+        android:visible="true"
+        app:showAsAction="always" />
+
+</menu>

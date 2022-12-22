@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/activity_home"
+        layout="@layout/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:id="@+id/activity_journal_store_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_all_padding">
+
+            <TextView
+                android:id="@+id/activity_journal_store_title"
+                style="@style/ReceiptTextView"
+                android:layout_marginTop="0dp"
+                android:text="@string/store" />
+
+            <TextView
+                android:id="@+id/activity_journal_store"
+                style="@style/ReceiptTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="0dp"
+                android:text="A. Datum Corporation" />
+
+            <TextView
+                android:id="@+id/activity_journal_adress_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_store_title"
+                android:text="@string/address" />
+
+            <TextView
+                android:id="@+id/activity_journal_adress"
+                style="@style/ReceiptTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/activity_journal_store"
+                android:text="2598 Big Canyon Road" />
+
+            <TextView
+                android:id="@+id/activity_journal_state_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_adress_title"
+                android:text="@string/state" />
+
+            <TextView
+                android:id="@+id/activity_journal_state"
+                style="@style/ReceiptTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/activity_journal_adress"
+                android:text="New York" />
+
+            <TextView
+                android:id="@+id/activity_journal_country_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_state_title"
+                android:text="@string/country" />
+
+            <TextView
+                android:id="@+id/activity_journal_country"
+                style="@style/ReceiptTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/activity_journal_state"
+                android:text="US" />
+
+            <TextView
+                android:id="@+id/activity_journal_cashier_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_country_title"
+                android:layout_marginTop="24dp"
+                android:text="@string/cashier" />
+
+            <TextView
+                android:id="@+id/activity_journal_cashier"
+                style="@style/ReceiptTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/activity_journal_country"
+                android:layout_marginTop="24dp"
+                android:text="--" />
+
+            <TextView
+                android:id="@+id/activity_journal_invoice_no_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_cashier_title"
+                android:text="@string/invoice_no" />
+
+            <TextView
+                android:id="@+id/activity_journal_invoice_no"
+                style="@style/ReceiptTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/activity_journal_cashier"
+                android:text="20" />
+
+            <TextView
+                android:id="@+id/activity_journal_invoice_time_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_invoice_no_title"
+                android:text="@string/invoice_time" />
+
+            <TextView
+                android:id="@+id/activity_journal_invoice_time"
+                style="@style/ReceiptTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/activity_journal_invoice_no"
+                android:text="17/16/2037 5:42:03 PM" />
+
+            <ImageView
+                android:id="@+id/activity_journal_dotted_line"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_below="@+id/activity_journal_invoice_time_title"
+                android:layout_marginTop="34dp"
+                android:layout_toStartOf="@+id/activity_journal_dotted_line_title"
+                android:background="@drawable/dotted"
+                android:layerType="software" />
+
+            <TextView
+                android:id="@+id/activity_journal_dotted_line_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_invoice_time_title"
+                android:layout_centerInParent="true"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/normal_sale"
+                android:textAllCaps="true" />
+
+            <ImageView
+                android:id="@+id/activity_journal_dotted_line1"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_below="@+id/activity_journal_invoice_time_title"
+                android:layout_marginTop="34dp"
+                android:layout_toEndOf="@+id/activity_journal_dotted_line_title"
+                android:layerType="software"
+                android:src="@drawable/dotted" />
+
+            <TextView
+                android:id="@+id/activity_journal_dotted_items_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_dotted_line"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/items" />
+
+            <ImageView
+                android:id="@+id/activity_journal_invoice_dotted_line2"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_below="@+id/activity_journal_dotted_items_title"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/dotted"
+                android:layerType="software" />
+
+            <TextView
+                android:id="@+id/activity_journal_name_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_invoice_dotted_line2"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="14dp"
+                android:text="@string/name" />
+
+            <TextView
+                android:id="@+id/activity_journal_price_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_invoice_dotted_line2"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="14dp"
+                android:layout_toEndOf="@+id/activity_journal_name_title"
+                android:text="@string/price" />
+
+            <TextView
+                android:id="@+id/activity_journal_qty_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_invoice_dotted_line2"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="14dp"
+                android:text="@string/qty" />
+
+            <TextView
+                android:id="@+id/activity_journal_total_title"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_invoice_dotted_line2"
+                android:layout_marginEnd="22dp"
+                android:layout_marginTop="14dp"
+                android:layout_toStartOf="@+id/activity_journal_pr_title"
+                android:text="@string/total" />
+
+            <TextView
+                android:id="@+id/activity_journal_pr_title"
+                style="@style/ReceiptTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/activity_journal_invoice_dotted_line2"
+                android:layout_marginTop="14dp"
+                android:text="@string/percent" />
+
+            <TextView
+                android:id="@+id/activity_journal_name"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_name_title"
+                android:text="Long Sleeve Logo Jersey, S" />
+
+            <TextView
+                android:id="@+id/activity_journal_price"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_name"
+                android:layout_marginEnd="26dp"
+                android:layout_toStartOf="@+id/activity_journal_qty"
+                android:text="99.98" />
+
+            <TextView
+                android:id="@+id/activity_journal_qty"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_name"
+                android:layout_marginEnd="26dp"
+                android:layout_toStartOf="@+id/activity_journal_total"
+                android:text="2.00" />
+
+            <TextView
+                android:id="@+id/activity_journal_total"
+                style="@style/ReceiptTextView"
+                android:layout_below="@+id/activity_journal_name"
+                android:layout_marginEnd="26dp"
+                android:layout_toStartOf="@+id/activity_journal_pr"
+                android:text="99.98" />
+
+            <TextView
+                android:id="@+id/activity_journal_pr"
+                style="@style/ReceiptTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/activity_journal_name"
+                android:text="8.00" />
+        </RelativeLayout>
+    </ScrollView>
+</LinearLayout>

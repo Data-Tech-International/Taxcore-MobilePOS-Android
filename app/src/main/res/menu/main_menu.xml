@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/actionSearch"
+        android:icon="@drawable/magnify"
+        android:title="@string/search"
+        android:visible="false"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_search_journal"
+        android:icon="@drawable/filter_outline"
+        android:title="@string/filter"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_search_journal_erase"
+        android:icon="@drawable/filter_remove_outline"
+        android:title="@string/filter"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_add_cert"
+        android:icon="@drawable/playlist_check"
+        android:title="@string/check"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/actionRemoveAll"
+        android:icon="@drawable/delete_empty"
+        android:title="@string/delete"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/plus"
+        android:title="@string/item"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/exportCatalog"
+        android:title="@string/export_catalog"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/import_catalog"
+        android:title="@string/import_catalog"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/export_journal"
+        android:title="@string/export_invoices"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/import_journal"
+        android:title="@string/import_invoices"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/scan_barcode"
+        android:icon="@drawable/barcode_scan"
+        android:title="@string/scan_barcode"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+</menu>
