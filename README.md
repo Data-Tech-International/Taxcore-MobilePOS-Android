@@ -28,7 +28,7 @@ Before you can start using the TaxCore mobile POS app, make sure you have met se
 
 # Installing and using the app
 
-For detailed instructions on how to install and use TaxCore mobile POS, see the [official user manual](https://tap.coral.demo.taxcore.dti.rs/Help/view/1702895787/TaxCore-Free-POS-User-Manual/en-US.
+For detailed instructions on how to install and use TaxCore mobile POS, see the [official user manual](https://tap.coral.demo.taxcore.dti.rs/Help/view/1702895787/TaxCore-Free-POS-User-Manual/en-US).
 
 # Contributing
 
