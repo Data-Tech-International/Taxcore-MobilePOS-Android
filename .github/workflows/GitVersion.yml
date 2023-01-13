@@ -1,0 +1,37 @@
+assembly-versioning-scheme: MajorMinorPatch
+major-version-bump-message: '\+semver:\s?(breaking|major)'
+minor-version-bump-message: '\+semver:\s?(feature|minor)'
+patch-version-bump-message: '\+semver:\s?(fix|patch)'
+no-bump-message: '\+semver:\s?(none|skip)'
+legacy-semver-padding: 4
+build-metadata-padding: 4
+commits-since-version-source-padding: 4
+commit-message-incrementing: Enabled
+mode: Mainline 
+branches: 
+  master:
+    regex: ^master$|^main$
+    is-mainline: true
+    increment: patch
+    is-source-branch-for: ['release', 'feature']
+  feature:
+    tag: useBranchName
+    regex: ^features?[\/].*
+    increment: None
+  fix:
+    tag: beta
+    regex: ^hotfix?[\/].*
+    increment: patch
+    source-branches: ['master']
+  release:
+    tag: beta
+    increment: Minor
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    regex: ^releases?[\/].*
+    source-branches: ['master']
+    tracks-release-branches: false
+    is-release-branch: true
+    is-mainline: false
+ignore:
+  sha: []
