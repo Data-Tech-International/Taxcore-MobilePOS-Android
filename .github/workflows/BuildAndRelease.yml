@@ -52,7 +52,7 @@ jobs:
       - name: Create Github Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v1.0.0
+          tag_name: 3.2.0
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: false
           prerelease: false
