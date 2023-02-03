@@ -6,7 +6,7 @@ apply plugin: 'realm-android'
 
 def versionMajor = 3
 def versionMinor = 2
-def versionPatch = 0
+def versionPatch = 1
 def versionBuild = 1
 
 def appVersionCode = Integer.valueOf(System.env.BUILD_NUMBER ?: versionBuild)
