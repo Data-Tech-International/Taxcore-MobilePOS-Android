@@ -26,7 +26,7 @@ Before you can start using the TaxCore mobile POS app, make sure you have met se
 -   Functional built-in camera (optional)
 -   An active account on Taxpayer Administration Portal
 
-## Using the app
+# Using the app
 
 For detailed instructions on how to install and use TaxCore mobile POS, see [official user manual](https://github.com/Data-Tech-International/Taxcore-MobilePOS-Android/wiki)
 
