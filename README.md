@@ -9,7 +9,7 @@ functions.
 TaxCore mobile POS enables taxpayers to easily keep track of their invoices and product lists, as
 well as not to worry about being compliant with the current tax regulations system.
 
-#### Disclaimer
+## Disclaimer
 
 > TaxCore mobile POS is a free app, available for commercial use, therefore we are not responsible for
 > the contents of the imported/exported files, and we are not responsible for any lost data, corrupted
@@ -26,7 +26,9 @@ Before you can start using the TaxCore mobile POS app, make sure you have met se
 -   Functional built-in camera (optional)
 -   An active account on Taxpayer Administration Portal
 
-For detailed instructions on how to install and use TaxCore mobile POS, see [official user manual](https://tap.coral.demo.taxcore.dti.rs/Help/view/1702895787/TaxCore-Free-POS-User-Manual/en-US)
+# Using the app
+
+For detailed instructions on how to install and use TaxCore mobile POS, see [official user manual](https://github.com/Data-Tech-International/Taxcore-MobilePOS-Android/wiki)
 
 # Contributing
 
