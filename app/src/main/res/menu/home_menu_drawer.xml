@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group
+        android:id="@+id/menu_top"
+        android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/nav_cpos"
+            android:icon="@drawable/ic_menu_receipt"
+            android:title="@string/inetcpos" />
+
+
+        <item
+            android:id="@+id/nav_plu"
+            android:icon="@drawable/ic_menu_catalog"
+            android:title="@string/catalog" />
+
+
+        <item
+            android:id="@+id/nav_journal"
+            android:icon="@drawable/ic_menu_journal"
+            android:title="@string/title_journal" />
+
+    </group>
+
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_menu_settings"
+        android:title="@string/settings" />
+
+    <item
+        android:id="@+id/app_info"
+        android:icon="@drawable/information_variant"
+        android:title="@string/app_info" />
+
+    <item
+        android:id="@+id/nav_pin"
+        android:checked="false"
+        android:icon="@drawable/ic_security_home"
+        android:title="@string/enter_by_pin"
+        android:visible="false"
+        app:actionLayout="@layout/switch_layout" />
+
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_menu_logout"
+        android:title="@string/logout"
+        android:visible="false" />
+
+</menu>

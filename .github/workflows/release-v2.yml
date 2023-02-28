@@ -1,0 +1,82 @@
+name: TaxCore Mobile POS v2
+
+on:
+  push:
+    branches:
+      - main-v2
+
+jobs:
+  build:
+    name: Setup Environment and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code to specific branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Add signing and distribution config and credentials
+        run: |
+          mkdir -p app/src/release && touch app/src/release/google-services.json
+          echo "$TAXCORE_V2_ENCODED_FIREBASE_JSON" | base64 -d > app/src/release/google-services.json
+          # Create release key from encoded action secret 
+          echo "$TAXCORE_V2_ENCODED_RELEASE_KEY" | base64 -d > keys/taxcore-v2-release.jks
+          # Append release credentials
+          echo "$TAXCORE_V2_RELEASE_CREDENTIALS" >> gradle.properties
+        env:
+          TAXCORE_V2_ENCODED_FIREBASE_JSON: ${{ secrets.TAXCORE_V2_ENCODED_FIREBASE_JSON }}
+          TAXCORE_V2_RELEASE_CREDENTIALS: ${{ secrets.TAXCORE_V2_RELEASE_CREDENTIALS }}
+          TAXCORE_V2_ENCODED_RELEASE_KEY: ${{ secrets.TAXCORE_V2_ENCODED_RELEASE_KEY }}
+
+      - name: Generate app APK
+        run: ./gradlew assembleRelease
+
+      - name: Export current app version
+        run: |
+          echo "APP_VERSION=$(${{ github.workspace }}/gradlew -q printVersionInformation | head -1)" >> $GITHUB_ENV
+          echo "VERSION_TAG=$(${{ github.workspace }}/gradlew -q printVersionInformation | tail -1)" >> $GITHUB_ENV
+
+      - name: Save Artifact info
+        id: set-result-artifact
+        run: |
+          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/TaxCore-MobilePOS-${{ env.APP_VERSION }}.apk
+          ARTIFACT_PATHNAME_APK=$(ls app/build/outputs/apk/release/*.apk | head -n 1)
+          ARTIFACT_NAME_APK=$(basename $ARTIFACT_PATHNAME_APK)
+          RELEASE_NOTES=$(awk -v ver=${{ env.VERSION_TAG }} '/^## \[/ { if ($2 == "["ver"]") { p=1 } else { p=0 } } p { print }' CHANGELOG.md | tail -n +3)
+          echo "ARTIFACT_NAME_APK is " ${ARTIFACT_NAME_APK}
+          echo "ARTIFACT_PATHNAME_APK=${ARTIFACT_PATHNAME_APK}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME_APK=${ARTIFACT_NAME_APK}" >> $GITHUB_ENV
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          echo "$RELEASE_NOTES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Upload artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.TAXCORE_V2_FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.SERVICE_ACCOUNT_FILE_CONTENT }}
+          groups: external-dti
+          releaseNotes: ${{ env.RELEASE_NOTES }}
+          file: ${{ env.ARTIFACT_PATHNAME_APK }}
+
+      - name: Create Github Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.VERSION_TAG }}
+          body: ${{ env.RELEASE_NOTES }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            ./${{ env.ARTIFACT_PATHNAME_APK }}

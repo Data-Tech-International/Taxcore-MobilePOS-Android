@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="invoice_type">
+        <item>None</item>
+        <item>Normal</item>
+        <item>Proforma</item>
+        <item>Copy</item>
+        <item>Training</item>
+    </string-array>
+
+    <string-array name="transaction_type">
+        <item>None</item>
+        <item>Sale</item>
+        <item>Refund</item>
+    </string-array>
+
+    <string-array name="date_sort">
+        <item>Date Desc</item>
+        <item>Date Asc</item>
+    </string-array>
+</resources>

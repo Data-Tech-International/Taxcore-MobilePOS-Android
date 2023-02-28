@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/item_taxes_checked_title"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:clickable="false"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:checkedIconEnabled="false"
+        tools:text="F" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_taxes_checked_title_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/item_taxes_checked"
+        android:layout_toEndOf="@+id/item_taxes_checked_title"
+        android:padding="@dimen/items_all_padding"
+        android:text="@string/label_tax_label"
+        android:textSize="@dimen/title_size" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/item_taxes_checked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="12dp"
+        android:background="?attr/selectableItemBackground"
+        tools:text="" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/item_taxes_checked_title"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@color/color_view_line" />
+
+</RelativeLayout>

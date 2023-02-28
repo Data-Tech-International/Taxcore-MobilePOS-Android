@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/bottom_fragment_cash_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/cash" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_cash"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_cash_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/cash"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+
+    <ImageButton
+        android:id="@+id/bottom_fragment_card_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_cash_icon"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/credit_card" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_cash"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_card_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/card"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+
+    <ImageButton
+        android:id="@+id/bottom_fragment_other_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_card_icon"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/apps" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_other"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_card"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_other_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/other"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+
+    <ImageButton
+        android:id="@+id/bottom_fragment_check_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_other_icon"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/bank" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_check"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_other"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_check_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/check"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+
+    <ImageButton
+        android:id="@+id/bottom_fragment_wire_transfer_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_check_icon"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/access_point" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_wire_transfer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_check"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_wire_transfer_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/wiretransfer"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+
+    <ImageButton
+        android:id="@+id/bottom_fragment_voucher_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_wire_transfer_icon"
+        android:layout_alignParentStart="true"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/ticket_percent" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_voucher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_wire_transfer"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_voucher_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/voucher"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+
+    <ImageButton
+        android:id="@+id/bottom_fragment_mobile_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_voucher_icon"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/cellphone_android" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_mobile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_voucher"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_mobile_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/mobile_money"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+</RelativeLayout>

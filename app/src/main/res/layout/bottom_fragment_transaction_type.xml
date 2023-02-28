@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageButton
+        android:id="@+id/bottom_fragment_invoice_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/information_variant" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_invoice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_invoice_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/sale"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+
+    <ImageButton
+        android:id="@+id/bottom_fragment_refund_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_invoice_icon"
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/information_variant" />
+
+    <TextView
+        android:id="@+id/bottom_fragment_refund"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bottom_fragment_invoice"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/bottom_fragment_refund_icon"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/refund"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_size" />
+</RelativeLayout>

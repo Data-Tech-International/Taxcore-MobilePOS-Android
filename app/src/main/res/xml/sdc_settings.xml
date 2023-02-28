@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        app:defaultValue="true"
+        app:disableDependentsState="false"
+        app:iconSpaceReserved="false"
+        app:key="use_vsdc_server"
+        app:summaryOff="Using ESDC server"
+        app:summaryOn="Using VSDC server (default)"
+        app:title="Switch active SDC server" />
+
+    <PreferenceCategory
+        android:summary="@string/vsdc_server_info"
+        android:title="@string/title_pref_section_vsdc"
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="false">
+
+        <EditTextPreference
+            android:dialogTitle="@string/vsdc_server_title"
+            android:enabled="false"
+            android:key="vsdc_base_url"
+            android:selectable="false"
+            android:shouldDisableView="true"
+            android:title="@string/vsdc_server_address"
+            app:enableCopying="true"
+            app:iconSpaceReserved="false"
+            app:key="vsdc_base_url"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory>
+
+        <Preference
+            android:key="@string/configure"
+            android:layout="@layout/custom_preference_category_title"
+            android:widgetLayout="@layout/custom_preference_category_title"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:dialogTitle="@string/esdc_dialog_name_title"
+            android:enabled="false"
+            android:key="esdc_server_name"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/esdc_server_name"
+            app:dialogMessage="@string/esdc_dialog_name_message"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            android:dialogTitle="@string/esdc_server"
+            android:enabled="false"
+            android:inputType="textUri"
+            android:key="esdc_base_url"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/address_esdc"
+            android:title="@string/esdc_server_address"
+            app:dialogMessage="@string/address_esdc"
+            app:iconSpaceReserved="false"
+            app:key="esdc_base_url"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            android:enabled="false"
+            android:key="environment_name"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/selected_environment"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
