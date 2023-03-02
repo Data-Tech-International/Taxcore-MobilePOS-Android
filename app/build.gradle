@@ -35,19 +35,7 @@ android {
             keyPassword DEBUG_KEY_PASS
         }
 
-        taxcore {
-            storeFile file(TAXCORE_V3_KEYSTORE_PATH)
-            storePassword TAXCORE_V3_KEYSTORE_PASS
-            keyAlias TAXCORE_V3_KEY_ALIAS
-            keyPassword TAXCORE_V3_KEY_PASS
-        }
-
-        purs {
-            storeFile file(PURS_KEYSTORE_PATH)
-            storePassword PURS_KEYSTORE_PASS
-            keyAlias PURS_KEY_ALIAS
-            keyPassword PURS_KEY_PASS
-        }
+        /**SIGNING_CONFIG**/
     }
 
     buildTypes {
@@ -62,29 +50,7 @@ android {
             signingConfig signingConfigs.debug
         }
 
-        taxcore {
-            debuggable false
-            minifyEnabled false
-
-            versionNameSuffix "-TAXCORE"
-            applicationIdSuffix ".v3"
-
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            signingConfig signingConfigs.taxcore
-        }
-
-        purs {
-            debuggable false
-            minifyEnabled false
-
-            versionNameSuffix "-PURS"
-            applicationIdSuffix ".purs"
-
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            signingConfig signingConfigs.purs
-        }
+        /**BUILD_TYPE**/
     }
 
     compileOptions {

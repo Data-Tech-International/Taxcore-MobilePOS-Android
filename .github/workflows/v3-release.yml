@@ -43,6 +43,8 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main-v3' }}
         run: |
           echo "BUILD_TARGET=taxcore" >> $GITHUB_ENV
+          echo "BUILD_TYPE=${{ env.TAXCORE_BUILD_TYPE }}" >> $GITHUB_ENV
+          echo "SIGNING_CONFIG=${{ env.TAXCORE_SIGNING_CONFIG }}" >> $GITHUB_ENV
           echo "ENCODED_FIREBASE_JSON=${{ secrets.TAXCORE_V3_ENCODED_FIREBASE_JSON }}" >> $GITHUB_ENV
           echo "FIREBASE_APP_ID=${{ secrets.TAXCORE_V3_FIREBASE_APP_ID }}" >> $GITHUB_ENV
           echo "ENCODED_RELEASE_KEY=${{ secrets.TAXCORE_V3_ENCODED_RELEASE_KEY }}" >> $GITHUB_ENV
@@ -52,6 +54,8 @@ jobs:
         if: ${{ github.ref == 'refs/heads/purs' }}
         run: |
           echo "BUILD_TARGET=purs" >> $GITHUB_ENV
+          echo "BUILD_TYPE=${{ env.PURS_BUILD_TYPE }}" >> $GITHUB_ENV
+          echo "SIGNING_CONFIG=${{ env.PURS_SIGNING_CONFIG }}" >> $GITHUB_ENV
           echo "ENCODED_FIREBASE_JSON=${{ secrets.PURS_V3_ENCODED_FIREBASE_JSON }}" >> $GITHUB_ENV
           echo "FIREBASE_APP_ID=${{ secrets.PURS_V3_FIREBASE_APP_ID }}" >> $GITHUB_ENV
           echo "ENCODED_RELEASE_KEY=${{ secrets.PURS_V3_ENCODED_RELEASE_KEY }}" >> $GITHUB_ENV
@@ -59,6 +63,8 @@ jobs:
 
       - name: Add signing and distribution config and credentials
         run: |
+          sed -i "s|/\*\*SIGNING_CONFIG\*\*/|${{ env.SIGNING_CONFIG }}|g" app/build.gradle
+          sed -i "s|/\*\*BUILD_TYPE\*\*/|${{ env.BUILD_TYPE }}|g" app/build.gradle
           mkdir -p app/src/${{ env.BUILD_TARGET }} && touch app/src/${{ env.BUILD_TARGET }}/google-services.json
           echo "${{ env.ENCODED_FIREBASE_JSON }}" | base64 -d > app/src/${{ env.BUILD_TARGET }}/google-services.json
           # Create release key from encoded action secret 
