@@ -43,23 +43,29 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main-v3' }}
         run: |
           echo "BUILD_TARGET=taxcore" >> $GITHUB_ENV
-          echo "BUILD_TYPE=${{ env.TAXCORE_BUILD_TYPE }}" >> $GITHUB_ENV
-          echo "SIGNING_CONFIG=${{ env.TAXCORE_SIGNING_CONFIG }}" >> $GITHUB_ENV
+          echo "BUILD_TYPE=${{ vars.TAXCORE_BUILD_TYPE }}" >> $GITHUB_ENV
+          echo "SIGNING_CONFIG=${{ vars.TAXCORE_SIGNING_CONFIG }}" >> $GITHUB_ENV
           echo "ENCODED_FIREBASE_JSON=${{ secrets.TAXCORE_V3_ENCODED_FIREBASE_JSON }}" >> $GITHUB_ENV
           echo "FIREBASE_APP_ID=${{ secrets.TAXCORE_V3_FIREBASE_APP_ID }}" >> $GITHUB_ENV
           echo "ENCODED_RELEASE_KEY=${{ secrets.TAXCORE_V3_ENCODED_RELEASE_KEY }}" >> $GITHUB_ENV
-          echo "RELEASE_CREDENTIALS=${{ secrets.TAXCORE_V3_RELEASE_CREDENTIALS }}" >> $GITHUB_ENV
+          # Append multiline release credentials
+          echo "RELEASE_CREDENTIALS<<EOF" >> $GITHUB_ENV
+          echo "${{ secrets.TAXCORE_V3_RELEASE_CREDENTIALS }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Configuration for purs branch
         if: ${{ github.ref == 'refs/heads/purs' }}
         run: |
           echo "BUILD_TARGET=purs" >> $GITHUB_ENV
-          echo "BUILD_TYPE=${{ env.PURS_BUILD_TYPE }}" >> $GITHUB_ENV
-          echo "SIGNING_CONFIG=${{ env.PURS_SIGNING_CONFIG }}" >> $GITHUB_ENV
+          echo "BUILD_TYPE=${{ vars.PURS_BUILD_TYPE }}" >> $GITHUB_ENV
+          echo "SIGNING_CONFIG=${{ vars.PURS_SIGNING_CONFIG }}" >> $GITHUB_ENV
           echo "ENCODED_FIREBASE_JSON=${{ secrets.PURS_V3_ENCODED_FIREBASE_JSON }}" >> $GITHUB_ENV
           echo "FIREBASE_APP_ID=${{ secrets.PURS_V3_FIREBASE_APP_ID }}" >> $GITHUB_ENV
           echo "ENCODED_RELEASE_KEY=${{ secrets.PURS_V3_ENCODED_RELEASE_KEY }}" >> $GITHUB_ENV
-          echo "RELEASE_CREDENTIALS=${{ secrets.PURS_V3_RELEASE_CREDENTIALS }}" >> $GITHUB_ENV
+          # Append multiline release credentials
+          echo "RELEASE_CREDENTIALS<<EOF" >> $GITHUB_ENV
+          echo "${{ secrets.PURS_V3_RELEASE_CREDENTIALS }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Add signing and distribution config and credentials
         run: |
@@ -68,7 +74,7 @@ jobs:
           mkdir -p app/src/${{ env.BUILD_TARGET }} && touch app/src/${{ env.BUILD_TARGET }}/google-services.json
           echo "${{ env.ENCODED_FIREBASE_JSON }}" | base64 -d > app/src/${{ env.BUILD_TARGET }}/google-services.json
           # Create release key from encoded action secret 
-          echo "${{ env.ENCODED_RELEASE_KEY }}" | base64 -d > keys/purs-release.jks
+          echo "${{ env.ENCODED_RELEASE_KEY }}" | base64 -d > keys/${{ env.BUILD_TARGET }}-release.jks
           # Append release credentials
           echo "${{ env.RELEASE_CREDENTIALS }}" >> gradle.properties
 
@@ -100,14 +106,14 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "::endgroup::"
 
-#      - name: Upload artifact to Firebase App Distribution
-#        uses: wzieba/Firebase-Distribution-Github-Action@v1
-#        with:
-#          appId: ${{ env.FIREBASE_APP_ID }}
-#          serviceCredentialsFileContent: ${{ secrets.SERVICE_ACCOUNT_FILE_CONTENT }}
-#          groups: external-dti
-#          releaseNotes: ${{ env.RELEASE_NOTES }}
-#          file: ${{ env.ARTIFACT_APK_PATH }}
+      - name: Upload artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ env.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.SERVICE_ACCOUNT_FILE_CONTENT }}
+          groups: external-dti
+          releaseNotes: ${{ env.RELEASE_NOTES }}
+          file: ${{ env.ARTIFACT_APK_PATH }}
 
       - name: Create Github Release
         id: create_release

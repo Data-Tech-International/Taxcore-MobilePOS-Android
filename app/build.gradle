@@ -22,7 +22,8 @@ android {
 
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch * 10 + appVersionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
-        archivesBaseName = "MobilePOS-v$versionName($versionCode)"
+
+        archivesBaseName = "MobilePOS-$versionCode-v$versionName"
 
         multiDexEnabled true
     }
@@ -41,6 +42,10 @@ android {
     buildTypes {
 
         debug {
+            defaultConfig {
+                versionName "${versionMajor}.${versionMinor}.${versionPatch} (${appVersionBuild})"
+            }
+
             versionNameSuffix "-debug"
             applicationIdSuffix ".debug"
 
