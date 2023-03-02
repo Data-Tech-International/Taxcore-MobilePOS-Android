@@ -9,7 +9,7 @@ def versionMinor = 2
 def versionPatch = 0
 def versionBuild = 1
 
-def appVersionCode = Integer.valueOf(System.env.BUILD_NUMBER ?: versionBuild)
+def appVersionBuild = Integer.valueOf(System.env.GITHUB_RUN_NUMBER ?: versionBuild)
 
 android {
     compileSdkVersion 33
@@ -20,8 +20,9 @@ android {
         minSdkVersion 24
         targetSdkVersion 33
 
-        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch * 10 + appVersionCode
+        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch * 10 + appVersionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        archivesBaseName = "MobilePOS-v$versionName($versionCode)"
 
         multiDexEnabled true
     }
@@ -32,6 +33,20 @@ android {
             storePassword DEBUG_KEYSTORE_PASS
             keyAlias DEBUG_KEY_ALIAS
             keyPassword DEBUG_KEY_PASS
+        }
+
+        taxcore {
+            storeFile file(TAXCORE_V3_KEYSTORE_PATH)
+            storePassword TAXCORE_V3_KEYSTORE_PASS
+            keyAlias TAXCORE_V3_KEY_ALIAS
+            keyPassword TAXCORE_V3_KEY_PASS
+        }
+
+        purs {
+            storeFile file(PURS_KEYSTORE_PATH)
+            storePassword PURS_KEYSTORE_PASS
+            keyAlias PURS_KEY_ALIAS
+            keyPassword PURS_KEY_PASS
         }
     }
 
@@ -46,11 +61,42 @@ android {
 
             signingConfig signingConfigs.debug
         }
+
+        taxcore {
+            debuggable false
+            minifyEnabled false
+
+            versionNameSuffix "-TAXCORE"
+            applicationIdSuffix ".v3"
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.taxcore
+        }
+
+        purs {
+            debuggable false
+            minifyEnabled false
+
+            versionNameSuffix "-PURS"
+            applicationIdSuffix ".purs"
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.purs
+        }
     }
 
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
+    }
+
+    task printVersionInformation {
+        // Full version with build number
+        println defaultConfig.versionName
+        // Version without build number
+        println "${versionMajor}.${versionMinor}.${versionPatch}"
     }
 
 }
