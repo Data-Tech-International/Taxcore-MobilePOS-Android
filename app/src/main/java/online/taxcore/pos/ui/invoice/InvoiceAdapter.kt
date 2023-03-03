@@ -96,7 +96,7 @@ class InvoiceAdapter(
 
             qtyInput.setText(quantityText)
             qtyInput.setSelection(quantityText.length)
-            qtyInput.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(14, 3))
+            qtyInput.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(11, 3))
 
             setActionButtonEnabled(WhichButton.POSITIVE, false)
 

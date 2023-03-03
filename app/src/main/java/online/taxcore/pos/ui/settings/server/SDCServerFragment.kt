@@ -9,10 +9,7 @@ import android.text.InputType
 import android.util.Patterns
 import android.view.View
 import androidx.annotation.StringRes
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
-import androidx.preference.SwitchPreferenceCompat
+import androidx.preference.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
@@ -449,6 +446,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
 
         DownloadService.downloadCert(
             url,
+            requireActivity().cacheDir,
             onStart = {
                 configDialog.show()
             },

@@ -72,7 +72,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="4dp"
                     android:src="@drawable/pencil"
-                    app:tint="@color/colorWhite"
+                    android:tint="@color/colorWhite"
                     android:visibility="gone" />
 
                 <ImageButton

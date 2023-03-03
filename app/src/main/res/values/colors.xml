@@ -18,6 +18,8 @@
     <color name="colorPrimaryDark">#137DEE</color>
     <color name="colorAccent">#265FE5</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorSmoke">#F9F9F9</color>
+    <color name="colorGray">#DDDDDD</color>
     <color name="colorRed">#FF5722</color>
     <color name="colorRedis">#FF867C</color>
     <color name="colorBlue">#536DFE</color>

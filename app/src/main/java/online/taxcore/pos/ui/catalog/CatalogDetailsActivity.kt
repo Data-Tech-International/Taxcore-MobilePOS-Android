@@ -53,9 +53,7 @@ class CatalogDetailsActivity : BaseActivity() {
     }
 
     private fun setActiveFragment() {
-
-        val intentExtra = intent.extras?.getString(ACTIVITY_EXTRA)
-        when (intentExtra) {
+        when (intent.extras?.getString(ACTIVITY_EXTRA)) {
             CATALOG_SEARCH -> {
                 catalogDetailsToolbar.setNavigationIcon(R.drawable.ic_exit)
                 catalogDetailsToolbar.title = getString(R.string.title_search_catalog)
@@ -67,6 +65,5 @@ class CatalogDetailsActivity : BaseActivity() {
             }
 
         }
-
     }
 }

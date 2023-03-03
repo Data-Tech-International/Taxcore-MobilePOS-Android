@@ -23,21 +23,27 @@ import online.taxcore.pos.ui.base.BaseActivity
 import online.taxcore.pos.ui.dashboard.DashboardActivity
 import online.taxcore.pos.utils.TCUtil
 import online.taxcore.pos.utils.isOffline
+import org.jetbrains.anko.ctx
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
-import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
 
-    @Inject
     lateinit var prefService: PrefService
     private var hasCert: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_activity)
+
+        prefService = try {
+            PrefService(this)
+        } catch (ex: SecurityException) {
+            ctx.cacheDir.deleteRecursively()
+            PrefService(this)
+        }
 
         setAppSession()
         setLogoImage()
