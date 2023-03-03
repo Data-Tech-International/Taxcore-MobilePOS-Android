@@ -135,7 +135,7 @@
                     android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-"
                     android:hint="@string/ref"
                     android:inputType="textCapCharacters"
-                    android:maxLength="25" />
+                    android:maxLength="50" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -207,7 +207,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/buyer_cost_center"
-                    android:maxLength="15" />
+                    android:maxLength="50" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.LinearLayoutCompat

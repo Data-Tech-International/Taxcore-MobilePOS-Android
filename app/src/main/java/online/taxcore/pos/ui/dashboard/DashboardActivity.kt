@@ -58,7 +58,7 @@ import online.taxcore.pos.ui.settings.SettingsDetailsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity.Companion.FRAGMENT_SDC_CONFIGURE
 import online.taxcore.pos.utils.isOffline
 import org.jetbrains.anko.contentView
-import java.io.IOException
+import java.io.*
 import java.util.*
 import javax.inject.Inject
 
@@ -424,6 +424,7 @@ class DashboardActivity : BaseActivity() {
 
         DownloadService.downloadCert(
             url,
+            cacheDir,
             onStart = {
                 configDialog.show()
             },

@@ -875,11 +875,6 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
         )
     }
 
-    private fun showErrorMessage(errorMessage: String) {
-        val stringWithoutBrackets = errorMessage.removeBrackets()
-        AlertDialogHelper.showSimpleAlertDialog(activity, stringWithoutBrackets.showErrorMessage())
-    }
-
     private fun resetInvoice() {
         isNewInvoiceTypeCopy = false
         isNewTransactionTypeRefund = false

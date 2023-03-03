@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.print.PrintManager
@@ -28,7 +29,7 @@ import kotlinx.android.synthetic.main.invoice_preview_dialog.*
 import online.taxcore.pos.BuildConfig
 import online.taxcore.pos.R
 import online.taxcore.pos.constants.PrefConstants
-import online.taxcore.pos.constants.StorageConstants
+import online.taxcore.pos.enums.ExportMimeType
 import online.taxcore.pos.ui.base.BaseActivity
 import online.taxcore.pos.utils.CreatePdf
 import java.io.File
@@ -71,12 +72,12 @@ class FiscalInvoiceFragment : DialogFragment() {
         val delimiter = "========================================"
         val typeface = Typeface.createFromAsset(activity?.assets, "fonts/ConsolaMono.ttf")
 
-        val invoiceArg = arguments?.getString("Invoice") ?: ""
-        val invoiceFooter = invoiceArg.split(delimiter).last()
-        val invoiceText = invoiceArg.replace(invoiceFooter, "")
+        val invoiceJournal = arguments?.getString("Invoice") ?: ""
+        val invoiceFooter = invoiceJournal.split(delimiter).last()
+        val invoiceContent = invoiceJournal.replace(invoiceFooter, "")
 
         dialog_fragment_invoice.typeface = typeface
-        dialog_fragment_invoice.text = invoiceText
+        dialog_fragment_invoice.text = invoiceContent
         dialog_fragment_invoice.gravity = Gravity.CENTER_HORIZONTAL
 
         dialog_fragment_invoice_end.text = invoiceFooter
@@ -94,6 +95,17 @@ class FiscalInvoiceFragment : DialogFragment() {
         }
 
         main_app_bar_share.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                invoiceNumber?.let { invoiceNo ->
+                    createAndSharePdf(
+                        invoiceNo,
+                        invoiceJournal
+                    )
+
+                }
+                return@setOnClickListener
+            }
+
             Dexter.withContext(activity)
                 .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(object : PermissionListener {
@@ -101,8 +113,7 @@ class FiscalInvoiceFragment : DialogFragment() {
                         invoiceNumber?.let { it1 ->
                             createAndSharePdf(
                                 it1,
-                                invoiceText,
-                                invoiceFooter
+                                invoiceJournal
                             )
                         }
                     }
@@ -121,7 +132,7 @@ class FiscalInvoiceFragment : DialogFragment() {
         }
 
         main_app_bar_print.setOnClickListener {
-            printInvoice(invoiceNumber!!, invoiceText, invoiceFooter)
+            printInvoice(invoiceNumber!!, invoiceJournal)
             // createWebPrintJob(getBitmapFromView(dialog_fragment_invoice_container))
         }
     }
@@ -132,19 +143,22 @@ class FiscalInvoiceFragment : DialogFragment() {
 
     private fun printInvoice(
         invoiceNumber: String,
-        invoiceText: String = "",
-        invoiceFooter: String = ""
+        invoiceJournal: String = ""
     ) {
         val imageBytes = arguments?.getString("QrCode")
         val imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT)
+        //Create file path for Pdf
+        val fileDirPath = requireActivity().cacheDir.absolutePath
+        val fullFilePath = fileDirPath + File.separator + invoiceNumber + ".pdf"
+
         val content =
-            CreatePdf.write(invoiceNumber, invoiceText, imageByteArray, invoiceFooter)
+            CreatePdf.write(fullFilePath, invoiceJournal, imageByteArray)
         if (content) {
             val act = activity as BaseActivity
             val printManager = act.originalActivityContext()
                 .getSystemService(Context.PRINT_SERVICE) as PrintManager
             val jobName = this.getString(R.string.app_name) + " doc"
-            printManager.print(jobName, MyPrintDocumentAdapter(invoiceNumber, ""), null)
+            printManager.print(jobName, MyPrintDocumentAdapter(invoiceNumber, fileDirPath), null)
         }
     }
 
@@ -159,19 +173,23 @@ class FiscalInvoiceFragment : DialogFragment() {
 
     private fun createAndSharePdf(
         pdfTitle: String? = "",
-        pdfInvoice: String? = "",
-        pdfInvoiceFooter: String? = ""
+        invoiceJournal: String = ""
     ) {
         val pref = PreferenceManager.getDefaultSharedPreferences(context)
         val imageBytes = arguments?.getString("QrCode")
         val imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT)
-        val content = CreatePdf.write(pdfTitle, pdfInvoice, imageByteArray, pdfInvoiceFooter)
+        //Create file path for Pdf
+        val filePath = requireActivity().cacheDir.absolutePath + File.separator + pdfTitle + ".pdf"
+
+        val content =
+            CreatePdf.write(filePath, invoiceJournal, imageByteArray)
+
         if (content) {
             val uriFromFile = context?.let { it1 ->
                 FileProvider.getUriForFile(
                     it1,
                     BuildConfig.APPLICATION_ID + ".provider",
-                    File(StorageConstants.DOWNLOAD_STORAGE_PATH + "/" + pdfTitle + ".pdf")
+                    File(filePath)
                 )
             }
 
@@ -184,7 +202,7 @@ class FiscalInvoiceFragment : DialogFragment() {
                 putExtra(Intent.EXTRA_SUBJECT, getTitleSubject(seller, pdfTitle!!))
                 putExtra(Intent.EXTRA_STREAM, uriFromFile)
                 putExtra(Intent.EXTRA_TEXT, url)
-                type = "application/pdf"
+                type = ExportMimeType.PDF.type
             }
 
             startActivity(Intent.createChooser(shareIntent, getString(R.string.title_select_app)))

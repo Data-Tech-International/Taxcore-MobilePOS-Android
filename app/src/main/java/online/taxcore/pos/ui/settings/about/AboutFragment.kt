@@ -41,7 +41,7 @@ class AboutFragment : Fragment() {
         setImage()
         setAppCountry()
         setAppVersion()
-        setDateUpdate("09.2022.")
+        setDateUpdate(getCurrentDate())
     }
 
     override fun onResume() {
@@ -51,7 +51,7 @@ class AboutFragment : Fragment() {
 
     @SuppressLint("SimpleDateFormat")
     private fun getCurrentDate(): String {
-        val dateFormat = SimpleDateFormat("dd.MM.yyyy")
+        val dateFormat = SimpleDateFormat("MM.yyyy")
         val currentCal = Calendar.getInstance()
         return dateFormat.format(currentCal.time)
     }
