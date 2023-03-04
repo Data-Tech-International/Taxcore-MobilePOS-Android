@@ -79,7 +79,7 @@ class SDCConfigureFragment : Fragment(R.layout.sdc_configure_fragment), IPAddres
             }
         }
 
-        ipAddressPart1Input.setOnEditorActionListener { v, actionId, event ->
+        ipAddressPart1Input.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 ipAddressPart2Input.requestFocus()
                 return@setOnEditorActionListener true
@@ -90,13 +90,13 @@ class SDCConfigureFragment : Fragment(R.layout.sdc_configure_fragment), IPAddres
         ipAddressPart2Input.onTextChanged {
             validateAddressFromFields()
             if (it.length == 3) {
-                ipAddressPart3Input.requestFocus();
+                ipAddressPart3Input.requestFocus()
             } else if (it.isEmpty()) {
                 ipAddressPart1Input.requestFocus()
             }
         }
 
-        ipAddressPart2Input.setOnEditorActionListener { v, actionId, event ->
+        ipAddressPart2Input.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 ipAddressPart3Input.requestFocus()
                 return@setOnEditorActionListener true
@@ -108,13 +108,13 @@ class SDCConfigureFragment : Fragment(R.layout.sdc_configure_fragment), IPAddres
             validateFormFields()
             validateAddressFromFields()
             if (it.length == 3) {
-                ipAddressPart4Input.requestFocus();
+                ipAddressPart4Input.requestFocus()
             } else if (it.isEmpty()) {
                 ipAddressPart2Input.requestFocus()
             }
         }
 
-        ipAddressPart3Input.setOnEditorActionListener { v, actionId, event ->
+        ipAddressPart3Input.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 ipAddressPart4Input.requestFocus()
                 return@setOnEditorActionListener true
@@ -261,7 +261,7 @@ class SDCConfigureFragment : Fragment(R.layout.sdc_configure_fragment), IPAddres
 
         val port = esdcPortInput.text.toString()
 
-        return "$chosenProtocol://$ipAddress:$port/".toLowerCase(Locale.ROOT)
+        return "$chosenProtocol://$ipAddress:$port/".lowercase(Locale.ROOT)
     }
 
     private fun validateFormFields() {
@@ -298,7 +298,7 @@ class SDCConfigureFragment : Fragment(R.layout.sdc_configure_fragment), IPAddres
         // IP ADDRESS
         val serverAddress = prefService.loadEsdcEndpoint()
         if (serverAddress.isNotBlank()) {
-            chosenProtocol = serverAddress.split("://")[0].toUpperCase(Locale.ROOT)
+            chosenProtocol = serverAddress.split("://")[0].uppercase(Locale.ROOT)
             val ip_part1 = serverAddress.substringAfter("://").substringBefore(".")
             val ip_part2 = serverAddress.substringAfter(".")
             val ip_part3 = ip_part2.substringAfter(".")
@@ -354,6 +354,7 @@ class SDCConfigureFragment : Fragment(R.layout.sdc_configure_fragment), IPAddres
             onSuccessStatus = {
                 prefService.saveStatusData(it)
                 longToast(R.string.toast_configuration_changed)
+                @Suppress("DEPRECATION")
                 activity?.onBackPressed()
             },
             onError = {

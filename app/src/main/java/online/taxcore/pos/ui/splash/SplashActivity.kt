@@ -1,5 +1,6 @@
 package online.taxcore.pos.ui.splash
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
@@ -29,6 +30,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
 
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity() {
 
     lateinit var prefService: PrefService
@@ -89,6 +91,7 @@ class SplashActivity : BaseActivity() {
             return
         }
 
+        @Suppress("DEPRECATION")
         Handler().postDelayed({
             DashboardActivity.start(this, null)
         }, 2000)
@@ -130,6 +133,7 @@ class SplashActivity : BaseActivity() {
             }
         } catch (error: IOException) {
             runOnUiThread {
+                @Suppress("DEPRECATION")
                 Handler().postDelayed({
                     DashboardActivity.start(this, null)
                 }, 2000)

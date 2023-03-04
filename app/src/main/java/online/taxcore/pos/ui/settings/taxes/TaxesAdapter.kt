@@ -1,5 +1,6 @@
 package online.taxcore.pos.ui.settings.taxes
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,8 @@ import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.TaxesSettings
 import online.taxcore.pos.extensions.roundLocalized
 
-class TaxesAdapter() : RecyclerView.Adapter<TaxesAdapter.TaxesViewHolder>() {
+@SuppressLint("NotifyDataSetChanged")
+class TaxesAdapter : RecyclerView.Adapter<TaxesAdapter.TaxesViewHolder>() {
 
     private var taxesList = ArrayList<TaxesSettings>()
 

@@ -888,8 +888,8 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
         isNewInvoiceTypeCopy = false
         isNewTransactionTypeRefund = false
 
+        invoiceRefTimeButton.text = ""
         invoiceRefNumberInput.setText("")
-        invoiceRefTimeButton.setText("")
         invoiceBuyerTinInput.setText("")
         invoiceBuyerCostCenterInput.setText("")
 

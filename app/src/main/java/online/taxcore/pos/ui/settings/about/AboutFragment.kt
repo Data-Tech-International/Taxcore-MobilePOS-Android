@@ -30,7 +30,7 @@ class AboutFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.about_fragment, container, false)
+        inflater.inflate(R.layout.about_fragment, container, false)
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
         menu.clear()
@@ -74,17 +74,15 @@ class AboutFragment : Fragment() {
 
     private fun setImage() {
         val envLogo = prefService.loadEnvLogo()
-        val logoImage = if (envLogo.isNotEmpty()) {
-            envLogo
-        } else {
+        val logoImage = envLogo.ifEmpty {
             val tinOid = prefService.loadTinOid()
             TCUtil.getEnvLogo(tinOid)
         }
 
         Glide.with(this)
-                .load(logoImage)
-                .error(R.drawable.tax_core_logo_splash)
-                .into(fragment_about_app_image)
+            .load(logoImage)
+            .error(R.drawable.tax_core_logo_splash)
+            .into(fragment_about_app_image)
     }
 
 }
