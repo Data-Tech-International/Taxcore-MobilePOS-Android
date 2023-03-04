@@ -41,27 +41,6 @@ object TaxesManager {
         }
     }
 
-    fun addItemToDatabase(taxItem: TaxItem) {
-        val realm = Realm.getDefaultInstance()
-        try {
-            realm.executeTransaction {
-                // Add a appliedTaxes
-                val taxes = realm.createObject<TaxesSettings>()
-                with(taxes) {
-                    code = taxItem.label
-                    name = taxItem.name
-                    rate = taxItem.rate
-                    value = taxItem.value
-                }
-                addItem(0, taxes)
-            }
-        } catch (e: Exception) {
-            print(e)
-        } finally {
-            realm.close()
-        }
-    }
-
     fun getAllTaxes(): ArrayList<TaxesSettings> {
         val realm = Realm.getDefaultInstance()
         try {

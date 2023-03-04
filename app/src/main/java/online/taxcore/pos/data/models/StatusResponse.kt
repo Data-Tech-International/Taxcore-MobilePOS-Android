@@ -2,6 +2,8 @@ package online.taxcore.pos.data.models
 
 import online.taxcore.pos.utils.TCUtil
 
+private const val AmountPerQuantityCategory = "2"
+
 class StatusResponse {
     var sdcDateTime: String = ""
     var supportedLanguages: List<String> = arrayListOf()
@@ -11,19 +13,27 @@ class StatusResponse {
     var currentTaxRates: CurrentTaxRate? = null
     var gsc: List<String> = arrayListOf()
 
-    fun getTaxLabels(countryCode: String = ""): List<TaxItem>? {
+    fun getTaxLabels(countryCode: String = ""): List<TaxItem> {
         val currencySymbol = TCUtil.getCurrencyBy(countryCode)
-        return currentTaxRates?.taxCategories?.map { taxCategory ->
-            val taxValue =
-                if (taxCategory.categoryType == "AmountPerQuantity") currencySymbol else "%"
+        val mappedTaxLabels = arrayListOf<TaxItem>()
 
-            TaxItem(
-                name = taxCategory.name,
-                label = taxCategory.taxRates.first().label, // FIXME: 29.7.21. Map all taxRates
-                rate = taxCategory.taxRates.first().rate, // FIXME: 29.7.21. Map all taxRates
-                value = taxValue,
-            )
+        currentTaxRates?.taxCategories?.forEach { taxCategory ->
+            val taxValue =
+                if (taxCategory.categoryType == AmountPerQuantityCategory) currencySymbol else "%"
+
+            taxCategory.taxRates.forEach { taxRate ->
+                val tItem = TaxItem(
+                    name = taxCategory.name,
+                    label = taxRate.label,
+                    rate = taxRate.rate,
+                    value = taxValue,
+                )
+
+                mappedTaxLabels.add(tItem)
+            }
         }
+
+        return mappedTaxLabels
     }
 
     fun hasErrors(): Boolean {
