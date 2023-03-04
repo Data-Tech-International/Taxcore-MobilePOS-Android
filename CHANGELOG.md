@@ -1,6 +1,27 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [Unreleased]
+
+### Added
+
+- **TBD** Invoice catalog search
+- **TBD** TaxRates valid from date 
+
+### Fixed
+
+- **TBD** Configuration response error handling  
+
+## [3.3.1] - 2023-03-03
+
+### Changed
+
+- **TBD** Display tax labels from all categories 
+
+### Fixed
+
+- Certificate error fallback - PKCS12 key store mac invalid
+- Lint warnings for deprecated syntax 
 
 ## [3.3.0] - 2023-03-03
 

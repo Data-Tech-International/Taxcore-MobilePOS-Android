@@ -57,7 +57,6 @@ import online.taxcore.pos.data.local.TaxesManager
 import online.taxcore.pos.data.models.InvoiceResponse
 import online.taxcore.pos.data.models.Item
 import online.taxcore.pos.data.params.InvoiceRequest
-import online.taxcore.pos.data.params.InvoiceRequestType
 import online.taxcore.pos.data.params.PaymentItem
 import online.taxcore.pos.data.realm.Cashier
 import online.taxcore.pos.data.realm.Journal
@@ -163,7 +162,9 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
         setOnInputChangeListeners()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        @Suppress("DEPRECATION")
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode != Activity.RESULT_OK) return
@@ -189,6 +190,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
                 } else {
                     val intent = Intent(context, ItemDetailActivity::class.java)
                     intent.putExtra(BARCODE_EAN_EXTRA, barcode)
+                    @Suppress("DEPRECATION")
                     startActivityForResult(intent, NEW_INVOICE_REQUEST)
                 }
 
@@ -240,6 +242,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
 
         invoiceCreateItemButton.setOnClickListener {
             val intent = Intent(context, ItemDetailActivity::class.java)
+            @Suppress("DEPRECATION")
             startActivityForResult(intent, NEW_INVOICE_REQUEST)
         }
 
@@ -362,7 +365,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
 
     private fun setInputFields() {
         when (invoiceActionType) {
-            "copy" -> {
+            COPY.value -> {
                 invoiceActionsLayout.visible = false
                 invoiceFavoritesRecycler.visible = false
                 invoiceResetButton.visible = false
@@ -383,7 +386,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
 
                 invoicePaymentSelect.isEnabled = false
             }
-            "refund" -> {
+            REFUND.value -> {
                 invoiceActionsLayout.visible = false
                 invoiceFavoritesRecycler.visible = false
                 invoiceResetButton.visible = false
@@ -462,6 +465,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
                 override fun onPermissionGranted(response: PermissionGrantedResponse) {
                     baseActivity()?.let {
                         val intent = Intent(context, BarcodeScannerActivity::class.java)
+                        @Suppress("DEPRECATION")
                         startActivityForResult(intent, SCAN_BARCODE_REQUEST)
                     }
                 }
@@ -488,7 +492,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
 
         // Get PAC from session
         if (isVSDCSelected) {
-            val invoicePac = AppSession.pacCode.toUpperCase(Locale.getDefault())
+            val invoicePac = AppSession.pacCode.uppercase(Locale.getDefault())
             when {
                 invoicePac.isNotEmpty() and useCachedCredentials -> signVsdcInvoiceReceipt(
                     invoicePac
@@ -509,13 +513,18 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
     }
 
     private fun createVsdcService(): ApiService? {
-        val activeCertName = prefService.loadActiveCertName()
-        val pfxPass = prefService.loadPfxPass(activeCertName)
-        val cert = CertManager.loadCert(activeCertName)
+        return try {
+            val activeCertName = prefService.loadActiveCertName()
+            val pfxPass = prefService.loadPfxPass(activeCertName)
+            val cert = CertManager.loadCert(activeCertName)
 
-        val ca = CertAuthority.certificateParams(cert!!.pfxData, pfxPass)
+            val ca = CertAuthority.certificateParams(cert!!.pfxData, pfxPass)
 
-        return APIClient.vsdc(ca)
+            APIClient.vsdc(ca)
+        } catch (ex: Error) {
+            longToast(R.string.error_wrong_pass_or_file)
+            null
+        }
     }
 
     private fun createESDCService(): ApiServiceESDC? {
@@ -536,15 +545,12 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
         }
 
         verifyRequest.enqueue(object : Callback<String> {
-            override fun onFailure(call: Call<String>?, t: Throwable?) {
-                t?.message?.let { longToast(it) }
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                t.message?.let { longToast(it) }
                 dialogESDC?.dismiss()
             }
 
-            override fun onResponse(call: Call<String>?, response: Response<String>?) {
-
-                response ?: return
-
+            override fun onResponse(call: Call<String>, response: Response<String>) {
                 if (response.isSuccessful.not()) {
                     dialogESDC?.dismiss()
                     // TODO: Improve error handling
@@ -604,6 +610,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
             }
 
             setActionButtonEnabled(WhichButton.NEUTRAL, getClipboardText().isNotEmpty())
+            @Suppress("DEPRECATION")
             neutralButton(R.string.paste_and_sign) {
                 val clipboardText = getClipboardText()
                 getCustomView().pinInputView.setText(clipboardText)
@@ -639,13 +646,14 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
             getCustomView().pacInputView.onTextChanged { inputText ->
                 if (inputText.length == PAC_INPUT_LENGTH) {
                     val inputPac = this.getCustomView().pacInputView.text.toString()
-                        .toUpperCase(Locale.getDefault())
+                        .uppercase(Locale.getDefault())
                     signVsdcInvoiceReceipt(inputPac)
                     dismiss()
                 }
             }
 
             setActionButtonEnabled(WhichButton.NEUTRAL, getClipboardText().isNotEmpty())
+            @Suppress("DEPRECATION")
             neutralButton(R.string.paste_and_sign) {
                 val clipboardText = getClipboardText()
                 getCustomView().pacInputView.setText(clipboardText)
@@ -689,6 +697,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
                 validateInvoice()
             }
 
+            @Suppress("DEPRECATION")
             neutralButton(R.string.reset) {
                 refTimeLabel?.visibility = View.INVISIBLE
                 refTimeLabel?.text = ""
@@ -707,7 +716,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
             cancelOnTouchOutside(false)  // calls setCanceledOnTouchOutside on the underlying dialog
         }
 
-    private fun prepareInvoiceRequestBody(reqType: InvoiceRequestType): InvoiceRequest {
+    private fun prepareInvoiceRequestBody(): InvoiceRequest {
         val invoiceRequest = InvoiceRequest()
 
         val selectedCashier = Cashier().queryFirst { equalTo("isChecked", true) }
@@ -730,7 +739,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
             buyerCostCenterId = invoiceBuyerCostCenterInput.stringOrNull()
             referentDocumentNumber = referentDocNo
             referentDocumentDT = refDT
-            payment = listOf(PaymentItem(invoiceSumAmount.toDouble(), paymentType))
+            payment = listOf(PaymentItem(invoiceSumAmount, paymentType))
             items = collectSelectedItems()
         }
 
@@ -781,7 +790,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
         prefService.saveCredentialsTime()
 
         runAsync {
-            val invoiceRequestBody = prepareInvoiceRequestBody(InvoiceRequestType.VSDC)
+            val invoiceRequestBody = prepareInvoiceRequestBody()
 
             val vsdcService = createVsdcService()
             val call = vsdcService?.createInvoice(inputPac, invoiceRequestBody)
@@ -800,7 +809,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
     }
 
     private fun signEsdcInvoice() {
-        val invoiceRequestBody = prepareInvoiceRequestBody(InvoiceRequestType.ESDC)
+        val invoiceRequestBody = prepareInvoiceRequestBody()
 
         val esdcService = createESDCService()
         val call = esdcService?.createInvoice(invoiceRequestBody)
@@ -846,7 +855,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
         }
     }
 
-    private fun handleSuccessfulInvoiceSign(signedInvoice: InvoiceResponse?): Unit {
+    private fun handleSuccessfulInvoiceSign(signedInvoice: InvoiceResponse?) {
         signedInvoice?.let { invoice ->
             prefService.saveEsdcLocation(signedInvoice.locationName)
             saveJournalItem(invoice)
@@ -954,10 +963,10 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
     private fun hasInvoiceItems(): Boolean = invoiceAdapter?.getInvoiceItems()?.isNotEmpty()
         ?: false
 
-// INVOICE TYPE
+    // INVOICE TYPE
 
     private fun findInvoiceTypeName(invoiceType: String): String {
-        return when (invoiceType.toLowerCase()) {
+        return when (invoiceType.lowercase(Locale.getDefault())) {
             NORMAL.value -> getString(R.string.normal)
             PROFORMA.value -> getString(R.string.proforma)
             COPY.value -> getString(R.string.copy)
@@ -966,10 +975,10 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
         }
     }
 
-// PAYMENT TYPE
+    // PAYMENT TYPE
 
     private fun findPaymentTypeName(paymentType: String): String {
-        return when (paymentType.toLowerCase()) {
+        return when (paymentType.lowercase(Locale.getDefault())) {
             CASH.value -> getString(R.string.cash)
             CARD.value -> getString(R.string.card)
             OTHER.value -> getString(R.string.other)
@@ -982,17 +991,17 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
         }
     }
 
-// TRANSACTION TYPE
+    // TRANSACTION TYPE
 
     private fun findTransactionTypeName(transactionType: String): String {
-        return when (transactionType.toLowerCase()) {
+        return when (transactionType.lowercase(Locale.getDefault())) {
             SALE.value -> getString(R.string.sale)
             REFUND.value -> getString(R.string.refund)
             else -> throw Error("Unknown transaction type")
         }
     }
 
-// LISTENERS
+    // LISTENERS
 
     override fun onInvoiceTypeChanged(invoiceType: InvoiceType, selectedValue: String) {
         invoiceTypeSelect.tag = invoiceType.value
