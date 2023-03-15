@@ -64,6 +64,9 @@ object DownloadService {
 
                 val documentsFolder =
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                if(!documentsFolder.exists()) {
+                    documentsFolder.mkdir()
+                }
 
                 val fileNameBase = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1).ifBlank {
                     UUID.randomUUID().toString()
