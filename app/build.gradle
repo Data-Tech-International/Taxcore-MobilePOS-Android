@@ -9,7 +9,7 @@ def versionMinor = 2
 def versionPatch = 0
 def versionBuild = 1
 
-def appVersionCode = Integer.valueOf(System.env.BUILD_NUMBER ?: versionBuild)
+def appVersionBuild = Integer.valueOf(System.env.GITHUB_RUN_NUMBER ?: versionBuild)
 
 android {
     compileSdkVersion 33
@@ -20,8 +20,10 @@ android {
         minSdkVersion 24
         targetSdkVersion 33
 
-        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch * 10 + appVersionCode
+        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch * 10 + appVersionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+
+        archivesBaseName = "MobilePOS-$versionCode-v$versionName"
 
         multiDexEnabled true
     }
@@ -33,11 +35,17 @@ android {
             keyAlias DEBUG_KEY_ALIAS
             keyPassword DEBUG_KEY_PASS
         }
+
+        /**SIGNING_CONFIG**/
     }
 
     buildTypes {
 
         debug {
+            defaultConfig {
+                versionName "${versionMajor}.${versionMinor}.${versionPatch} (${appVersionBuild})"
+            }
+
             versionNameSuffix "-debug"
             applicationIdSuffix ".debug"
 
@@ -46,11 +54,20 @@ android {
 
             signingConfig signingConfigs.debug
         }
+
+        /**BUILD_TYPE**/
     }
 
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
+    }
+
+    task printVersionInformation {
+        // Full version with build number
+        println defaultConfig.versionName
+        // Version without build number
+        println "${versionMajor}.${versionMinor}.${versionPatch}"
     }
 
 }

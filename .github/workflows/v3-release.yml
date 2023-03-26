@@ -1,0 +1,128 @@
+name: TaxCore MobilePOS v3
+
+on:
+  push:
+    branches:
+      - main-v3
+      - purs
+  pull_request:
+    branches:
+      - main-v3
+      - purs
+
+jobs:
+  build:
+    name: Setup Environment and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code to specific branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Configuration for pull request
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "BUILD_TARGET=debug" >> $GITHUB_ENV
+          echo "ENCODED_FIREBASE_JSON=${{ secrets.DEBUG_V3_ENCODED_FIREBASE_JSON }}" >> $GITHUB_ENV
+          echo "FIREBASE_APP_ID=${{ secrets.DEBUG_V3_FIREBASE_APP_ID }}" >> $GITHUB_ENV
+
+      - name: Configuration for taxcore branch
+        if: ${{ github.ref == 'refs/heads/main-v3' }}
+        run: |
+          echo "BUILD_TARGET=taxcore" >> $GITHUB_ENV
+          echo "BUILD_TYPE=${{ vars.TAXCORE_BUILD_TYPE }}" >> $GITHUB_ENV
+          echo "SIGNING_CONFIG=${{ vars.TAXCORE_SIGNING_CONFIG }}" >> $GITHUB_ENV
+          echo "ENCODED_FIREBASE_JSON=${{ secrets.TAXCORE_V3_ENCODED_FIREBASE_JSON }}" >> $GITHUB_ENV
+          echo "FIREBASE_APP_ID=${{ secrets.TAXCORE_V3_FIREBASE_APP_ID }}" >> $GITHUB_ENV
+          echo "ENCODED_RELEASE_KEY=${{ secrets.TAXCORE_V3_ENCODED_RELEASE_KEY }}" >> $GITHUB_ENV
+          # Append multiline release credentials
+          echo "RELEASE_CREDENTIALS<<EOF" >> $GITHUB_ENV
+          echo "${{ secrets.TAXCORE_V3_RELEASE_CREDENTIALS }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Configuration for purs branch
+        if: ${{ github.ref == 'refs/heads/purs' }}
+        run: |
+          echo "BUILD_TARGET=purs" >> $GITHUB_ENV
+          echo "BUILD_TYPE=${{ vars.PURS_BUILD_TYPE }}" >> $GITHUB_ENV
+          echo "SIGNING_CONFIG=${{ vars.PURS_SIGNING_CONFIG }}" >> $GITHUB_ENV
+          echo "ENCODED_FIREBASE_JSON=${{ secrets.PURS_V3_ENCODED_FIREBASE_JSON }}" >> $GITHUB_ENV
+          echo "FIREBASE_APP_ID=${{ secrets.PURS_V3_FIREBASE_APP_ID }}" >> $GITHUB_ENV
+          echo "ENCODED_RELEASE_KEY=${{ secrets.PURS_V3_ENCODED_RELEASE_KEY }}" >> $GITHUB_ENV
+          # Append multiline release credentials
+          echo "RELEASE_CREDENTIALS<<EOF" >> $GITHUB_ENV
+          echo "${{ secrets.PURS_V3_RELEASE_CREDENTIALS }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Add signing and distribution config and credentials
+        run: |
+          sed -i "s|/\*\*SIGNING_CONFIG\*\*/|${{ env.SIGNING_CONFIG }}|g" app/build.gradle
+          sed -i "s|/\*\*BUILD_TYPE\*\*/|${{ env.BUILD_TYPE }}|g" app/build.gradle
+          mkdir -p app/src/${{ env.BUILD_TARGET }} && touch app/src/${{ env.BUILD_TARGET }}/google-services.json
+          echo "${{ env.ENCODED_FIREBASE_JSON }}" | base64 -d > app/src/${{ env.BUILD_TARGET }}/google-services.json
+          # Create release key from encoded action secret 
+          echo "${{ env.ENCODED_RELEASE_KEY }}" | base64 -d > keys/${{ env.BUILD_TARGET }}-release.jks
+          # Append release credentials
+          echo "${{ env.RELEASE_CREDENTIALS }}" >> gradle.properties
+
+      - name: Generate app APK
+        run: ./gradlew assemble${{ env.BUILD_TARGET }}
+
+      - name: Generate app Bundle
+        if: ${{ env.BUILD_TARGET != 'debug' }}
+        run: ./gradlew bundle${{ env.BUILD_TARGET }}
+
+      - name: Export current app version
+        run: |
+          echo "APP_VERSION=$(${{ github.workspace }}/gradlew -q printVersionInformation | head -1)" >> $GITHUB_ENV
+          echo "VERSION_TAG=$(${{ github.workspace }}/gradlew -q printVersionInformation | tail -1)" >> $GITHUB_ENV
+
+      - name: Save Artifact info
+        id: set-result-artifact
+        run: |
+          echo "::group::Save paths"
+          ARTIFACT_APK_PATH=$(ls app/build/outputs/apk/${{ env.BUILD_TARGET }}/*.apk | head -n 1)
+          ARTIFACT_AAB_PATH=$(ls app/build/outputs/bundle/${{ env.BUILD_TARGET }}/*.aab | head -n 1)
+          echo "ARTIFACT_APK_PATH=${ARTIFACT_APK_PATH}" >> $GITHUB_ENV
+          echo "ARTIFACT_AAB_PATH=${ARTIFACT_AAB_PATH}" >> $GITHUB_ENV
+          echo "::endgroup::"
+          echo "::group::Prepare release notes"
+          RELEASE_NOTES=$(awk -v ver=${{ env.VERSION_TAG }} '/^## \[/ { if ($2 == "["ver"]") { p=1 } else { p=0 } } p { print }' CHANGELOG.md | tail -n +3)
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          echo "$RELEASE_NOTES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "::endgroup::"
+
+      - name: Upload artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ env.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.SERVICE_ACCOUNT_FILE_CONTENT }}
+          groups: external-dti
+          releaseNotes: ${{ env.RELEASE_NOTES }}
+          file: ${{ env.ARTIFACT_APK_PATH }}
+
+      - name: Create Github Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: ${{ env.BUILD_TARGET == 'debug' }}
+          tag_name: ${{ env.VERSION_TAG }}
+          body: ${{ env.RELEASE_NOTES }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            ./${{ env.ARTIFACT_APK_PATH }}
+            ./${{ env.ARTIFACT_AAB_PATH }}
