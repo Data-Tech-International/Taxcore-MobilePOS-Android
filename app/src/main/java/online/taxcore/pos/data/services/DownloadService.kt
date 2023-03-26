@@ -1,7 +1,6 @@
 package online.taxcore.pos.data.services
 
 import UnzipUtils
-import android.os.Environment
 import android.util.Base64
 import okhttp3.ResponseBody
 import online.taxcore.pos.data.api.APIClient
@@ -24,6 +23,7 @@ enum class ErrorType {
 object DownloadService {
     fun downloadCert(
         endpoint: String,
+        destinationFolder: File,
         onStart: () -> Unit,
         onSuccess: (encodedPfx: String, p12FileName: String) -> Unit,
         onError: (type: ErrorType, message: String?) -> Unit,
@@ -62,20 +62,17 @@ object DownloadService {
                     return onEnd()
                 }
 
-                val documentsFolder =
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-
-                val fileNameBase = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1).ifBlank {
+                val fileNameBase = downloadUrl.substringAfterLast("/").ifBlank {
                     UUID.randomUUID().toString()
-                }
+                }.removeSuffix(".zip")
 
                 val zipFileName = "$fileNameBase.zip"
-                val zipFilePath = documentsFolder.absolutePath + File.separator + zipFileName
+                val zipFilePath = destinationFolder.absolutePath + File.separator + zipFileName
 
                 File(zipFilePath).writeBytes(body.bytes())
 
                 val zipFile = File(zipFilePath)
-                val extractDirPath = documentsFolder.absolutePath + File.separator + fileNameBase
+                val extractDirPath = destinationFolder.absolutePath + File.separator + fileNameBase
 
                 try {
                     UnzipUtils.unzip(

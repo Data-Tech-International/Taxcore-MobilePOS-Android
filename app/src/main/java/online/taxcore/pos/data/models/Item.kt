@@ -3,9 +3,9 @@ package online.taxcore.pos.data.models
 class Item {
     var name: String = ""
     var gtin: String? = null
-    var quantity: Float = 0.0F
-    var discount: Float = 0.0F
+    var quantity: Double = 0.000
+    var discount: Double = 0.00
     var labels: List<String> = arrayListOf()
-    var unitPrice: Float = 0.0F
-    var totalAmount: Float = 0.0F
+    var unitPrice: Double = 0.00
+    var totalAmount: Double = 0.00
 }

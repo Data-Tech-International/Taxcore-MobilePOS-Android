@@ -2,7 +2,6 @@ package online.taxcore.pos.ui.invoice;
 
 import android.os.Bundle;
 import android.os.CancellationSignal;
-import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.print.PageRange;
 import android.print.PrintAttributes;
@@ -18,6 +17,7 @@ import java.io.OutputStream;
 
 public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
 
+    private final String fileExtensionSuffix = ".pdf";
     private final String fileName;
     private final String path;
 
@@ -35,7 +35,7 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
             return;
         }
 
-        PrintDocumentInfo pdi = new PrintDocumentInfo.Builder(fileName + ".pdf")
+        PrintDocumentInfo pdi = new PrintDocumentInfo.Builder(fileName + fileExtensionSuffix)
                 .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT).build();
 
         callback.onLayoutFinished(pdi, true);
@@ -48,10 +48,9 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
         OutputStream output = null;
 
         try {
-            String name = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() +
-                    File.separator + fileName + ".pdf";
+            String fullFilePath = this.path + File.separator + fileName + fileExtensionSuffix;
 
-            input = new FileInputStream(new File(name));
+            input = new FileInputStream(fullFilePath);
             output = new FileOutputStream(parcelFileDescriptor.getFileDescriptor());
 
             byte[] buf = new byte[1024];
@@ -67,8 +66,13 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
             //Catch exception
         } finally {
             try {
-                input.close();
-                output.close();
+                if (output != null) {
+                    output.close();
+                }
+
+                if (input != null) {
+                    input.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

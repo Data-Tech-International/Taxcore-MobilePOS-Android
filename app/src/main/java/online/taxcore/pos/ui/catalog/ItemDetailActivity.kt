@@ -265,7 +265,7 @@ class ItemDetailActivity : BaseActivity() {
     }
 
     private fun setOnPriceChangeHandler() {
-        activity_detail_plu_input_price.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(14, 2))
+        activity_detail_plu_input_price.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(12, 2))
         activity_detail_plu_input_price.onTextChanged {
 
             if (isNumber(it)) {
