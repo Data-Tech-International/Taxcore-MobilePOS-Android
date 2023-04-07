@@ -40,10 +40,14 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_activity)
 
+        // This is needed since on some devices encrypted storage
+        // is not working properly. cache and data clean is needed
+        // to instantiate pref service
         prefService = try {
             PrefService(this)
-        } catch (ex: SecurityException) {
+        } catch (ex: java.lang.Exception) {
             ctx.cacheDir.deleteRecursively()
+            ctx.dataDir.deleteRecursively()
             PrefService(this)
         }
 

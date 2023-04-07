@@ -18,10 +18,12 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Display tax labels from all category types
+- Backup disabled in manifest
 
 ### Fixed
 
 - Certificate error fallback - PKCS12 key store mac invalid
+- Unhandled file import/export exceptions 
 - Lint warnings for deprecated syntax
 
 ## [3.3.0] - 2023-03-03
