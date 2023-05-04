@@ -1,23 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string-array name="invoice_type">
-		<item>Aucun</item>
-		<item>Normal</item>
-		<item>Proforma</item>
-		<item>Copie</item>
-		<item>Formation</item>
-	</string-array>
-	<string-array name="transaction_type">
-		<item>Aucun</item>
-		<item>Vente</item>
-		<item>Avoir</item>
-	</string-array>
-	<string-array name="date_sort">
-		<item>Le plus récent</item>
-		<item>Le plus ancien</item>
-	</string-array>
-	<string-array name="languages">
-		<item>Anglais</item>
-		<item>Français</item>
-		<item>Serbe (Lat)</item>
-	</string-array>
+    <string-array name="invoice_type">
+        <item>Aucun</item>
+        <item>Normal</item>
+        <item>Proforma</item>
+        <item>Copie</item>
+        <item>Formation</item>
+    </string-array>
+
+    <string-array name="transaction_type">
+        <item>Aucun</item>
+        <item>Vente</item>
+        <item>Avoir</item>
+    </string-array>
+
+    <string-array name="date_sort">
+        <item>Le plus récent</item>
+        <item>Le plus ancien</item>
+    </string-array>
+
+    <string-array name="languages">
+        <item>Anglais</item>
+        <item>Français</item>
+        <item>Serbe (Lat)</item>
+    </string-array>
 </resources>
