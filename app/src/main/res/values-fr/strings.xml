@@ -75,7 +75,7 @@
     <string name="cashier_two">Second caissier</string>
     <string name="cashier_three">Troisième caissier</string>
     <string name="copy">Copie</string>
-    <string name="refund">Facture d'avoir</string>
+    <string name="refund">Facture d\'avoir</string>
     <string name="invoice">Ticket de caisse</string>
     <string name="check">Chèque</string>
     <string name="wiretransfer">Virement bancaire</string>
