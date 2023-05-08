@@ -18,7 +18,7 @@
     <string name="vat_code_f">Code d\'Étiquettes Fiscales : F</string>
     <string name="vat_code_e">Code d\'Étiquettes Fiscales : E</string>
     <string name="vat_code_a">Code d\'Étiquettes Fiscales : A</string>
-    <string name="barcode">EAN :</string>
+    <string name="barcode">Référence article :</string>
     <string name="update">Mise à jour</string>
     <string name="account">Compte</string>
     <string name="mail">Email</string>
@@ -70,18 +70,18 @@
     <string name="catalog">Catalogue</string>
     <string name="enter_by_pin">Crées/Changes ton code PIN</string>
     <string name="use_pin_code">Utilises ton code PIN</string>
-    <string name="cashiers">Numéro d\'identification fiscal (NIF) du caissier </string>
+    <string name="cashiers">Numéro de compte contribuable (CC) du caissier </string>
     <string name="cashier_one">Premier caissier</string>
     <string name="cashier_two">Second caissier</string>
     <string name="cashier_three">Troisième caissier</string>
     <string name="copy">Copie</string>
-    <string name="refund">Remboursement</string>
+    <string name="refund">Facture d'avoir</string>
     <string name="invoice">Ticket de caisse</string>
     <string name="check">Chèque</string>
     <string name="wiretransfer">Virement bancaire</string>
     <string name="voucher">Bon d\'achat</string>
-    <string name="mobile_money">Argent mobile</string>
-    <string name="buyer_id">NIF de l\'acheteur</string>
+    <string name="mobile_money">Mobile Money</string>
+    <string name="buyer_id">NºCC du client</string>
     <string name="sale">Vente</string>
     <string name="html"><![CDATA[This <i>is</i> a <b>test</b> of]]></string>
     <string name="no_journals">Pas de journaux</string>
@@ -98,7 +98,7 @@
     <string name="export_invoices">Exporter les tickets</string>
     <string name="import_invoices">Importer les tickets</string>
     <string name="scan_barcode">Scanner le code-barre</string>
-    <string name="ean_barcode">EAN :</string>
+    <string name="ean_barcode">Référence article :</string>
     <string name="reset">réinitialiser</string>
     <string name="date_and_time_title">Date et heure</string>
     <string name="from">Du :</string>
@@ -108,7 +108,7 @@
     <string name="select_time">Choisir l\'heure</string>
     <string name="to">Au :</string>
     <string name="sdc_invoice">Nº de ticket de caisse CDV</string>
-    <string name="buyer_tin">NIF de l\'acheteur</string>
+    <string name="buyer_tin">NºCC du client</string>
     <string name="payment_type">Type de paiement :</string>
     <string name="transaction_type_spinner">Type de transaction :</string>
     <string name="invoice_type_spinner">Type de ticket :</string>
@@ -181,7 +181,7 @@
     <string name="error_require_internet_message">La configuration de l\'app n\'est pas possible sans connexion à internet. S\'il te plaît, actives ta connexion et essaies à nouveau.</string>
     <string name="error_invalid_url">Impossible d\'ouvrir l\'URL</string>
     <string name="error_general">Un problème est survenu. Essaies à nouveau.</string>
-    <string name="error_item_name">Le nom de l\'article doit être au moins de 2 caractères de longs</string>
+    <string name="error_item_name">La désignation de l\'article doit être au moins de 2 caractères de longs</string>
     <string name="error_title">Erreur !</string>
     <string name="error_minimum_one_character">Minimum d\'un caractère</string>
     <string name="error_minimum_eight_characters">Minimum de huit caractères</string>
@@ -194,7 +194,7 @@
     <string name="text_add_edit_item">Ajouter/éditer des articles</string>
     <string name="text_loading_settings">Chargement des paramètres de l\'application…</string>
     <string name="text_uid">IU</string>
-    <string name="text_location_name">Nom de l\'emplacement</string>
+    <string name="text_location_name">Nom du vendeur</string>
     <string name="text_currently_active_cashier">Caissier actuel</string>
     <string name="text_no_items">Pas d\'articles</string>
 
@@ -212,9 +212,9 @@
     <string name="hint_search">Recherches</string>
     <string name="hint_cashier_id">Identifiant du caissier</string>
     <string name="hint_cashier_name">Nom du caissier</string>
-    <string name="hint_item_name">Nom de l\'article</string>
+    <string name="hint_item_name">Désignation de l\'article</string>
     <string name="hint_unit_price">Prix de l\'unité</string>
-    <string name="hint_gtin">EAN</string>
+    <string name="hint_gtin">Référence article</string>
 
     <string name="toast_invalid_certificate">Certificat non valide</string>
     <string name="toast_esdc_address_invalid">L\'adresse du CDV-E n\'est pas valide</string>
@@ -304,11 +304,11 @@
     <string name="ping_description">Le PING est utilisé pour vérifier la disponibilité du CDV-E. Après avoir reçu le message \"TOUT VA BIEN\" du CDV-E, cliques sur SAUVEGARDER pour stocker tes paramètres de configuration.</string>
     <string name="esdc_not_configured">Pas configuré</string>
     <string name="invoice_copy">Copie</string>
-    <string name="invoice_refund">Remboursement</string>
+    <string name="invoice_refund">Avoir</string>
     <string name="invoice_reset_message">Cette action éliminera toutes tes contributions. Es-tu sûr de vouloir réinitialiser le ticket ?</string>
     <string name="invoice_create_invoice">Créer le ticket</string>
     <string name="invoice_create_invoice_copy">Créer une copie du ticket</string>
-    <string name="invoice_create_invoice_refund">Créer un remboursement du ticket</string>
+    <string name="invoice_create_invoice_refund">Créer un avoir du ticket</string>
     <string name="paste_and_sign">Coller et signer</string>
     <string name="catalog_import_in_progress">Importation du catalogue en cours, patientes s\'il te plaît…</string>
     <string name="title_language">Langues</string>
@@ -317,7 +317,7 @@
     <string name="app_version">Version :</string>
 
     <string name="switch_sdc_server">Changer de serveur actif CDV</string>
-    <string name="search_by_name_or_EAN">Rechercher par nom ou EAN</string>
+    <string name="search_by_name_or_EAN">Rechercher par nom ou référence article</string>
     <string name="using_vsdc_server">Utilisation du serveur CDV-V (par défaut)</string>
     <string name="using_esdc_server">Utilisation du serveur CDV-E</string>
 
@@ -334,9 +334,9 @@
 
     <string name="title_caution">Avertissement</string>
     <string name="title_enter_file_name">Entrer le nom du fichier</string>
-    <string name="title_confirm_remove_item">Es-tu sûr de vouloir supprimer l\'article du ticket ?</string>
+    <string name="title_confirm_remove_item">Es-tu sûr de vouloir supprimer l\'article du ticket ?</string>
     <string name="title_enter_quantity">Entrer la quantité</string>
-    <string name="title_confirm_remove_item_name">Es-tu sûr de vouloir supprimer l\'article %1$s du catalogue ?</string>
+    <string name="title_confirm_remove_item_name">Es-tu sûr de vouloir supprimer l\'article %1$s du catalogue ?</string>
 
     <string name="error_minimum_quantity">La quantité ne peut pas être inférieure à 0.001</string>
 

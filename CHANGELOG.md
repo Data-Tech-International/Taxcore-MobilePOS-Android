@@ -13,12 +13,13 @@ All notable changes to this project will be documented in this file.
 
 - **TBD** Configuration response error handling
 
-## [3.3.1] - 2023-03-03
+## [3.3.1] - 2023-05-08
 
 ### Changed
 
 - Display tax labels from all category types
 - Backup disabled in manifest
+- FR translations updated
 
 ### Fixed
 

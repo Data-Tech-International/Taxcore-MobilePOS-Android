@@ -11,7 +11,7 @@
     <string-array name="transaction_type">
         <item>Aucun</item>
         <item>Vente</item>
-        <item>Remboursement</item>
+        <item>Avoir</item>
     </string-array>
 
     <string-array name="date_sort">
