@@ -8,11 +8,13 @@ import online.taxcore.pos.data.params.InvoiceRequest
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface ApiServiceESDC {
 
     @POST("api/v3/invoices")
+    @Headers("Accept-Language: sr-Cyrl-RS")
     fun createInvoice(@Body payload: InvoiceRequest): Call<InvoiceResponse>
 
     @POST("api/v3/pin")

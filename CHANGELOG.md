@@ -13,7 +13,11 @@ All notable changes to this project will be documented in this file.
 
 - **TBD** Configuration response error handling
 
-## [3.3.1] - 2023-05-08
+## [3.3.1] - 2023-07-02
+
+### Added
+
+- Accept-Language header to `/invoices` request
 
 ### Changed
 
