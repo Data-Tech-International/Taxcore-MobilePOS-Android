@@ -10,27 +10,28 @@ import retrofit2.http.*
 interface ApiService {
 
     @Headers(
-            "Accept: application/json",
-            "Content-Type: application/json"
+        "Accept: application/json",
+        "Content-Type: application/json",
+        "Accept-Language: sr-Cyrl-RS"
     )
     @POST("api/v3/invoices")
     fun createInvoice(
-            @Header("PAC") pacValue: String,
-            @Body payload: InvoiceRequest
+        @Header("PAC") pacValue: String,
+        @Body payload: InvoiceRequest
     ): Call<InvoiceResponse>
 
     @Headers(
-            "Accept: application/json",
-            "Content-Type: application/json"
+        "Accept: application/json",
+        "Content-Type: application/json"
     )
     @GET("api/v3/status")
     fun getTaxes(
-            @Header("PAC") pacValue: String
+        @Header("PAC") pacValue: String
     ): Call<StatusResponse>
 
     @GET("api/v3/environment-parameters")
     fun fetchEnvParams(
-            @Header("PAC") pacValue: String
+        @Header("PAC") pacValue: String
     ): Call<EnvResponse>
 
 }
