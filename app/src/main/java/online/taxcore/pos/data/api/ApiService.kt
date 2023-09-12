@@ -11,8 +11,7 @@ interface ApiService {
 
     @Headers(
         "Accept: application/json",
-        "Content-Type: application/json",
-        "Accept-Language: sr-Cyrl-RS"
+        "Content-Type: application/json"
     )
     @POST("api/v3/invoices")
     fun createInvoice(
