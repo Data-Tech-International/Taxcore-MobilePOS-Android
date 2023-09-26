@@ -13,7 +13,11 @@ All notable changes to this project will be documented in this file.
 
 - **TBD** Configuration response error handling
 
-## [3.3.1] - 2023-09-12
+## [3.3.1] - 2023-09-26
+
+### Added
+
+- New language Serbian (BA) - `Serbian (Latin) (Bosnia and Herzegovina) (sr-Latn-BA)` 
 
 ### Changed
 
