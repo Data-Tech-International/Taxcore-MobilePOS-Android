@@ -1,5 +1,6 @@
 package online.taxcore.pos.ui.settings.cashiers
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +26,7 @@ import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Cashier
 import online.taxcore.pos.extensions.onTextChanged
 
+@SuppressLint("NotifyDataSetChanged")
 class CashiersAdapter : RecyclerView.Adapter<CashierViewHolder>() {
 
     private var cashiersList = mutableListOf<Cashier>()
@@ -33,7 +35,7 @@ class CashiersAdapter : RecyclerView.Adapter<CashierViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CashierViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.cashiers_recycler_item, parent, false)
+            .inflate(R.layout.cashiers_recycler_item, parent, false)
         return CashierViewHolder(view)
     }
 
@@ -80,7 +82,8 @@ class CashiersAdapter : RecyclerView.Adapter<CashierViewHolder>() {
                     notifyItemRangeChanged(position, cashiersList.size)
                     notifyItemRemoved(position)
 
-                    Toast.makeText(context, context.getString(R.string.toast_cashier_deleted), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_cashier_deleted), Toast.LENGTH_SHORT)
+                        .show()
                 }
 
                 negativeButton(R.string.btn_close)
@@ -122,11 +125,13 @@ class CashiersAdapter : RecyclerView.Adapter<CashierViewHolder>() {
 
                     notifyItemChanged(position, currentCashier)
 
-                    Toast.makeText(context, context.getString(R.string.toast_cashier_updated), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_cashier_updated), Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
     }
+
 
     fun setData(arrayList: MutableList<Cashier>) {
         this.cashiersList = arrayList

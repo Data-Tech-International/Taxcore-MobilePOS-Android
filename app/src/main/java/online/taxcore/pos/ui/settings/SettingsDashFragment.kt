@@ -95,6 +95,7 @@ class SettingsDashFragment : Fragment() {
                 "en" -> 0
                 "fr" -> 1
                 "sr" -> 2
+                "bs" -> 3
                 else -> 0
             }
 
@@ -111,6 +112,7 @@ class SettingsDashFragment : Fragment() {
                         0 -> "en"
                         1 -> "fr"
                         2 -> "sr"
+                        3 -> "bs"
                         else -> "en"
                     }
 

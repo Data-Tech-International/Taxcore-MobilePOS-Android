@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- **TBD** Invoice catalog search
+- **TBD** TaxRates valid from date
+
+### Fixed
+
+- **TBD** Configuration response error handling
+
+## [3.3.1] - 2023-09-26
+
+### Added
+
+- New language Serbian (BA) - `Serbian (Latin) (Bosnia and Herzegovina) (sr-Latn-BA)` 
+
+### Changed
+
+- Display tax labels from all category types
+- Backup disabled in manifest
+- FR translations updated
+
+### Fixed
+
+- Certificate error fallback - PKCS12 key store mac invalid
+- Unhandled file import/export exceptions 
+- Lint warnings for deprecated syntax
+
 ## [3.3.0] - 2023-03-03
 
 ### Added

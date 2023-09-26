@@ -1,5 +1,6 @@
 package online.taxcore.pos.ui.splash
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
@@ -29,6 +30,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
 
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity() {
 
     lateinit var prefService: PrefService
@@ -38,10 +40,14 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_activity)
 
+        // This is needed since on some devices encrypted storage
+        // is not working properly. cache and data clean is needed
+        // to instantiate pref service
         prefService = try {
             PrefService(this)
-        } catch (ex: SecurityException) {
+        } catch (ex: java.lang.Exception) {
             ctx.cacheDir.deleteRecursively()
+            ctx.dataDir.deleteRecursively()
             PrefService(this)
         }
 
@@ -89,6 +95,7 @@ class SplashActivity : BaseActivity() {
             return
         }
 
+        @Suppress("DEPRECATION")
         Handler().postDelayed({
             DashboardActivity.start(this, null)
         }, 2000)
@@ -96,14 +103,20 @@ class SplashActivity : BaseActivity() {
 
     @Throws(IOException::class)
     private fun createVsdcService(): ApiService? {
+        return try {
+            val activeCert = prefService.loadActiveCertName()
+            val certPass = prefService.loadPfxPass(activeCert)
 
-        val activeCert = prefService.loadActiveCertName()
-        val certPass = prefService.loadPfxPass(activeCert)
+            val cert = CertManager.loadCert(activeCert)
 
-        val cert = CertManager.loadCert(activeCert)
+            val certAuthority = CertAuthority.certificateParams(cert!!.pfxData, certPass)
 
-        val certAuthority = CertAuthority.certificateParams(cert!!.pfxData, certPass)
-        return APIClient.vsdc(certAuthority)
+            APIClient.vsdc(certAuthority)
+
+        } catch (err: Error) {
+            longToast(R.string.error_wrong_pass_or_file)
+            return null
+        }
     }
 
     private fun fetchTaxes() {
@@ -124,6 +137,7 @@ class SplashActivity : BaseActivity() {
             }
         } catch (error: IOException) {
             runOnUiThread {
+                @Suppress("DEPRECATION")
                 Handler().postDelayed({
                     DashboardActivity.start(this, null)
                 }, 2000)
@@ -132,8 +146,8 @@ class SplashActivity : BaseActivity() {
     }
 
     private val onFetchTaxLabelsCallback = object : Callback<StatusResponse> {
-        override fun onFailure(call: Call<StatusResponse>?, t: Throwable?) {
-            t?.message?.let { errMsg ->
+        override fun onFailure(call: Call<StatusResponse>, t: Throwable) {
+            t.message?.let { _ ->
 
                 AppService.resetConfiguration {
                     prefService.removeActiveCertName()
@@ -145,40 +159,38 @@ class SplashActivity : BaseActivity() {
             }
         }
 
-        override fun onResponse(call: Call<StatusResponse>?, response: Response<StatusResponse>?) {
-            response?.let { res ->
+        override fun onResponse(call: Call<StatusResponse>, response: Response<StatusResponse>) {
 
-                if (res.isSuccessful.not()) {
-                    val errorMessage = res.errorBody()?.string()
-                    errorMessage?.let { _ ->
-                        if (errorMessage.startsWith("<!DOCTYPE html", true)) {
-                            val parsedMsg =
-                                errorMessage.substringAfter("<h3>").substringBefore("</h3>")
-                            longToast(parsedMsg)
-                        }
-
-                        AppService.resetConfiguration {
-                            prefService.removeConfiguration()
-                            prefService.setAppConfigured(false)
-                        }
-
-                        longToast(R.string.error_general)
-
-                        DashboardActivity.start(this@SplashActivity, null)
+            if (response.isSuccessful.not()) {
+                val errorMessage = response.errorBody()?.string()
+                errorMessage?.let { _ ->
+                    if (errorMessage.startsWith("<!DOCTYPE html", true)) {
+                        val parsedMsg =
+                            errorMessage.substringAfter("<h3>").substringBefore("</h3>")
+                        longToast(parsedMsg)
                     }
-                    return
+
+                    AppService.resetConfiguration {
+                        prefService.removeConfiguration()
+                        prefService.setAppConfigured(false)
+                    }
+
+                    longToast(R.string.error_general)
+
+                    DashboardActivity.start(this@SplashActivity, null)
                 }
-
-                res.body()?.let { taxRateResponse ->
-
-                    val certOid = prefService.loadCertData().tinOid
-                    val taxItems = taxRateResponse.getTaxLabels(certOid) ?: arrayListOf()
-
-                    TaxesManager.replaceActiveTaxItems(taxItems)
-                }
-
-                DashboardActivity.start(this@SplashActivity, null)
+                return
             }
+
+            response.body()?.let { taxRateResponse ->
+
+                val certOid = prefService.loadCertData().tinOid
+                val taxItems = taxRateResponse.getTaxLabels(certOid)
+
+                TaxesManager.replaceActiveTaxItems(taxItems)
+            }
+
+            DashboardActivity.start(this@SplashActivity, null)
         }
     }
 
@@ -186,9 +198,7 @@ class SplashActivity : BaseActivity() {
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val envLogo = prefService.loadEnvLogo()
 
-        val logoImage = if (envLogo.isNotBlank()) {
-            envLogo
-        } else {
+        val logoImage = envLogo.ifBlank {
             val tinOID = prefService.loadTinOid()
             TCUtil.getEnvLogo(tinOID)
         }

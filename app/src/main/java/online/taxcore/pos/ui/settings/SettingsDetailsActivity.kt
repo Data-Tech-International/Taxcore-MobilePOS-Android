@@ -62,8 +62,7 @@ class SettingsDetailsActivity : BaseActivity() {
 
     private fun setActiveFragment() {
 
-        val intentExtra = intent.extras?.getString(ACTIVITY_EXTRA)
-        when (intentExtra) {
+        when (intent.extras?.getString(ACTIVITY_EXTRA)) {
             FRAGMENT_TAX -> {
                 baseToolbar.title = getString(R.string.title_active_taxes)
                 addFragment(taxesFragment, R.id.baseFragment)
@@ -90,6 +89,7 @@ class SettingsDetailsActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
+            @Suppress("DEPRECATION")
             onBackPressed()
             return true
         }

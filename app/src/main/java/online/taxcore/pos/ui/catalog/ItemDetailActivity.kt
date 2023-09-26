@@ -61,8 +61,6 @@ class ItemDetailActivity : BaseActivity() {
     private var updatedFieldsMap = mutableMapOf<String, Boolean>()
     private var useESDC: Boolean = false
 
-    private var existInvalidTax = false
-
     companion object {
         private const val EXTRA_ITEM_UUID = "EXTRA_ITEM_UUID"
 
@@ -197,16 +195,16 @@ class ItemDetailActivity : BaseActivity() {
         val itemTaxLabels = item?.tax?.map { it.code } ?: arrayListOf()
 
         val appliedTaxItems = appTaxList
-                .map {
-                    if (itemTaxLabels.contains(it.code)) {
-                        it.isChecked = true
-                    }
-                    it
+            .map {
+                if (itemTaxLabels.contains(it.code)) {
+                    it.isChecked = true
                 }
+                it
+            }
 
         val appTaxLabels = appTaxList.map { it.code }
         val invalidTaxItems = item?.tax?.filter { appTaxLabels.contains(it.code).not() }
-                ?: arrayListOf()
+            ?: arrayListOf()
 
         if (invalidTaxItems.isNotEmpty()) {
             invalid_taxes_label.visibility = View.VISIBLE
@@ -269,7 +267,8 @@ class ItemDetailActivity : BaseActivity() {
         activity_detail_plu_input_price.onTextChanged {
 
             if (isNumber(it)) {
-                updatedFieldsMap["price"] = (it.roundTo2DecimalPlaces().toDouble() != item?.price?.roundToDecimal()?.toDouble())
+                updatedFieldsMap["price"] =
+                    (it.roundTo2DecimalPlaces().toDouble() != item?.price?.roundToDecimal()?.toDouble())
             }
 
             isPriceValid = it.isNotEmpty() && isNumber(it)
@@ -346,7 +345,8 @@ class ItemDetailActivity : BaseActivity() {
             val appliedInvalidLabelsList = appliedInvalidTaxes?.toList()?.map { it.code } as Collection<String>
             val itemLabelsList = item?.tax?.toList()?.map { it.code } as Collection<String>
 
-            updatedFieldsMap["appliedTaxes"] = appliedLabelsList != itemLabelsList || appliedInvalidLabelsList != itemLabelsList
+            updatedFieldsMap["appliedTaxes"] =
+                appliedLabelsList != itemLabelsList || appliedInvalidLabelsList != itemLabelsList
         }
 
         return appliedTaxes.isNullOrEmpty().not() || appliedInvalidTaxes.isNullOrEmpty().not()
@@ -434,7 +434,7 @@ class ItemDetailActivity : BaseActivity() {
 
         contentView?.let {
             Snackbar.make(it, R.string.toast_item_updated, Snackbar.LENGTH_SHORT)
-                    .show()
+                .show()
         }
     }
 
