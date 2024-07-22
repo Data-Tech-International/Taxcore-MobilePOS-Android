@@ -13,23 +13,27 @@ All notable changes to this project will be documented in this file.
 
 - **TBD** Configuration response error handling
 
-## [3.3.1] - 2023-09-26
+## [3.4.0] - 2024-07-22
 
 ### Added
 
-- New language Serbian (BA) - `Serbian (Latin) (Bosnia and Herzegovina) (sr-Latn-BA)` 
+- Support for Android 14
+- New language Serbian (BA) - `Serbian (Latin) (Bosnia and Herzegovina) (sr-Latn-BA)`
 
 ### Changed
 
 - Display tax labels from all category types
 - Backup disabled in manifest
 - FR translations updated
+- Update build gradle version
+- Java compatibility version
 
 ### Fixed
 
 - Certificate error fallback - PKCS12 key store mac invalid
 - Unhandled file import/export exceptions 
 - Lint warnings for deprecated syntax
+- Layout issue for cashiers
 
 ## [3.3.0] - 2023-03-03
 

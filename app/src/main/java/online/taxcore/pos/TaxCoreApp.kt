@@ -38,10 +38,10 @@ class TaxCoreApp : Application(), HasActivityInjector {
     private fun initRealm() {
         Realm.init(this)
         val config = RealmConfiguration.Builder()
-            .schemaVersion(1)
+            .name("taxcore3.realm")
+            .schemaVersion(2)
             .allowQueriesOnUiThread(true)
             .allowWritesOnUiThread(true)
-            .name("taxcore3.realm")
             .build()
 
         Realm.setDefaultConfiguration(config)
