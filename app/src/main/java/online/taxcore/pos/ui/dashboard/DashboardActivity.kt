@@ -30,11 +30,27 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.pawegio.kandroid.longToast
-import kotlinx.android.synthetic.main.dashboard_activity.*
-import kotlinx.android.synthetic.main.dialog_cert_pass_layout.view.*
-import kotlinx.android.synthetic.main.dialog_loading.*
-import kotlinx.android.synthetic.main.dialog_loading.view.*
-import kotlinx.android.synthetic.main.dialog_pac_layout.view.*
+import kotlinx.android.synthetic.main.dashboard_activity.catalogCardButton
+import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcEnvLabel
+import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcLocationLayout
+import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcLocationName
+import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcUidLabel
+import kotlinx.android.synthetic.main.dashboard_activity.dashboard
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardChangeCertButton
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardConfigureButton
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderCertInfoLayout
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderEsdcLayout
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderImageView
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderLocationNameTextView
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderNoConfigLayout
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderUIDTextView
+import kotlinx.android.synthetic.main.dashboard_activity.invoiceCardButton
+import kotlinx.android.synthetic.main.dashboard_activity.journalCardButton
+import kotlinx.android.synthetic.main.dashboard_activity.settingsCardButton
+import kotlinx.android.synthetic.main.dialog_cert_pass_layout.view.certPassInput
+import kotlinx.android.synthetic.main.dialog_loading.loadingDialogText
+import kotlinx.android.synthetic.main.dialog_loading.view.loadingDialogText
+import kotlinx.android.synthetic.main.dialog_pac_layout.view.pacInputView
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -57,9 +73,8 @@ import online.taxcore.pos.ui.settings.SettingsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity.Companion.FRAGMENT_SDC_CONFIGURE
 import online.taxcore.pos.utils.isOffline
-import org.jetbrains.anko.contentView
-import java.io.*
-import java.util.*
+import java.io.IOException
+import java.util.Locale
 import javax.inject.Inject
 
 class DashboardActivity : BaseActivity() {
@@ -93,7 +108,7 @@ class DashboardActivity : BaseActivity() {
         val showSnackbar = intent.extras?.getBoolean("snackbar")
         showSnackbar?.let {
             if (it) {
-                contentView?.let { view ->
+                dashboard?.let { view ->
                     Snackbar.make(
                         view,
                         R.string.previously_selected_certificate_not_exist,
@@ -345,7 +360,8 @@ class DashboardActivity : BaseActivity() {
             icon(R.drawable.ic_security)
             title(R.string.title_select_certificate)
 
-            val selectedIndex = certificates.map { it.name }.indexOf(prefService.loadActiveCertName())
+            val selectedIndex =
+                certificates.map { it.name }.indexOf(prefService.loadActiveCertName())
             val certListNames = certificates.map { it.displayName() }
 
             listItemsSingleChoice(
@@ -371,7 +387,8 @@ class DashboardActivity : BaseActivity() {
                 // proceed to PAC input
                 showPacInputDialog { pacInput ->
                     try {
-                        val clientAuthority = CertAuthority.certificateParams(cert.pfxData, savedCertPass)
+                        val clientAuthority =
+                            CertAuthority.certificateParams(cert.pfxData, savedCertPass)
 
                         fetchConfig(pacInput, clientAuthority, cert.name)
                     } catch (ex: Error) {
@@ -422,7 +439,8 @@ class DashboardActivity : BaseActivity() {
         DownloadService.downloadCert(url, cacheDir, onStart = {
             configDialog.show()
         }, onSuccess = { pfx, p12File ->
-            configDialog.getCustomView().loadingDialogText.text = getString(R.string.msg_file_downloaded)
+            configDialog.getCustomView().loadingDialogText.text =
+                getString(R.string.msg_file_downloaded)
             showCertPassInputDialog(pfx, p12File)
         }, onError = { errorType, _ ->
             when (errorType) {
@@ -477,7 +495,8 @@ class DashboardActivity : BaseActivity() {
             getCustomView().pacInputView.onTextChanged { inputText ->
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PAC_INPUT_LENGTH)
                 if (inputText.length == PAC_INPUT_LENGTH) {
-                    val inputPac = this.getCustomView().pacInputView.text.toString().uppercase(Locale.getDefault())
+                    val inputPac = this.getCustomView().pacInputView.text.toString()
+                        .uppercase(Locale.getDefault())
                     callback(inputPac)
                     dismiss()
                 }
@@ -508,7 +527,8 @@ class DashboardActivity : BaseActivity() {
             getCustomView().certPassInput.onTextChanged { inputText ->
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PASS_INPUT_LENGTH)
                 if (inputText.length == PASS_INPUT_LENGTH) {
-                    val inputPass = this.getCustomView().certPassInput.text.toString().uppercase(Locale.getDefault())
+                    val inputPass = this.getCustomView().certPassInput.text.toString()
+                        .uppercase(Locale.getDefault())
                     callback(inputPass)
                     dismiss()
                 }
@@ -523,7 +543,7 @@ class DashboardActivity : BaseActivity() {
         return item?.text?.trim() ?: ""
     }
 
-/* Helpers */
+    /* Helpers */
 
     private fun createLoadingDialog(@StringRes stringId: Int = R.string.loading_please_wait): MaterialDialog =
         MaterialDialog(this).apply {

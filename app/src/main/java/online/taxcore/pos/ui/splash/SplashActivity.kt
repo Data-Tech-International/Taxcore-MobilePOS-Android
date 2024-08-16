@@ -24,7 +24,6 @@ import online.taxcore.pos.ui.base.BaseActivity
 import online.taxcore.pos.ui.dashboard.DashboardActivity
 import online.taxcore.pos.utils.TCUtil
 import online.taxcore.pos.utils.isOffline
-import org.jetbrains.anko.ctx
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -46,8 +45,8 @@ class SplashActivity : BaseActivity() {
         prefService = try {
             PrefService(this)
         } catch (ex: java.lang.Exception) {
-            ctx.cacheDir.deleteRecursively()
-            ctx.dataDir.deleteRecursively()
+            this.cacheDir.deleteRecursively()
+            this.dataDir.deleteRecursively()
             PrefService(this)
         }
 

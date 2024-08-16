@@ -73,7 +73,6 @@ import online.taxcore.pos.extensions.*
 import online.taxcore.pos.helpers.AlertDialogHelper
 import online.taxcore.pos.ui.catalog.ItemDetailActivity
 import online.taxcore.pos.utils.TCUtil
-import org.jetbrains.anko.AnkoLogger
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -84,7 +83,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import online.taxcore.pos.data.realm.Item as ItemModel
 
-class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
+class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 
     @Inject
     lateinit var prefService: PrefService

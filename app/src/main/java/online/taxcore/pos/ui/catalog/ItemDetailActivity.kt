@@ -17,8 +17,19 @@ import com.pawegio.kandroid.longToast
 import com.vicpin.krealmextensions.queryAndUpdate
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
-import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.item_details_activity.*
+import kotlinx.android.synthetic.main.app_bar_main.toolbar
+import kotlinx.android.synthetic.main.item_details_activity.activity_detail_list_vat
+import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_barcode
+import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_input_barcode
+import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_input_name
+import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_input_price
+import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_name
+import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_price
+import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_scroll
+import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_vat
+import kotlinx.android.synthetic.main.item_details_activity.invalid_taxes_label
+import kotlinx.android.synthetic.main.item_details_activity.invalid_taxes_list
+import kotlinx.android.synthetic.main.item_details_activity.ll_invalid_taxes
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
 import online.taxcore.pos.data.local.TaxesManager
@@ -34,7 +45,7 @@ import online.taxcore.pos.ui.common.TaxesCheckedAdapter
 import online.taxcore.pos.ui.invoice.InvoiceFragment
 import online.taxcore.pos.ui.invoice.InvoiceFragment.Companion.BARCODE_EAN_EXTRA
 import online.taxcore.pos.utils.hideKeyboard
-import org.jetbrains.anko.contentView
+
 import javax.inject.Inject
 
 class ItemDetailActivity : BaseActivity() {
@@ -114,6 +125,7 @@ class ItemDetailActivity : BaseActivity() {
             finish()
             true
         }
+
         R.id.actionItemSave -> {
             if (isInCreateMode and isFormValid()) {
                 saveItem()
@@ -123,6 +135,7 @@ class ItemDetailActivity : BaseActivity() {
 
             true
         }
+
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -132,7 +145,8 @@ class ItemDetailActivity : BaseActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.title = if (isInCreateMode) getString(R.string.add_item) else getString(R.string.edit_item)
+        supportActionBar?.title =
+            if (isInCreateMode) getString(R.string.add_item) else getString(R.string.edit_item)
     }
 
     private fun initFields() {
@@ -255,7 +269,8 @@ class ItemDetailActivity : BaseActivity() {
             if (isBarcodeValid) {
                 activity_detail_plu_barcode.isErrorEnabled = false
             } else {
-                activity_detail_plu_barcode.error = getString(R.string.error_minimum_eight_characters)
+                activity_detail_plu_barcode.error =
+                    getString(R.string.error_minimum_eight_characters)
             }
 
             validateInputForm()
@@ -263,12 +278,14 @@ class ItemDetailActivity : BaseActivity() {
     }
 
     private fun setOnPriceChangeHandler() {
-        activity_detail_plu_input_price.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(12, 2))
+        activity_detail_plu_input_price.filters =
+            arrayOf<InputFilter>(DecimalDigitsInputFilter(12, 2))
         activity_detail_plu_input_price.onTextChanged {
 
             if (isNumber(it)) {
                 updatedFieldsMap["price"] =
-                    (it.roundTo2DecimalPlaces().toDouble() != item?.price?.roundToDecimal()?.toDouble())
+                    (it.roundTo2DecimalPlaces().toDouble() != item?.price?.roundToDecimal()
+                        ?.toDouble())
             }
 
             isPriceValid = it.isNotEmpty() && isNumber(it)
@@ -332,7 +349,9 @@ class ItemDetailActivity : BaseActivity() {
         }
     }
 
-    private fun isFormValid() = hasTaxLabelApplied() && isPriceValid && isNameValid && isBarcodeValid
+    private fun isFormValid() =
+        hasTaxLabelApplied() && isPriceValid && isNameValid && isBarcodeValid
+
     private fun isFormUpdated(): Boolean = updatedFieldsMap.any { item -> item.value }
 
     private fun hasTaxLabelApplied(): Boolean {
@@ -342,7 +361,8 @@ class ItemDetailActivity : BaseActivity() {
 
         if (isInEditMode) {
             val appliedLabelsList = appliedTaxes?.toList()?.map { it.code } as Collection<String>
-            val appliedInvalidLabelsList = appliedInvalidTaxes?.toList()?.map { it.code } as Collection<String>
+            val appliedInvalidLabelsList =
+                appliedInvalidTaxes?.toList()?.map { it.code } as Collection<String>
             val itemLabelsList = item?.tax?.toList()?.map { it.code } as Collection<String>
 
             updatedFieldsMap["appliedTaxes"] =
@@ -432,7 +452,8 @@ class ItemDetailActivity : BaseActivity() {
 
         hideKeyboard()
 
-        contentView?.let {
+
+        activity_detail_plu_scroll?.let {
             Snackbar.make(it, R.string.toast_item_updated, Snackbar.LENGTH_SHORT)
                 .show()
         }
