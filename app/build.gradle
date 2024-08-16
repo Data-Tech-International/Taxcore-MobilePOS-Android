@@ -143,7 +143,6 @@ dependencies {
     implementation 'io.github.inflationx:viewpump:2.0.3'
     implementation "com.itextpdf:itextpdf:5.5.13.3"
     implementation "com.madgag:scpkix-jdk15on:1.47.0.1"
-    implementation "net.cachapa.expandablelayout:expandablelayout:2.9.2"
 
     implementation "com.github.vicpinm:krealmextensions:2.5.0"
 
