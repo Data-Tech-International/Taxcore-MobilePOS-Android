@@ -45,10 +45,16 @@ object JsonFileManager {
             FirebaseCrashlytics.getInstance().recordException(e)
         } catch (e: FileNotFoundException) {
             Log.wtf("ERROR", e)
+            activity?.longToast("File not found")
             FirebaseCrashlytics.getInstance().recordException(e)
         } catch (e: IllegalStateException) {
             Log.wtf("ERROR", e)
-
+            activity?.longToast("Invalid JSON format")
+            FirebaseCrashlytics.getInstance().recordException(e)
+        } catch (e: Exception) {
+            Log.wtf("ERROR", e)
+            activity?.longToast("Unable to import journal")
+            FirebaseCrashlytics.getInstance().recordException(e)
         } finally {
             FileUtils.trimCache(activity)
         }
@@ -56,6 +62,7 @@ object JsonFileManager {
         return arrayListOf()
     }
 
+    @Deprecated("Deprecated")
     fun exportJournal(
         context: Context?,
         destinationFilePath: String,
@@ -79,12 +86,15 @@ object JsonFileManager {
                 onSuccess(true)
             } catch (e: FileNotFoundException) {
                 Log.wtf("ERROR", e)
-
                 onError("Unable to export journals. File not found.")
             } catch (e: RuntimeException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
                 onError("Unable to export journals.")
+            } catch (e: Exception) {
+                Log.wtf("ERROR", e)
+                FirebaseCrashlytics.getInstance().recordException(e)
+                onError("Unable to export journal.")
             } finally {
                 outStream?.flush()
                 outStream?.close()

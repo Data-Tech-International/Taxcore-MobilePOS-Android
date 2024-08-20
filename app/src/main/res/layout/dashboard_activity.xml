@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/dashboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -136,8 +137,8 @@
                         android:gravity="center_horizontal"
                         android:maxLines="2"
                         android:textColor="@android:color/white"
-                        tools:visibility="visible"
-                        tools:text="This is like really long location" />
+                        tools:text="This is like really long location"
+                        tools:visibility="visible" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 

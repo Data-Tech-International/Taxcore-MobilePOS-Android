@@ -109,20 +109,21 @@ object CatalogFileManager {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
                 onError("Wrong data type.")
-            } catch (e: java.lang.IndexOutOfBoundsException) {
+            } catch (e: IndexOutOfBoundsException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
                 onError("Invalid file content.")
-            } catch (e: IllegalStateException) {
+            } catch (e: Exception) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Error occurred")
+                onError("Unable to complete operation")
             } finally {
                 FileUtils.trimCache(context)
             }
         }
     }
 
+    @Deprecated("Deprecated")
     fun exportCsvCatalog(
         context: Context?,
         csvFilePath: String,
@@ -156,7 +157,7 @@ object CatalogFileManager {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
                 onError("Unable to export catalog. File not found.")
-            } catch (e: RuntimeException) {
+            } catch (e: Exception) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
                 onError("Unable to export catalog.")
@@ -202,43 +203,6 @@ object CatalogFileManager {
         return GsonBuilder().setPrettyPrinting().create().toJson(catalogItems)
     }
 
-    fun exportJsonCatalog(
-        context: Context?,
-        destinationFilePath: String,
-        items: MutableList<Item>,
-        onSuccess: (Boolean) -> Unit,
-        onError: (String) -> Unit
-    ) {
-        runAsync {
-            try {
-                val outputFile = File(destinationFilePath)
-                val json = generateJsonFileContent(items)
-
-                outputFile.writeText(json, Charsets.UTF_8)
-
-                val availableSize = FileUtils.getAvailableSpaceInKB()
-
-                if (outputFile.sizeInKb > availableSize) {
-                    onError("Not enough space to export catalog.")
-                    return@runAsync
-                }
-
-                onSuccess(true)
-            } catch (e: FileNotFoundException) {
-                Log.wtf("ERROR", e)
-                FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Unable to export catalog. File not found.")
-            } catch (e: RuntimeException) {
-                Log.wtf("ERROR", e)
-                FirebaseCrashlytics.getInstance().recordException(e)
-
-                onError("Unable to export catalog.")
-            } finally {
-                FileUtils.trimCache(context)
-            }
-        }
-    }
-
     fun importJsonCatalog(
         sourceFile: File,
         context: Context?,
@@ -262,11 +226,15 @@ object CatalogFileManager {
             } catch (e: FileNotFoundException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-            } catch (e: IllegalStateException) {
-                Log.wtf("ERROR", e)
+                onError("Unable to complete operation")
             } catch (e: JsonSyntaxException) {
                 Log.wtf("ERROR", e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 onError("Wrong JSON type")
+            } catch (e: Exception) {
+                Log.wtf("ERROR", e)
+                FirebaseCrashlytics.getInstance().recordException(e)
+                onError("Unable to complete operation")
             } finally {
                 FileUtils.trimCache(context)
             }

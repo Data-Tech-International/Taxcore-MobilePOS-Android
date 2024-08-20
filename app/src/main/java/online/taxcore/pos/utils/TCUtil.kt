@@ -55,12 +55,8 @@ object TCUtil {
         }
     }
 
-    fun getCurrencyBy(countryCode: String?): String {
-        if (countryCode.isNullOrEmpty()) {
-            return ""
-        }
-
-        return when (countryCode.toUpperCase(Locale.getDefault())) {
+    fun getCurrencyBy(countryCode: String): String {
+        return when (countryCode.uppercase(Locale.getDefault())) {
             "FJ" -> "FJ\$"
             "WS" -> "WS\$"
             "US" -> "\\US\$"

@@ -86,6 +86,7 @@ class CatalogListFragment : Fragment() {
         return when (item.itemId) {
             android.R.id.home -> {
                 activity?.hideKeyboard()
+                @Suppress("DEPRECATION")
                 activity?.onBackPressed()
                 true
             }

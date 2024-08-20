@@ -26,7 +26,7 @@ class CatalogFilterFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.catalog_filters_fragment, container, false)
+        inflater.inflate(R.layout.catalog_filters_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,6 +55,7 @@ class CatalogFilterFragment : Fragment() {
         android.R.id.home -> {
             CatalogManager.resetFilter()
 
+            @Suppress("DEPRECATION")
             baseActivity()?.onBackPressed()
             true
         }
@@ -95,12 +96,12 @@ class CatalogFilterFragment : Fragment() {
         val taxesSettingsList = TaxesSettings().queryAll().toMutableList()
 
         val appliedTaxSettings = taxesSettingsList
-                .map {
-                    if (CatalogManager.appliedTaxes.contains(it.code)) {
-                        it.isChecked = true
-                    }
-                    it
+            .map {
+                if (CatalogManager.appliedTaxes.contains(it.code)) {
+                    it.isChecked = true
                 }
+                it
+            }
 
         taxesCheckedAdapter?.setData(appliedTaxSettings.toMutableList())
     }
@@ -155,7 +156,7 @@ class CatalogFilterFragment : Fragment() {
     private fun applySearchFilter() {
 
         val appliedTaxes = taxesCheckedAdapter?.getAppliedTaxes()?.map { it.code }?.toTypedArray()
-                ?: emptyArray()
+            ?: emptyArray()
 
         with(CatalogManager) {
             itemName = catalogFilterItemNameInput.text.toString()

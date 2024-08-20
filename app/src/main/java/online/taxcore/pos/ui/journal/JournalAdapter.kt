@@ -15,6 +15,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
+@SuppressLint("NotifyDataSetChanged")
 class JournalAdapter : RecyclerView.Adapter<JournalAdapter.JournalViewHolder>() {
 
     private var journalList: MutableList<Journal> = mutableListOf()

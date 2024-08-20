@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -139,7 +140,7 @@ class CatalogAdapter(
                 itemView.itemTaxLabelsChipGroup.chipSpacingHorizontal = 0
             }
 
-            val itemEan = if (item.barcode.isNotEmpty()) item.barcode else "n/a"
+            val itemEan = item.barcode.ifEmpty { "n/a" }
             itemView.item_plu_barcode.text = "EAN: $itemEan"
             itemView.item_plu_price.text = priceText
 
@@ -151,9 +152,9 @@ class CatalogAdapter(
             }
 
             val starDrawable = if (item.isFavorite) {
-                itemView.context.getDrawable(R.drawable.ic_star_full)
+                AppCompatResources.getDrawable(itemView.context, R.drawable.ic_star_full)
             } else {
-                itemView.context.getDrawable(R.drawable.ic_star_empty)
+                AppCompatResources.getDrawable(itemView.context, R.drawable.ic_star_empty)
             }
 
             ImageViewCompat.setImageTintList(

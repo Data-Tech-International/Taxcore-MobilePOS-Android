@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.print.PrintManager
 import android.util.Base64
 import android.view.Gravity
@@ -17,6 +16,7 @@ import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -175,7 +175,7 @@ class FiscalInvoiceFragment : DialogFragment() {
         pdfTitle: String? = "",
         invoiceJournal: String = ""
     ) {
-        val pref = PreferenceManager.getDefaultSharedPreferences(context)
+        val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val imageBytes = arguments?.getString("QrCode")
         val imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT)
         //Create file path for Pdf

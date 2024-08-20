@@ -30,11 +30,27 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.pawegio.kandroid.longToast
-import kotlinx.android.synthetic.main.dashboard_activity.*
-import kotlinx.android.synthetic.main.dialog_cert_pass_layout.view.*
-import kotlinx.android.synthetic.main.dialog_loading.*
-import kotlinx.android.synthetic.main.dialog_loading.view.*
-import kotlinx.android.synthetic.main.dialog_pac_layout.view.*
+import kotlinx.android.synthetic.main.dashboard_activity.catalogCardButton
+import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcEnvLabel
+import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcLocationLayout
+import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcLocationName
+import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcUidLabel
+import kotlinx.android.synthetic.main.dashboard_activity.dashboard
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardChangeCertButton
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardConfigureButton
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderCertInfoLayout
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderEsdcLayout
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderImageView
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderLocationNameTextView
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderNoConfigLayout
+import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderUIDTextView
+import kotlinx.android.synthetic.main.dashboard_activity.invoiceCardButton
+import kotlinx.android.synthetic.main.dashboard_activity.journalCardButton
+import kotlinx.android.synthetic.main.dashboard_activity.settingsCardButton
+import kotlinx.android.synthetic.main.dialog_cert_pass_layout.view.certPassInput
+import kotlinx.android.synthetic.main.dialog_loading.loadingDialogText
+import kotlinx.android.synthetic.main.dialog_loading.view.loadingDialogText
+import kotlinx.android.synthetic.main.dialog_pac_layout.view.pacInputView
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -57,9 +73,8 @@ import online.taxcore.pos.ui.settings.SettingsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity.Companion.FRAGMENT_SDC_CONFIGURE
 import online.taxcore.pos.utils.isOffline
-import org.jetbrains.anko.contentView
-import java.io.*
-import java.util.*
+import java.io.IOException
+import java.util.Locale
 import javax.inject.Inject
 
 class DashboardActivity : BaseActivity() {
@@ -93,7 +108,7 @@ class DashboardActivity : BaseActivity() {
         val showSnackbar = intent.extras?.getBoolean("snackbar")
         showSnackbar?.let {
             if (it) {
-                contentView?.let { view ->
+                dashboard?.let { view ->
                     Snackbar.make(
                         view,
                         R.string.previously_selected_certificate_not_exist,
@@ -113,23 +128,24 @@ class DashboardActivity : BaseActivity() {
     }
 
     private var doubleBackToExitPressedOnce = false
+
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
 
         if (!isAppConfigured) {
-            showAppNotConfiguredDialog(
-                titleText = R.string.title_finish_configuration,
+            showAppNotConfiguredDialog(titleText = R.string.title_finish_configuration,
                 messageText = R.string.msg_exit_without_configuration,
                 negativeBtnText = R.string.btn_close,
                 onNotNow = {
                     AppSession.resetSessionCredentials()
                     finishAffinity()
-                }
-            )
+                })
             return
         }
 
         if (doubleBackToExitPressedOnce) {
             AppSession.resetSessionCredentials()
+            @Suppress("DEPRECATION")
             super.onBackPressed()
             return
         }
@@ -137,6 +153,7 @@ class DashboardActivity : BaseActivity() {
         this.doubleBackToExitPressedOnce = true
         longToast(getString(R.string.exit_app))
 
+        @Suppress("DEPRECATION")
         Handler().postDelayed({
             doubleBackToExitPressedOnce = false
         }, 3000)
@@ -283,23 +300,20 @@ class DashboardActivity : BaseActivity() {
     }
 
     private fun askPermission() {
-        Dexter.withContext(this)
-            .withPermissions(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-            )
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {}
+        Dexter.withContext(this).withPermissions(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+        ).withListener(object : MultiplePermissionsListener {
+            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {}
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                    longToast(getString(R.string.denied_permission))
-                }
-            }).check()
+            override fun onPermissionRationaleShouldBeShown(
+                permissions: MutableList<PermissionRequest>?, token: PermissionToken?
+            ) {
+                token?.continuePermissionRequest()
+                longToast(getString(R.string.denied_permission))
+            }
+        }).check()
     }
 
     /**
@@ -310,31 +324,25 @@ class DashboardActivity : BaseActivity() {
     private fun fetchConfig(pac: String, clientAuthority: ClientAuthority, certName: String) {
         val configDialog = createLoadingDialog()
 
-        SdcService.fetchVsdcConfiguration(clientAuthority, pac,
-            onStart = {
-                configDialog.show()
-            },
-            onSuccessEnv = {
-                prefService.saveEnvData(it)
-            },
-            onSuccessStatus = {
+        SdcService.fetchVsdcConfiguration(clientAuthority, pac, onStart = {
+            configDialog.show()
+        }, onSuccessEnv = {
+            prefService.saveEnvData(it)
+        }, onSuccessStatus = {
 
-                prefService.setAppConfigured()
-                prefService.savePac(pac)
-                prefService.saveCertificateData(clientAuthority.second)
-                prefService.saveActiveCertName(certName)
+            prefService.setAppConfigured()
+            prefService.savePac(pac)
+            prefService.saveCertificateData(clientAuthority.second)
+            prefService.saveActiveCertName(certName)
 
-                initHeader()
+            initHeader()
 
-                longToast(R.string.toast_configuration_changed)
-            },
-            onError = {
-                longToast(R.string.error_provide_valid_pac)
-            },
-            onEnd = {
-                configDialog.cancel()
-            }
-        )
+            longToast(R.string.toast_configuration_changed)
+        }, onError = {
+            longToast(R.string.error_provide_valid_pac)
+        }, onEnd = {
+            configDialog.cancel()
+        })
     }
 
     @SuppressLint("CheckResult")
@@ -378,14 +386,20 @@ class DashboardActivity : BaseActivity() {
                 // Cert is in the database, with password in storage,
                 // proceed to PAC input
                 showPacInputDialog { pacInput ->
-                    val clientAuthority =
-                        CertAuthority.certificateParams(cert.pfxData, savedCertPass)
+                    try {
+                        val clientAuthority =
+                            CertAuthority.certificateParams(cert.pfxData, savedCertPass)
 
-                    fetchConfig(pacInput, clientAuthority, cert.name)
+                        fetchConfig(pacInput, clientAuthority, cert.name)
+                    } catch (ex: Error) {
+                        longToast(R.string.error_wrong_pass_or_file)
+                    }
                 }
             }
 
             positiveButton(R.string.btn_allow)
+
+            @Suppress("DEPRECATION")
             neutralButton(R.string.add_new_cert) {
                 openDownloadCertDialog()
             }
@@ -422,28 +436,21 @@ class DashboardActivity : BaseActivity() {
 
         val configDialog = createLoadingDialog(R.string.btn_download)
 
-        DownloadService.downloadCert(
-            url,
-            cacheDir,
-            onStart = {
-                configDialog.show()
-            },
-            onSuccess = { pfx, p12File ->
-                configDialog.getCustomView().loadingDialogText.text =
-                    getString(R.string.msg_file_downloaded)
-                showCertPassInputDialog(pfx, p12File)
-            },
-            onError = { errorType, _ ->
-                when (errorType) {
-                    ErrorType.INVALID_OR_USED_LINK -> longToast(R.string.msg_nothing_to_download)
-                    ErrorType.NO_CERT_FILE_FOUND -> longToast(R.string.error_no_cert_files_found)
-                    else -> longToast(R.string.msg_failed_try_again)
-                }
-            },
-            onEnd = {
-                configDialog.cancel()
+        DownloadService.downloadCert(url, cacheDir, onStart = {
+            configDialog.show()
+        }, onSuccess = { pfx, p12File ->
+            configDialog.getCustomView().loadingDialogText.text =
+                getString(R.string.msg_file_downloaded)
+            showCertPassInputDialog(pfx, p12File)
+        }, onError = { errorType, _ ->
+            when (errorType) {
+                ErrorType.INVALID_OR_USED_LINK -> longToast(R.string.msg_nothing_to_download)
+                ErrorType.NO_CERT_FILE_FOUND -> longToast(R.string.error_no_cert_files_found)
+                else -> longToast(R.string.msg_failed_try_again)
             }
-        )
+        }, onEnd = {
+            configDialog.cancel()
+        })
     }
 
     private fun showCertPassInputDialog(pfx: String, certName: String) {
@@ -474,6 +481,8 @@ class DashboardActivity : BaseActivity() {
             cancelable(false)
 
             setActionButtonEnabled(WhichButton.NEUTRAL, getClipboardText().isNotEmpty())
+
+            @Suppress("DEPRECATION")
             neutralButton(R.string.paste_and_continue) {
                 val clipboardText = getClipboardText()
                 getCustomView().pacInputView.setText(clipboardText)
@@ -487,7 +496,7 @@ class DashboardActivity : BaseActivity() {
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PAC_INPUT_LENGTH)
                 if (inputText.length == PAC_INPUT_LENGTH) {
                     val inputPac = this.getCustomView().pacInputView.text.toString()
-                        .toUpperCase(Locale.getDefault())
+                        .uppercase(Locale.getDefault())
                     callback(inputPac)
                     dismiss()
                 }
@@ -504,6 +513,8 @@ class DashboardActivity : BaseActivity() {
             cancelable(false)
 
             setActionButtonEnabled(WhichButton.NEUTRAL, getClipboardText().isNotEmpty())
+
+            @Suppress("DEPRECATION")
             neutralButton(R.string.paste_and_continue) {
                 val clipboardText = getClipboardText()
                 getCustomView().certPassInput.setText(clipboardText)
@@ -517,7 +528,7 @@ class DashboardActivity : BaseActivity() {
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PASS_INPUT_LENGTH)
                 if (inputText.length == PASS_INPUT_LENGTH) {
                     val inputPass = this.getCustomView().certPassInput.text.toString()
-                        .toUpperCase(Locale.getDefault())
+                        .uppercase(Locale.getDefault())
                     callback(inputPass)
                     dismiss()
                 }
@@ -532,7 +543,7 @@ class DashboardActivity : BaseActivity() {
         return item?.text?.trim() ?: ""
     }
 
-/* Helpers */
+    /* Helpers */
 
     private fun createLoadingDialog(@StringRes stringId: Int = R.string.loading_please_wait): MaterialDialog =
         MaterialDialog(this).apply {

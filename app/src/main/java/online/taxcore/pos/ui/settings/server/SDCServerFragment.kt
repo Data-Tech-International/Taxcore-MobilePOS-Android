@@ -127,7 +127,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                     .setMessage(context?.getString(R.string.switching_will_reset_app))
                     .setPositiveButton(
                         context?.getString(R.string.i_am_sure)
-                    ) { dialog, id ->
+                    ) { dialog, _ ->
                         prefService.removeConfiguration()
 
                         resetAppSettings(newValue as Boolean)
@@ -302,6 +302,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
             },
             onSuccessStatus = {
                 prefService.saveStatusData(it)
+                @Suppress("DEPRECATION")
                 activity?.onBackPressed()
             },
             onError = {
@@ -395,14 +396,19 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                 // Cert is in the database, with password in storage,
                 // proceed to PAC input
                 showPacInputDialog { pacInput ->
-                    val clientAuthority =
-                        CertAuthority.certificateParams(cert.pfxData, savedCertPass)
+                    try {
+                        val clientAuthority =
+                            CertAuthority.certificateParams(cert.pfxData, savedCertPass)
 
-                    fetchConfig(pacInput, clientAuthority, cert.name)
+                        fetchConfig(pacInput, clientAuthority, cert.name)
+                    } catch (ex: IOException) {
+                        longToast(R.string.error_wrong_pass_or_file)
+                    }
                 }
             }
 
             positiveButton(text = getString(R.string.btn_allow))
+            @Suppress("DEPRECATION")
             neutralButton(text = getString(R.string.add_new_cert)) {
                 openDownloadCertDialog()
             }
@@ -496,6 +502,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
             cancelable(false)
 
             setActionButtonEnabled(WhichButton.NEUTRAL, getClipboardText().isNotEmpty())
+            @Suppress("DEPRECATION")
             neutralButton(R.string.paste_and_continue) {
                 val clipboardText = getClipboardText()
                 getCustomView().pacInputView.setText(clipboardText)
@@ -509,7 +516,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PAC_INPUT_LENGTH)
                 if (inputText.length == PAC_INPUT_LENGTH) {
                     val inputPac = this.getCustomView().pacInputView.text.toString()
-                        .toUpperCase(Locale.getDefault())
+                        .uppercase(Locale.getDefault())
                     callback(inputPac)
                     dismiss()
                 }
@@ -539,7 +546,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PAC_INPUT_LENGTH)
                 if (inputText.length == PAC_INPUT_LENGTH) {
                     val inputPass = this.getCustomView().certPassInput.text.toString()
-                        .toUpperCase(Locale.getDefault())
+                        .uppercase(Locale.getDefault())
                     callback(inputPass)
                     dismiss()
                 }

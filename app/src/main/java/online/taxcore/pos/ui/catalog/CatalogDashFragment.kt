@@ -154,9 +154,9 @@ class CatalogDashFragment : Fragment() {
             e.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(e)
             toast("Unable to export catalog. File not found.")
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             FirebaseCrashlytics.getInstance().recordException(e)
-            toast("Unable to export catalog.")
+            toast(getString(R.string.error_general))
             e.printStackTrace()
         }
     }

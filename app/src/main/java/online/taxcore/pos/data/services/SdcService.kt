@@ -31,17 +31,12 @@ object SdcService {
         }
 
         pingRequest?.enqueue(object : Callback<ResponseBody> {
-            override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 onError(null)
                 onEnd()
             }
 
-            override fun onResponse(
-                call: Call<ResponseBody>?,
-                response: Response<ResponseBody>?
-            ) {
-                response ?: return onEnd()
-
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     onSuccess()
                     return onEnd()
@@ -118,9 +113,7 @@ object SdcService {
                         val environment = response.body() ?: return onEnd()
                         val activeTaxItems = statusResponse.getTaxLabels(environment.country)
 
-                        activeTaxItems?.let { taxItems ->
-                            TaxesManager.replaceActiveTaxItems(taxItems)
-                        }
+                        TaxesManager.replaceActiveTaxItems(activeTaxItems)
 
                         AppSession.let {
                             it.isAppConfigured = true
@@ -203,7 +196,7 @@ object SdcService {
                         }
 
                         val taxes =
-                            statusResponse.getTaxLabels(environment.country) ?: arrayListOf()
+                            statusResponse.getTaxLabels(environment.country)
 
                         // Remove previous taxes from DB
                         TaxesManager.replaceActiveTaxItems(taxes)

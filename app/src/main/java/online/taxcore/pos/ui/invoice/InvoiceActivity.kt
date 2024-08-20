@@ -77,7 +77,7 @@ class InvoiceActivity : BaseActivity() {
         val activityExtraType = intent.extras?.getString(ACTIVITY_EXTRA_TYPE) ?: "normal"
         val activityExtraValue = intent.extras?.getString(ACTIVITY_EXTRA_VALUE).orEmpty()
 
-        val fragmentType = InvoiceActivityType.valueOf(activityExtraType.toUpperCase(Locale.getDefault()))
+        val fragmentType = InvoiceActivityType.valueOf(activityExtraType.uppercase(Locale.getDefault()))
 
         toolbar.title = when (fragmentType) {
             InvoiceActivityType.NORMAL -> getString(R.string.invoice_create_invoice)

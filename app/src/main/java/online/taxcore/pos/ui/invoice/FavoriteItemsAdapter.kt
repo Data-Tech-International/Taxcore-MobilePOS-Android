@@ -16,7 +16,8 @@ import online.taxcore.pos.data.local.InvoiceManager
 import online.taxcore.pos.data.realm.Item
 import online.taxcore.pos.extensions.roundLocalized
 
-class FavoriteItemsAdapter(private val validTaxes: List<String>, private val onSelectItem: () -> Unit) : RecyclerView.Adapter<FavoriteItemViewHolder>() {
+class FavoriteItemsAdapter(private val validTaxes: List<String>, private val onSelectItem: () -> Unit) :
+    RecyclerView.Adapter<FavoriteItemViewHolder>() {
 
     private var favouritesList = mutableListOf<Item>()
 
@@ -24,7 +25,7 @@ class FavoriteItemsAdapter(private val validTaxes: List<String>, private val onS
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteItemViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.invoice_favorite_recycler_item, parent, false)
+            .inflate(R.layout.invoice_favorite_recycler_item, parent, false)
         return FavoriteItemViewHolder(view)
     }
 
@@ -117,7 +118,7 @@ class FavoriteItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             itemView.favoriteItemTaxLabels.text = item.tax.joinToString(",") { it.code }
         }
 
-        val itemEan = if (item.barcode.isNotEmpty()) item.barcode else "n/a"
+        val itemEan = item.barcode.ifEmpty { "n/a" }
         itemView.favoriteItemBarcode.text = "EAN: $itemEan"
 
     }

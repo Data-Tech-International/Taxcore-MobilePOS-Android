@@ -39,7 +39,9 @@ class CatalogDetailsActivity : BaseActivity() {
         setActiveFragment()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        @Suppress("DEPRECATION")
         super.onBackPressed()
         CatalogManager.resetFilter()
     }

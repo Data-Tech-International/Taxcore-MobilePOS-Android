@@ -22,8 +22,3 @@ class PaymentItem(
     var amount: Double = 0.0,
     var paymentType: String = ""
 )
-
-enum class InvoiceRequestType {
-    VSDC,
-    ESDC
-}
