@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
 import androidx.fragment.app.Fragment
-import com.pawegio.kandroid.longToast
+import online.taxcore.pos.utils.longToast
 import kotlinx.android.synthetic.main.journal_filters_fragment.*
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.JournalManager

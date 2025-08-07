@@ -2,7 +2,8 @@ package online.taxcore.pos.data.realm
 
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
-import java.util.*
+import java.util.Locale
+import java.util.UUID
 
 open class Cert : RealmObject() {
     @PrimaryKey
@@ -16,6 +17,6 @@ open class Cert : RealmObject() {
                 .substring(2)
                 .removeSuffix(".nochain.p12")
 
-        return "$cName.p12".toLowerCase(Locale.ROOT)
+        return "$cName.p12".lowercase(Locale.ROOT)
     }
 }

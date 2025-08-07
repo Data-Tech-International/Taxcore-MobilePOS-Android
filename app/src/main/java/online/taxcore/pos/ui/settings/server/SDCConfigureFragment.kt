@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
-import com.pawegio.kandroid.longToast
+import online.taxcore.pos.utils.longToast
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.base_details_activity.*
 import kotlinx.android.synthetic.main.dialog_loading.*
@@ -228,14 +228,14 @@ class SDCConfigureFragment : Fragment(R.layout.sdc_configure_fragment), IPAddres
                 loadingDialog.show()
             },
             onSuccess = {
-                longToast(R.string.esdc_status_0000)
+                longToast(getString(R.string.esdc_status_0000))
             },
             onError = {
                 if (it == null) {
-                    longToast(R.string.error_general)
+                    longToast(getString(R.string.error_general))
                     return@pingEsdcServer
                 }
-                longToast(getMessageForStatus(it))
+                longToast(getString(getMessageForStatus(it)))
             },
             onEnd = {
                 loadingDialog.dismiss()
@@ -353,11 +353,11 @@ class SDCConfigureFragment : Fragment(R.layout.sdc_configure_fragment), IPAddres
             },
             onSuccessStatus = {
                 prefService.saveStatusData(it)
-                longToast(R.string.toast_configuration_changed)
+                longToast(getString(R.string.toast_configuration_changed))
                 activity?.onBackPressed()
             },
             onError = {
-                longToast(getMessageForStatus(it))
+                longToast(getString(getMessageForStatus(it)))
             },
             onEnd = {
                 loadingDialog.dismiss()

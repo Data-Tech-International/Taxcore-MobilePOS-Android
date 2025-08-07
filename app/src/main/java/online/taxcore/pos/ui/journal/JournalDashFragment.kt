@@ -29,9 +29,9 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
-import com.pawegio.kandroid.longToast
-import com.pawegio.kandroid.runOnUiThread
-import com.pawegio.kandroid.toast
+import online.taxcore.pos.utils.longToast
+import online.taxcore.pos.utils.runOnUiThread
+import online.taxcore.pos.utils.toast
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.journal_dashboard_fragment.*
 import online.taxcore.pos.AppSession
@@ -157,7 +157,7 @@ class JournalDashFragment : Fragment() {
 
                                 fileOS.write(itemsJson.toByteArray(Charsets.UTF_8))
                                 runOnUiThread {
-                                    toast(R.string.toast_journal_exported)
+                                    toast(getString(R.string.toast_journal_exported))
                                 }
                             }
                         }
@@ -250,7 +250,7 @@ class JournalDashFragment : Fragment() {
                     return@fileChooser
                 }
 
-                longToast(R.string.toast_file_is_empty)
+                longToast(getString(R.string.toast_file_is_empty))
             }
             positiveButton(R.string.title_import)
             negativeButton(R.string.btn_close) {
@@ -267,7 +267,7 @@ class JournalDashFragment : Fragment() {
             // Update UI
             setDashboardButtons()
 
-            longToast(R.string.toast_journal_imported)
+            longToast(getString(R.string.toast_journal_imported))
         }
     }
 

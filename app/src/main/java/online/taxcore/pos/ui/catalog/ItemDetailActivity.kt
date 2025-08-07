@@ -13,7 +13,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.pawegio.kandroid.longToast
+import online.taxcore.pos.utils.longToast
 import com.vicpin.krealmextensions.queryAndUpdate
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
@@ -34,7 +34,6 @@ import online.taxcore.pos.ui.common.TaxesCheckedAdapter
 import online.taxcore.pos.ui.invoice.InvoiceFragment
 import online.taxcore.pos.ui.invoice.InvoiceFragment.Companion.BARCODE_EAN_EXTRA
 import online.taxcore.pos.utils.hideKeyboard
-import org.jetbrains.anko.contentView
 import javax.inject.Inject
 
 class ItemDetailActivity : BaseActivity() {
@@ -432,7 +431,7 @@ class ItemDetailActivity : BaseActivity() {
 
         hideKeyboard()
 
-        contentView?.let {
+        findViewById<View>(android.R.id.content)?.let {
             Snackbar.make(it, R.string.toast_item_updated, Snackbar.LENGTH_SHORT)
                     .show()
         }

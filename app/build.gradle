@@ -8,7 +8,7 @@ apply plugin: 'realm-android'
 apply plugin: 'com.google.firebase.crashlytics'
 
 def versionMajor = 3
-def versionMinor = 3
+def versionMinor = 5
 def versionPatch = 0
 def versionBuild = 1
 
@@ -17,7 +17,7 @@ def appVersionBuild = Integer.valueOf(System.env.GITHUB_RUN_NUMBER ?: versionBui
 android {
     namespace 'online.taxcore.pos'
 
-    compileSdkVersion 33
+    compileSdk 36
 
     bundle {
         language {
@@ -28,8 +28,8 @@ android {
     defaultConfig {
         applicationId "online.taxcore.pos"
 
-        minSdkVersion 24
-        targetSdkVersion 33
+        minSdk 24
+        targetSdk 36
 
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch * 10 + appVersionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
@@ -37,6 +37,11 @@ android {
         archivesBaseName = "TaxCore-MobilePOS-$versionCode-v$versionName"
 
         multiDexEnabled true
+    }
+
+    buildFeatures {
+        viewBinding true
+        buildConfig true
     }
 
     signingConfigs {
@@ -71,11 +76,23 @@ android {
         targetCompatibility = 1.8
     }
 
-    task printVersionInformation {
-        // Full version with build number
-        println defaultConfig.versionName
-        // Version without build number
-        println "${versionMajor}.${versionMinor}.${versionPatch}"
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs += ['-Xskip-metadata-version-check', '-Xallow-kotlin-package']
+    }
+    
+    kapt {
+        correctErrorTypes = true
+        useBuildCache = true
+    }
+
+    tasks.register('printVersionInformation') {
+        doLast {
+            // Full version with build number
+            println defaultConfig.versionName
+            // Version without build number
+            println "${versionMajor}.${versionMinor}.${versionPatch}"
+        }
     }
 
 }
@@ -88,27 +105,23 @@ ext {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlin_version"))
 
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.67'
-
-    implementation "com.pawegio.kandroid:kandroid:0.8.7@aar"
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
 
     //Android libs
-    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
-    implementation "androidx.preference:preference-ktx:1.2.0"
+    implementation "androidx.preference:preference-ktx:1.2.1"
     implementation "androidx.security:security-crypto:1.0.0"
-    implementation "androidx.core:core-ktx:1.9.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+    implementation "androidx.core:core-ktx:1.13.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3"
 
-    implementation "com.android.support:design:$support"
-    implementation "com.android.support.constraint:constraint-layout:2.0.4"
-    implementation "com.google.android.material:material:1.8.0"
+    implementation "com.google.android.material:material:1.12.0"
 
     // dagger
     implementation "com.google.dagger:dagger:$dagger"
-    //noinspection OutdatedLibrary
     implementation "com.google.dagger:dagger-android:$dagger"
     implementation "com.google.dagger:dagger-android-support:$dagger"
     kapt "com.google.dagger:dagger-compiler:$dagger"
@@ -117,12 +130,12 @@ dependencies {
     //retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.9.2"
-    implementation "com.google.code.gson:gson:2.8.9"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.12.0"
+    implementation "com.google.code.gson:gson:2.10.1"
 
     //Glide
-    implementation "com.github.bumptech.glide:glide:4.12.0"
-    kapt "com.github.bumptech.glide:compiler:4.12.0"
+    implementation "com.github.bumptech.glide:glide:4.16.0"
+    kapt "com.github.bumptech.glide:compiler:4.16.0"
 
     // Material dialogs
     implementation 'com.afollestad.material-dialogs:core:3.3.0'
@@ -131,29 +144,24 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.3.0'
     implementation 'com.afollestad.material-dialogs:datetime:3.3.0'
 
-    implementation 'com.chaos.view:pinview:1.4.3'
+    implementation 'io.github.chaosleung:pinview:1.4.4'
 
-    implementation "org.greenrobot:eventbus:3.0.0"
+    implementation "org.greenrobot:eventbus:3.3.1"
     implementation 'io.github.inflationx:calligraphy3:3.1.1'
-    implementation 'io.github.inflationx:viewpump:2.0.3'
-    implementation "com.itextpdf:itextpdf:5.5.13.3"
-    implementation "com.madgag:scpkix-jdk15on:1.47.0.1"
-    implementation "net.cachapa.expandablelayout:expandablelayout:2.9.2"
+    implementation 'io.github.inflationx:viewpump:2.1.1'
+    implementation "com.itextpdf:itext7-core:7.2.5"
+    implementation "com.madgag:scpkix-jdk15on:1.47.0.3"
 
     implementation "com.github.vicpinm:krealmextensions:2.5.0"
 
     // Kotlin
-    implementation "org.jetbrains.anko:anko-commons:0.10.5"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 
-    implementation platform('com.google.firebase:firebase-bom:26.2.0')
-
-    // Add the Firebase Crashlytics SDK.
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation platform('com.google.firebase:firebase-bom:34.0.0')
+    implementation 'com.google.firebase:firebase-crashlytics'
 
     //Permission
-    implementation 'com.karumi:dexter:6.2.2'
+    implementation 'com.karumi:dexter:6.2.3'
 
     implementation "me.dm7.barcodescanner:zxing:1.9.8"
 }

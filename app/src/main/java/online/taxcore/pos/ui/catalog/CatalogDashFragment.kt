@@ -37,9 +37,9 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
-import com.pawegio.kandroid.longToast
-import com.pawegio.kandroid.runOnUiThread
-import com.pawegio.kandroid.toast
+import online.taxcore.pos.utils.longToast
+import online.taxcore.pos.utils.runOnUiThread
+import online.taxcore.pos.utils.toast
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.catalog_dashboard_fragment.*
 import kotlinx.android.synthetic.main.dialog_loading.*
@@ -145,7 +145,7 @@ class CatalogDashFragment : Fragment() {
                     outStream.write(fileContent.toByteArray(Charsets.UTF_8))
 
                     runOnUiThread {
-                        toast(R.string.toast_catalog_exported)
+                        toast(getString(R.string.toast_catalog_exported))
                     }
                 }
             }
@@ -387,7 +387,7 @@ class CatalogDashFragment : Fragment() {
                     return@fileChooser
                 }
 
-                longToast(R.string.toast_file_is_empty)
+                longToast(getString(R.string.toast_file_is_empty))
             }
             positiveButton(R.string.import_catalog)
             negativeButton(R.string.btn_close) {
@@ -443,7 +443,7 @@ class CatalogDashFragment : Fragment() {
             }
 
             loadingDialog.dismiss()
-            longToast(R.string.toast_catalog_imported)
+            longToast(getString(R.string.toast_catalog_imported))
 
             // Update UI
             setDashboardButtons()

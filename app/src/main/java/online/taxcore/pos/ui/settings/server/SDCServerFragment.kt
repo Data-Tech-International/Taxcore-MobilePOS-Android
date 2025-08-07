@@ -18,7 +18,7 @@ import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import com.pawegio.kandroid.longToast
+import online.taxcore.pos.utils.longToast
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.base_details_activity.*
 import kotlinx.android.synthetic.main.dialog_cert_pass_layout.view.*
@@ -305,7 +305,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                 activity?.onBackPressed()
             },
             onError = {
-                longToast(getMessageForStatus(it))
+                longToast(getString(getMessageForStatus(it)))
             },
             onEnd = {
                 configDialog.dismiss()
@@ -333,16 +333,16 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                     vsdcBaseUrl.summary = prefService.loadVsdcEndpoint()
                     refreshPrefFields()
 
-                    longToast(R.string.toast_configuration_changed)
+                    longToast(getString(R.string.toast_configuration_changed))
 
                 } catch (e: IllegalArgumentException) {
                     resetAppSettings(false)
-                    longToast(R.string.error_general)
+                    longToast(getString(R.string.error_general))
                 }
 
             },
             onError = {
-                longToast(R.string.error_provide_valid_pac)
+                longToast(getString(R.string.error_provide_valid_pac))
             },
             onEnd = {
                 configDialog.cancel()
@@ -457,9 +457,9 @@ class SDCServerFragment : PreferenceFragmentCompat(),
             },
             onError = { errorType, _ ->
                 when (errorType) {
-                    ErrorType.INVALID_OR_USED_LINK -> longToast(R.string.msg_nothing_to_download)
-                    ErrorType.NO_CERT_FILE_FOUND -> longToast(R.string.error_no_cert_files_found)
-                    else -> longToast(R.string.msg_failed_try_again)
+                    ErrorType.INVALID_OR_USED_LINK -> longToast(getString(R.string.msg_nothing_to_download))
+                    ErrorType.NO_CERT_FILE_FOUND -> longToast(getString(R.string.error_no_cert_files_found))
+                    else -> longToast(getString(R.string.msg_failed_try_again))
                 }
             },
             onEnd = {
@@ -482,7 +482,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                     fetchConfig(pacInput, clientAuthority, certName)
                 }
             } catch (e: IOException) {
-                longToast(R.string.error_wrong_pass_or_file)
+                longToast(getString(R.string.error_wrong_pass_or_file))
             }
         }
     }

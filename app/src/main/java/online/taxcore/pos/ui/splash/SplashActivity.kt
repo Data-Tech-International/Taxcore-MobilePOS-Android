@@ -6,7 +6,7 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
-import com.pawegio.kandroid.longToast
+import online.taxcore.pos.utils.longToast
 import kotlinx.android.synthetic.main.splash_activity.*
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
@@ -23,7 +23,6 @@ import online.taxcore.pos.ui.base.BaseActivity
 import online.taxcore.pos.ui.dashboard.DashboardActivity
 import online.taxcore.pos.utils.TCUtil
 import online.taxcore.pos.utils.isOffline
-import org.jetbrains.anko.ctx
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,7 +40,7 @@ class SplashActivity : BaseActivity() {
         prefService = try {
             PrefService(this)
         } catch (ex: SecurityException) {
-            ctx.cacheDir.deleteRecursively()
+            cacheDir.deleteRecursively()
             PrefService(this)
         }
 
@@ -140,7 +139,7 @@ class SplashActivity : BaseActivity() {
                     prefService.removeConfiguration()
                 }
 
-                longToast(R.string.error_general)
+                longToast(getString(R.string.error_general))
                 DashboardActivity.start(this@SplashActivity, null)
             }
         }
@@ -162,7 +161,7 @@ class SplashActivity : BaseActivity() {
                             prefService.setAppConfigured(false)
                         }
 
-                        longToast(R.string.error_general)
+                        longToast(getString(R.string.error_general))
 
                         DashboardActivity.start(this@SplashActivity, null)
                     }

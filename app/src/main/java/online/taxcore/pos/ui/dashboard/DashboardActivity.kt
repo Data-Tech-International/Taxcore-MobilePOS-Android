@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
 import android.util.Patterns
+import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -29,7 +30,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.pawegio.kandroid.longToast
+import online.taxcore.pos.utils.longToast
 import kotlinx.android.synthetic.main.dashboard_activity.*
 import kotlinx.android.synthetic.main.dialog_cert_pass_layout.view.*
 import kotlinx.android.synthetic.main.dialog_loading.*
@@ -57,7 +58,6 @@ import online.taxcore.pos.ui.settings.SettingsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity.Companion.FRAGMENT_SDC_CONFIGURE
 import online.taxcore.pos.utils.isOffline
-import org.jetbrains.anko.contentView
 import java.io.*
 import java.util.*
 import javax.inject.Inject
@@ -93,7 +93,7 @@ class DashboardActivity : BaseActivity() {
         val showSnackbar = intent.extras?.getBoolean("snackbar")
         showSnackbar?.let {
             if (it) {
-                contentView?.let { view ->
+                findViewById<View>(android.R.id.content)?.let { view ->
                     Snackbar.make(
                         view,
                         R.string.previously_selected_certificate_not_exist,
@@ -326,10 +326,10 @@ class DashboardActivity : BaseActivity() {
 
                 initHeader()
 
-                longToast(R.string.toast_configuration_changed)
+                longToast(getString(R.string.toast_configuration_changed))
             },
             onError = {
-                longToast(R.string.error_provide_valid_pac)
+                longToast(getString(R.string.error_provide_valid_pac))
             },
             onEnd = {
                 configDialog.cancel()
@@ -435,9 +435,9 @@ class DashboardActivity : BaseActivity() {
             },
             onError = { errorType, _ ->
                 when (errorType) {
-                    ErrorType.INVALID_OR_USED_LINK -> longToast(R.string.msg_nothing_to_download)
-                    ErrorType.NO_CERT_FILE_FOUND -> longToast(R.string.error_no_cert_files_found)
-                    else -> longToast(R.string.msg_failed_try_again)
+                    ErrorType.INVALID_OR_USED_LINK -> longToast(getString(R.string.msg_nothing_to_download))
+                    ErrorType.NO_CERT_FILE_FOUND -> longToast(getString(R.string.error_no_cert_files_found))
+                    else -> longToast(getString(R.string.msg_failed_try_again))
                 }
             },
             onEnd = {
@@ -460,7 +460,7 @@ class DashboardActivity : BaseActivity() {
                     fetchConfig(pacInput, clientAuthority, certName)
                 }
             } catch (e: IOException) {
-                longToast(R.string.error_wrong_pass_or_file)
+                longToast(getString(R.string.error_wrong_pass_or_file))
             }
         }
     }

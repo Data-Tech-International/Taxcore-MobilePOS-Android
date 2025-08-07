@@ -6,7 +6,7 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.pawegio.kandroid.onQueryChange
+import online.taxcore.pos.utils.onQueryChange
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.catalog_list_fragment.*
 import online.taxcore.pos.R

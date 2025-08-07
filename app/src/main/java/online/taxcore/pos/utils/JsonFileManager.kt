@@ -7,8 +7,10 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.pawegio.kandroid.longToast
-import com.pawegio.kandroid.runAsync
+import online.taxcore.pos.utils.longToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.saveAll
 import okhttp3.internal.toImmutableList
@@ -63,7 +65,7 @@ object JsonFileManager {
         onSuccess: (Boolean) -> Unit,
         onError: (String) -> Unit
     ) {
-        runAsync {
+        GlobalScope.launch(Dispatchers.IO) {
             var outStream: FileOutputStream? = null
             try {
                 val outputFile = File(destinationFilePath)

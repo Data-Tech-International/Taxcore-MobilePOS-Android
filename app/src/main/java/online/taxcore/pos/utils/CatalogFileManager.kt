@@ -8,7 +8,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import com.pawegio.kandroid.runAsync
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.realm.Item
 import online.taxcore.pos.data.realm.Taxes
@@ -33,7 +35,7 @@ object CatalogFileManager {
         onSuccess: (List<Item>) -> Unit,
         onError: (String) -> Unit
     ) {
-        runAsync {
+        GlobalScope.launch(Dispatchers.IO) {
             try {
                 val catalogList: ArrayList<Item> = arrayListOf()
                 val buffered = BufferedReader(FileReader(sourceFile))
@@ -131,7 +133,7 @@ object CatalogFileManager {
         onSuccess: (Boolean) -> Unit,
         onError: (String) -> Unit
     ) {
-        runAsync {
+        GlobalScope.launch(Dispatchers.IO) {
             var outStream: FileOutputStream? = null
             try {
                 val outputFile = File(csvFilePath)
@@ -148,7 +150,7 @@ object CatalogFileManager {
 
                 if (outputFile.sizeInKb > availableSize) {
                     onError("Not enough space to export catalog.")
-                    return@runAsync
+                    return@launch
                 }
 
                 onSuccess(true)
@@ -209,7 +211,7 @@ object CatalogFileManager {
         onSuccess: (Boolean) -> Unit,
         onError: (String) -> Unit
     ) {
-        runAsync {
+        GlobalScope.launch(Dispatchers.IO) {
             try {
                 val outputFile = File(destinationFilePath)
                 val json = generateJsonFileContent(items)
@@ -220,7 +222,7 @@ object CatalogFileManager {
 
                 if (outputFile.sizeInKb > availableSize) {
                     onError("Not enough space to export catalog.")
-                    return@runAsync
+                    return@launch
                 }
 
                 onSuccess(true)
@@ -245,7 +247,7 @@ object CatalogFileManager {
         onSuccess: (List<Item>) -> Unit,
         onError: (String) -> Unit
     ) {
-        runAsync {
+        GlobalScope.launch(Dispatchers.IO) {
             try {
                 val buffered = BufferedReader(FileReader(sourceFile))
                 val catalogList = Gson().fromJson<List<Item>>(

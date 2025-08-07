@@ -24,14 +24,14 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
-import com.pawegio.kandroid.toast
+import online.taxcore.pos.utils.toast
 import kotlinx.android.synthetic.main.invoice_preview_dialog.*
 import online.taxcore.pos.BuildConfig
 import online.taxcore.pos.R
 import online.taxcore.pos.constants.PrefConstants
 import online.taxcore.pos.enums.ExportMimeType
 import online.taxcore.pos.ui.base.BaseActivity
-import online.taxcore.pos.utils.CreatePdf
+// import online.taxcore.pos.utils.CreatePdf // TODO: Migrate to iText7
 import java.io.File
 
 class FiscalInvoiceFragment : DialogFragment() {
@@ -151,8 +151,8 @@ class FiscalInvoiceFragment : DialogFragment() {
         val fileDirPath = requireActivity().cacheDir.absolutePath
         val fullFilePath = fileDirPath + File.separator + invoiceNumber + ".pdf"
 
-        val content =
-            CreatePdf.write(fullFilePath, invoiceJournal, imageByteArray)
+        // TODO: Migrate CreatePdf to iText7
+        val content = false // CreatePdf.write(fullFilePath, invoiceJournal, imageByteArray)
         if (content) {
             val act = activity as BaseActivity
             val printManager = act.originalActivityContext()
@@ -181,8 +181,8 @@ class FiscalInvoiceFragment : DialogFragment() {
         //Create file path for Pdf
         val filePath = requireActivity().cacheDir.absolutePath + File.separator + pdfTitle + ".pdf"
 
-        val content =
-            CreatePdf.write(filePath, invoiceJournal, imageByteArray)
+        // TODO: Migrate CreatePdf to iText7
+        val content = false // CreatePdf.write(filePath, invoiceJournal, imageByteArray)
 
         if (content) {
             val uriFromFile = context?.let { it1 ->

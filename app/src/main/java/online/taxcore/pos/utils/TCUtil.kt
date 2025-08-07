@@ -5,7 +5,7 @@ import online.taxcore.pos.R
 import online.taxcore.pos.constants.CertConstants
 import online.taxcore.pos.constants.CountryConstants
 import java.security.cert.X509Certificate
-import java.util.*
+import java.util.Locale
 
 /**
  * TaxCore Helpers
@@ -60,7 +60,7 @@ object TCUtil {
             return ""
         }
 
-        return when (countryCode.toUpperCase(Locale.getDefault())) {
+        return when (countryCode.uppercase(Locale.getDefault())) {
             "FJ" -> "FJ\$"
             "WS" -> "WS\$"
             "US" -> "\\US\$"

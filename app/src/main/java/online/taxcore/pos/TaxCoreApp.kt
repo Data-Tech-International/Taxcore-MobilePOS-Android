@@ -52,6 +52,7 @@ class TaxCoreApp : Application(), HasActivityInjector {
             .application(this).build().inject(this)
     }
 
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
     private fun initCalligraphy() {
         ViewPump.init(
             ViewPump.builder()

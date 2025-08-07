@@ -31,10 +31,10 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
-import com.pawegio.kandroid.longToast
-import com.pawegio.kandroid.runAsync
-import com.pawegio.kandroid.runOnUiThread
-import com.pawegio.kandroid.toast
+import online.taxcore.pos.utils.longToast
+import online.taxcore.pos.utils.runAsync
+import online.taxcore.pos.utils.runOnUiThread
+import online.taxcore.pos.utils.toast
 import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.queryFirst
 import dagger.android.support.AndroidSupportInjection
@@ -74,7 +74,6 @@ import online.taxcore.pos.extensions.*
 import online.taxcore.pos.helpers.AlertDialogHelper
 import online.taxcore.pos.ui.catalog.ItemDetailActivity
 import online.taxcore.pos.utils.TCUtil
-import org.jetbrains.anko.AnkoLogger
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -85,7 +84,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import online.taxcore.pos.data.realm.Item as ItemModel
 
-class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
+class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 
     @Inject
     lateinit var prefService: PrefService
@@ -531,7 +530,7 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
 
         if (verifyRequest == null) {
             dialogESDC?.dismiss()
-            longToast(R.string.toast_esdc_address_invalid)
+            longToast(getString(R.string.toast_esdc_address_invalid))
             return
         }
 
@@ -560,11 +559,11 @@ class InvoiceFragment : Fragment(), AnkoLogger, OnInvoiceOptionResult {
                         //PIN is valid save it to session
                         AppSession.pinCode = pinCode
                         prefService.saveCredentialsTime()
-                        toast(getMessageForStatus(cardStatus))
+                        toast(getString(getMessageForStatus(cardStatus)))
                         signEsdcInvoice()
                         return
                     }
-                    else -> longToast(getMessageForStatus(cardStatus))
+                    else -> longToast(getString(getMessageForStatus(cardStatus)))
                 }
 
                 dialogESDC?.dismiss()
