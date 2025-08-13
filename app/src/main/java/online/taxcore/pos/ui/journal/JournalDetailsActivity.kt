@@ -5,13 +5,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
-import kotlinx.android.synthetic.main.base_details_activity.*
+import online.taxcore.pos.databinding.BaseDetailsActivityBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.extensions.addFragment
 import online.taxcore.pos.ui.base.BaseActivity
 
 class JournalDetailsActivity : BaseActivity() {
 
+    private lateinit var binding: BaseDetailsActivityBinding
     private val journalListFragment by lazy { JournalListFragment() }
     private val journalFilterFragment by lazy { JournalFilterFragment() }
 
@@ -32,14 +33,15 @@ class JournalDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.base_details_activity)
+        binding = BaseDetailsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initToolbar()
         setActiveFragment()
     }
 
     private fun initToolbar() {
-        setSupportActionBar(baseToolbar)
+        setSupportActionBar(binding.baseToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -47,7 +49,7 @@ class JournalDetailsActivity : BaseActivity() {
     }
 
     fun getJournalToolbar(): Toolbar? {
-        return baseToolbar
+        return binding.baseToolbar
     }
 
     private fun setActiveFragment() {
@@ -55,12 +57,12 @@ class JournalDetailsActivity : BaseActivity() {
         val intentExtra = intent.extras?.getString(ACTIVITY_EXTRA)
         when (intentExtra) {
             FRAGMENT_LIST -> {
-                baseToolbar.title = getString(R.string.title_invoices)
+                binding.baseToolbar.title = getString(R.string.title_invoices)
                 addFragment(journalListFragment, R.id.baseFragment)
             }
             else -> {
-                baseToolbar.setNavigationIcon(R.drawable.ic_exit)
-                baseToolbar.title = getString(R.string.title_search_journal)
+                binding.baseToolbar.setNavigationIcon(R.drawable.ic_exit)
+                binding.baseToolbar.title = getString(R.string.title_search_journal)
                 addFragment(journalFilterFragment, R.id.baseFragment)
             }
 

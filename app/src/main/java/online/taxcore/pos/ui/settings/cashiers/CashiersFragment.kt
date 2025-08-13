@@ -15,8 +15,8 @@ import com.afollestad.materialdialogs.customview.getCustomView
 import com.vicpin.krealmextensions.count
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
-import kotlinx.android.synthetic.main.cashiers_fragment.*
-import kotlinx.android.synthetic.main.dialog_add_cashier.view.*
+import online.taxcore.pos.databinding.CashiersFragmentBinding
+import online.taxcore.pos.databinding.DialogAddCashierBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Cashier
 import online.taxcore.pos.extensions.onTextChanged
@@ -25,14 +25,23 @@ import online.taxcore.pos.extensions.visible
 
 class CashiersFragment : Fragment() {
 
+    private var _binding: CashiersFragmentBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.cashiers_fragment, container, false)
+        _binding = CashiersFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         initView()
         setOnClickListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun initView() {
@@ -42,23 +51,23 @@ class CashiersFragment : Fragment() {
 
         val foregroundColor = if (hasCashiers) Color.TRANSPARENT else Color.parseColor("#90EEEEEE")
 
-        cashiersViewButton.isEnabled = hasCashiers
-        cashiersViewButton.foreground = ColorDrawable(foregroundColor)
+        binding.cashiersViewButton.isEnabled = hasCashiers
+        binding.cashiersViewButton.foreground = ColorDrawable(foregroundColor)
 
         activeCashier?.let {
-            cashierCurrentLayout.visible = true
+            binding.cashierCurrentLayout.visible = true
 
-            cashierCurrentLabel.text = it.name
-            cashierCurrentID.text = "ID: ${it.id}"
+            binding.cashierCurrentLabel.text = it.name
+            binding.cashierCurrentID.text = "ID: ${it.id}"
         }
     }
 
     private fun setOnClickListeners() {
-        cashiersViewButton.setOnClickListener {
+        binding.cashiersViewButton.setOnClickListener {
             replaceFragment(R.id.baseFragment, CashiersListFragment(), addToBackStack = true)
         }
 
-        cashiersAddButton.setOnClickListener {
+        binding.cashiersAddButton.setOnClickListener {
             openAddCashierDialog()
         }
     }
@@ -67,24 +76,25 @@ class CashiersFragment : Fragment() {
 
         MaterialDialog(requireContext()).show {
             title(R.string.dialog_title_add_cashier)
-            customView(R.layout.dialog_add_cashier)
+            val dialogBinding = DialogAddCashierBinding.inflate(layoutInflater)
+            customView(view = dialogBinding.root)
             setActionButtonEnabled(WhichButton.POSITIVE, false)
 
-            getCustomView().addCashierNameInput.onTextChanged { cashierName ->
-                val cashierId = getCustomView().addCashierIDInput.text.toString()
+            dialogBinding.addCashierNameInput.onTextChanged { cashierName ->
+                val cashierId = dialogBinding.addCashierIDInput.text.toString()
                 setActionButtonEnabled(WhichButton.POSITIVE, cashierName.isNotEmpty() && cashierId.isNotEmpty())
             }
 
             // Add input listener
-            getCustomView().addCashierIDInput.onTextChanged { cashierId ->
-                val cashierName = getCustomView().addCashierNameInput.text.toString()
+            dialogBinding.addCashierIDInput.onTextChanged { cashierId ->
+                val cashierName = dialogBinding.addCashierNameInput.text.toString()
                 setActionButtonEnabled(WhichButton.POSITIVE, cashierId.isNotEmpty() && cashierName.isNotEmpty())
             }
 
             negativeButton(R.string.btn_close)
             positiveButton(R.string.btn_add_cashier) {
-                val cashierName = it.getCustomView().addCashierNameInput.text.toString()
-                val cashierId = it.getCustomView().addCashierIDInput.text.toString()
+                val cashierName = dialogBinding.addCashierNameInput.text.toString()
+                val cashierId = dialogBinding.addCashierIDInput.text.toString()
 
                 val cashier = Cashier()
                 with(cashier) {

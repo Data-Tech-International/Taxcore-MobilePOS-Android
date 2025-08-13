@@ -41,8 +41,8 @@ import online.taxcore.pos.utils.longToast
 import online.taxcore.pos.utils.runOnUiThread
 import online.taxcore.pos.utils.toast
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.catalog_dashboard_fragment.*
-import kotlinx.android.synthetic.main.dialog_loading.*
+import online.taxcore.pos.databinding.CatalogDashboardFragmentBinding
+import online.taxcore.pos.databinding.DialogLoadingBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -62,6 +62,9 @@ class CatalogDashFragment : Fragment() {
     @Inject
     lateinit var prefService: PrefService
 
+    private var _binding: CatalogDashboardFragmentBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var arrayAdapter: ArrayAdapter<String>
 
     override fun onAttach(context: Context) {
@@ -73,8 +76,10 @@ class CatalogDashFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View =
-        inflater.inflate(R.layout.catalog_dashboard_fragment, container, false)
+    ): View {
+        _binding = CatalogDashboardFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setClickListeners()
@@ -82,6 +87,11 @@ class CatalogDashFragment : Fragment() {
         context?.let {
             arrayAdapter = ArrayAdapter(it, R.layout.dropdown_item, exportOptions)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onResume() {
@@ -193,43 +203,43 @@ class CatalogDashFragment : Fragment() {
         val configuredWithItemsColor =
             if (isAppConfigured and hasItems) Color.TRANSPARENT else Color.parseColor("#90EEEEEE")
 
-        catalogAddItemButton.isEnabled = isAppConfigured
-        catalogAddItemButton.foreground = ColorDrawable(configuredColor)
+        binding.catalogAddItemButton.isEnabled = isAppConfigured
+        binding.catalogAddItemButton.foreground = ColorDrawable(configuredColor)
 
-        catalogSearchItemsButton.isEnabled = hasItems and isAppConfigured
-        catalogSearchItemsButton.foreground = ColorDrawable(configuredWithItemsColor)
+        binding.catalogSearchItemsButton.isEnabled = hasItems and isAppConfigured
+        binding.catalogSearchItemsButton.foreground = ColorDrawable(configuredWithItemsColor)
 
-        catalogViewItemsButton.isEnabled = hasItems and isAppConfigured
-        catalogViewItemsButton.foreground = ColorDrawable(configuredWithItemsColor)
+        binding.catalogViewItemsButton.isEnabled = hasItems and isAppConfigured
+        binding.catalogViewItemsButton.foreground = ColorDrawable(configuredWithItemsColor)
 
-        catalogImportButton.isEnabled = isAppConfigured
-        catalogImportButton.foreground = ColorDrawable(configuredColor)
+        binding.catalogImportButton.isEnabled = isAppConfigured
+        binding.catalogImportButton.foreground = ColorDrawable(configuredColor)
 
-        catalogExportButton.isEnabled = hasItems and isAppConfigured
-        catalogExportButton.foreground = ColorDrawable(configuredWithItemsColor)
+        binding.catalogExportButton.isEnabled = hasItems and isAppConfigured
+        binding.catalogExportButton.foreground = ColorDrawable(configuredWithItemsColor)
 
     }
 
     private fun setClickListeners() {
-        catalogViewItemsButton.setOnClickListener {
+        binding.catalogViewItemsButton.setOnClickListener {
             baseActivity()?.let { activity ->
                 CatalogDetailsActivity.start(activity)
             }
         }
 
-        catalogAddItemButton.setOnClickListener {
+        binding.catalogAddItemButton.setOnClickListener {
             baseActivity()?.let { activity ->
                 ItemDetailActivity.start(activity)
             }
         }
 
-        catalogSearchItemsButton.setOnClickListener {
+        binding.catalogSearchItemsButton.setOnClickListener {
             baseActivity()?.let {
                 CatalogDetailsActivity.start(it, "EXTRA_CATALOG_SEARCH")
             }
         }
 
-        catalogExportButton.setOnClickListener {
+        binding.catalogExportButton.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 startCatalogExport()
             } else {
@@ -237,7 +247,7 @@ class CatalogDashFragment : Fragment() {
             }
         }
 
-        catalogImportButton.setOnClickListener {
+        binding.catalogImportButton.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 showCatalogImportConfirmDialog {
                     openFile(IMPORT_CATALOG)
@@ -398,7 +408,9 @@ class CatalogDashFragment : Fragment() {
 
     private fun createLoadingDialog(@StringRes stringId: Int = R.string.loading_please_wait): MaterialDialog =
         MaterialDialog(requireContext()).show {
-            customView(R.layout.dialog_loading).loadingDialogText.text = getString(stringId)
+            val dialogBinding = DialogLoadingBinding.inflate(layoutInflater)
+            customView(view = dialogBinding.root)
+            dialogBinding.loadingDialogText.text = getString(stringId)
 
             cancelable(false)  // calls setCancelable on the underlying dialog
             cancelOnTouchOutside(false)  // calls setCanceledOnTouchOutside on the underlying dialog

@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import online.taxcore.pos.utils.longToast
-import kotlinx.android.synthetic.main.splash_activity.*
+import online.taxcore.pos.databinding.SplashActivityBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -30,12 +30,14 @@ import java.io.IOException
 
 class SplashActivity : BaseActivity() {
 
+    private lateinit var binding: SplashActivityBinding
     lateinit var prefService: PrefService
     private var hasCert: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.splash_activity)
+        binding = SplashActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         prefService = try {
             PrefService(this)
@@ -78,7 +80,7 @@ class SplashActivity : BaseActivity() {
 
     private fun startAppConfig() {
 
-        splashLoadingBar.visibility = View.VISIBLE
+        binding.splashLoadingBar.visibility = View.VISIBLE
 
         val isConfigured = prefService.isAppConfigured()
         val hasCert = prefService.hasCertInstalled()
@@ -111,7 +113,7 @@ class SplashActivity : BaseActivity() {
 
             if (apiServer == null) {
                 runOnUiThread {
-                    splashLoadingBar.visibility = View.GONE
+                    binding.splashLoadingBar.visibility = View.GONE
                     DashboardActivity.start(this@SplashActivity, true)
                 }
                 return
@@ -196,6 +198,6 @@ class SplashActivity : BaseActivity() {
             .load(logoImage)
             .transition(withCrossFade(factory))
             .error(R.drawable.tax_core_logo_splash)
-            .into(splashLogoImageView)
+            .into(binding.splashLogoImageView)
     }
 }

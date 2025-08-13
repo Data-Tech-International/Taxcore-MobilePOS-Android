@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_checked_taxes.view.*
+import online.taxcore.pos.databinding.ItemCheckedTaxesBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Taxes
 import online.taxcore.pos.data.realm.TaxesSettings
@@ -15,10 +15,13 @@ class TaxesCheckedAdapter(private val checkedChangeListener: () -> Unit) : Recyc
     private var taxesList: MutableList<TaxesSettings> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaxesCheckedViewHolder {
-        val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_checked_taxes, parent, false)
+        val binding = ItemCheckedTaxesBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
 
-        return TaxesCheckedViewHolder(view)
+        return TaxesCheckedViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: TaxesCheckedViewHolder, position: Int) {
@@ -44,7 +47,7 @@ class TaxesCheckedAdapter(private val checkedChangeListener: () -> Unit) : Recyc
                 appliedTaxLabel
             }
 
-    class TaxesCheckedViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class TaxesCheckedViewHolder(private val binding: ItemCheckedTaxesBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: TaxesSettings, checkedChangeListener: () -> Unit) {
 
@@ -54,11 +57,11 @@ class TaxesCheckedAdapter(private val checkedChangeListener: () -> Unit) : Recyc
                 "${item.value} ${item.rate.roundLocalized(1)}"
             }
 
-            itemView.item_taxes_checked_title_label.text = "${item.name} (${taxRate})"
-            itemView.item_taxes_checked_title.text = item.code
-            itemView.item_taxes_checked.isChecked = item.isChecked
+            binding.itemTaxesCheckedTitleLabel.text = "${item.name} (${taxRate})"
+            binding.itemTaxesCheckedTitle.text = item.code
+            binding.itemTaxesChecked.isChecked = item.isChecked
 
-            itemView.item_taxes_checked.setOnCheckedChangeListener { _, _ ->
+            binding.itemTaxesChecked.setOnCheckedChangeListener { _, _ ->
                 item.isChecked = !item.isChecked
                 checkedChangeListener()
             }

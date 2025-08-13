@@ -38,10 +38,10 @@ import online.taxcore.pos.utils.toast
 import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.queryFirst
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.dialog_loading.*
-import kotlinx.android.synthetic.main.dialog_pac_layout.view.*
-import kotlinx.android.synthetic.main.dialog_pin_layout.view.*
-import kotlinx.android.synthetic.main.invoice_fragment.*
+import online.taxcore.pos.databinding.InvoiceFragmentBinding
+import online.taxcore.pos.databinding.DialogLoadingBinding
+import online.taxcore.pos.databinding.DialogPacLayoutBinding
+import online.taxcore.pos.databinding.DialogPinLayoutBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.BuildConfig
 import online.taxcore.pos.R
@@ -85,6 +85,9 @@ import javax.inject.Inject
 import online.taxcore.pos.data.realm.Item as ItemModel
 
 class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
+
+    private var _binding: InvoiceFragmentBinding? = null
+    private val binding get() = _binding!!
 
     @Inject
     lateinit var prefService: PrefService
@@ -130,8 +133,10 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View =
-        inflater.inflate(R.layout.invoice_fragment, container, false)
+    ): View {
+        _binding = InvoiceFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -201,6 +206,11 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
         updateUI()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun isCacheStale(milliseconds: Long): Boolean {
         val cacheTime = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
         val cacheTimeFromNow = TimeUnit.MILLISECONDS.toMinutes(Date().time) - cacheTime
@@ -219,54 +229,54 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
     }
 
     private fun initInitial() {
-        invoiceTypeSelect.tag = NORMAL.value
-        invoiceTypeSelect.text = getString(R.string.normal)
+        binding.invoiceTypeSelect.tag = NORMAL.value
+        binding.invoiceTypeSelect.text = getString(R.string.normal)
 
-        invoiceTransactionTypeSelect.tag = SALE.value
-        invoiceTransactionTypeSelect.text = getString(R.string.sale)
+        binding.invoiceTransactionTypeSelect.tag = SALE.value
+        binding.invoiceTransactionTypeSelect.text = getString(R.string.sale)
 
-        invoicePaymentSelect.tag = CASH.value
-        invoicePaymentSelect.text = getString(R.string.cash)
+        binding.invoicePaymentSelect.tag = CASH.value
+        binding.invoicePaymentSelect.text = getString(R.string.cash)
     }
 
     private fun setupClickListeners() {
 
-        invoiceAddItemButton.setOnClickListener {
+        binding.invoiceAddItemButton.setOnClickListener {
             MaterialDialog(requireContext(), BottomSheet(LayoutMode.MATCH_PARENT)).show {
                 customListAdapter(selectableItemsAdapter!!)
             }
         }
 
-        invoiceCreateItemButton.setOnClickListener {
+        binding.invoiceCreateItemButton.setOnClickListener {
             val intent = Intent(context, ItemDetailActivity::class.java)
             startActivityForResult(intent, NEW_INVOICE_REQUEST)
         }
 
-        invoiceScanItemButton.setOnClickListener {
+        binding.invoiceScanItemButton.setOnClickListener {
             startScanActivity()
         }
 
-        invoiceResetButton.setOnClickListener {
+        binding.invoiceResetButton.setOnClickListener {
             showConfirmResetDialog()
         }
 
-        invoiceFinishButton.setOnClickListener {
+        binding.invoiceFinishButton.setOnClickListener {
             signInvoiceListener()
         }
 
-        invoiceTypeSelect.setOnClickListener {
+        binding.invoiceTypeSelect.setOnClickListener {
             showBottomDialog(INVOICE)
         }
 
-        invoiceTransactionTypeSelect.setOnClickListener {
+        binding.invoiceTransactionTypeSelect.setOnClickListener {
             showBottomDialog(TRANSACTION)
         }
 
-        invoicePaymentSelect.setOnClickListener {
+        binding.invoicePaymentSelect.setOnClickListener {
             showBottomDialog(PAYMENT)
         }
 
-        invoiceRefTimeButton.setOnClickListener {
+        binding.invoiceRefTimeButton.setOnClickListener {
             showDateTimePicker()
         }
 
@@ -274,9 +284,9 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 
     private fun setOnInputChangeListeners() {
 
-        invoiceRefNumberInput.onTextChanged { refInputText ->
+        binding.invoiceRefNumberInput.onTextChanged { refInputText ->
 
-            invoiceRefDTLayout.visible = refInputText.isNotEmpty() and isRefInputValid()
+            binding.invoiceRefDTLayout.visible = refInputText.isNotEmpty() and isRefInputValid()
 
             validateInvoice()
 
@@ -284,43 +294,43 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 
                 val isRefErrorEnabled = when {
                     refInputText.isEmpty() -> {
-                        invoiceRefNumberLayout.error = getString(R.string.error_ref_doc_required)
+                        binding.invoiceRefNumberLayout.error = getString(R.string.error_ref_doc_required)
                         true
                     }
                     refInputText.isNotEmpty() and !refInputText.matches(invoiceRefRegex) -> {
-                        invoiceRefNumberLayout.error =
+                        binding.invoiceRefNumberLayout.error =
                             getString(R.string.error_invalid_ref_doc_format)
                         true
                     }
                     else -> false
                 }
 
-                invoiceRefNumberLayout.isErrorEnabled = isRefErrorEnabled
+                binding.invoiceRefNumberLayout.isErrorEnabled = isRefErrorEnabled
 
                 return@onTextChanged
             }
 
             // Error enabled when
-            invoiceRefNumberLayout.isErrorEnabled = when {
+            binding.invoiceRefNumberLayout.isErrorEnabled = when {
                 isRefInputValid() -> false
                 refInputText.isEmpty() -> false
                 else -> {
-                    invoiceRefNumberLayout.error = getString(R.string.error_invalid_ref_doc_format)
+                    binding.invoiceRefNumberLayout.error = getString(R.string.error_invalid_ref_doc_format)
                     true
                 }
             }
         }
 
-        invoiceBuyerTinInput.onTextChanged {
-            invoiceBuyerCostCenterLayout.visible = it.isNotEmpty()
+        binding.invoiceBuyerTinInput.onTextChanged {
+            binding.invoiceBuyerCostCenterLayout.visible = it.isNotEmpty()
         }
     }
 
     private fun updateUI() {
         val isListEmpty = invoiceAdapter?.getInvoiceItems().isNullOrEmpty()
 
-        invoiceNoItems.visible = isListEmpty
-        invoiceResetButton.visible = isListEmpty.not() and (invoiceActionType == "normal")
+        binding.invoiceNoItems.visible = isListEmpty
+        binding.invoiceResetButton.visible = isListEmpty.not() and (invoiceActionType == "normal")
 
         updateSum()
     }
@@ -339,64 +349,64 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 
             invoiceAdapter?.notifyDataSetChanged()
 
-            invoiceRefNumberInput.setText(journal.invoiceNumber)
-            invoiceBuyerTinInput.setText(journal.buyerTin)
+            binding.invoiceRefNumberInput.setText(journal.invoiceNumber)
+            binding.invoiceBuyerTinInput.setText(journal.buyerTin)
 
-            invoiceBuyerCostCenterInput.setText(journal.buyerCostCenter)
-            invoiceBuyerCostCenterLayout.visible =
+            binding.invoiceBuyerCostCenterInput.setText(journal.buyerCostCenter)
+            binding.invoiceBuyerCostCenterLayout.visible =
                 journal.buyerCostCenter.isNotEmpty() or journal.buyerTin.isNotEmpty()
 
-            invoiceTransactionTypeSelect.tag = journal.transactionType
-            invoiceTransactionTypeSelect.text = findTransactionTypeName(journal.transactionType)
+            binding.invoiceTransactionTypeSelect.tag = journal.transactionType
+            binding.invoiceTransactionTypeSelect.text = findTransactionTypeName(journal.transactionType)
 
-            invoiceRefTimeButton.text = formatDate(journal.date)
+            binding.invoiceRefTimeButton.text = formatDate(journal.date)
 
-            invoiceTypeSelect.tag = journal.invoiceType
-            invoiceTypeSelect.text = findInvoiceTypeName(journal.invoiceType)
+            binding.invoiceTypeSelect.tag = journal.invoiceType
+            binding.invoiceTypeSelect.text = findInvoiceTypeName(journal.invoiceType)
 
-            invoicePaymentSelect.tag = journal.paymentType
-            invoicePaymentSelect.text = findPaymentTypeName(journal.paymentType)
+            binding.invoicePaymentSelect.tag = journal.paymentType
+            binding.invoicePaymentSelect.text = findPaymentTypeName(journal.paymentType)
         }
     }
 
     private fun setInputFields() {
         when (invoiceActionType) {
             "copy" -> {
-                invoiceActionsLayout.visible = false
-                invoiceFavoritesRecycler.visible = false
-                invoiceResetButton.visible = false
+                binding.invoiceActionsLayout.visible = false
+                binding.invoiceFavoritesRecycler.visible = false
+                binding.invoiceResetButton.visible = false
 
-                invoiceRefNumberInput.isEnabled = false
-                invoiceBuyerTinInput.isEnabled = false
-                invoiceBuyerCostCenterInput.isEnabled = false
+                binding.invoiceRefNumberInput.isEnabled = false
+                binding.invoiceBuyerTinInput.isEnabled = false
+                binding.invoiceBuyerCostCenterInput.isEnabled = false
 
-                invoiceRefDTLayout.visible = true
-                invoiceRefTimeButton.isEnabled = false
-                invoiceRefDTLabel.visibility = View.VISIBLE
+                binding.invoiceRefDTLayout.visible = true
+                binding.invoiceRefTimeButton.isEnabled = false
+                binding.invoiceRefDTLabel.visibility = View.VISIBLE
 
-                invoiceTypeSelect.tag = COPY.value
-                invoiceTypeSelect.text = getString(R.string.invoice_copy)
-                invoiceTypeSelect.isEnabled = false
+                binding.invoiceTypeSelect.tag = COPY.value
+                binding.invoiceTypeSelect.text = getString(R.string.invoice_copy)
+                binding.invoiceTypeSelect.isEnabled = false
 
-                invoiceTransactionTypeSelect.isEnabled = false
+                binding.invoiceTransactionTypeSelect.isEnabled = false
 
-                invoicePaymentSelect.isEnabled = false
+                binding.invoicePaymentSelect.isEnabled = false
             }
             "refund" -> {
-                invoiceActionsLayout.visible = false
-                invoiceFavoritesRecycler.visible = false
-                invoiceResetButton.visible = false
+                binding.invoiceActionsLayout.visible = false
+                binding.invoiceFavoritesRecycler.visible = false
+                binding.invoiceResetButton.visible = false
 
-                invoiceRefNumberInput.isEnabled = false
-                invoiceRefTimeButton.isEnabled = false
-                invoiceRefDTLayout.visible = true
-                invoiceRefDTLabel.visibility = View.VISIBLE
+                binding.invoiceRefNumberInput.isEnabled = false
+                binding.invoiceRefTimeButton.isEnabled = false
+                binding.invoiceRefDTLayout.visible = true
+                binding.invoiceRefDTLabel.visibility = View.VISIBLE
 
-                invoiceTransactionTypeSelect.tag = REFUND.value
-                invoiceTransactionTypeSelect.text = getString(R.string.invoice_refund)
-                invoiceTransactionTypeSelect.isEnabled = false
+                binding.invoiceTransactionTypeSelect.tag = REFUND.value
+                binding.invoiceTransactionTypeSelect.text = getString(R.string.invoice_refund)
+                binding.invoiceTransactionTypeSelect.isEnabled = false
 
-                invoiceTypeSelect.isEnabled = false
+                binding.invoiceTypeSelect.isEnabled = false
             }
         }
     }
@@ -427,7 +437,7 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 
         invoiceAdapter?.setData(InvoiceManager.selectedItems)
 
-        invoiceItemsRecycler.adapter = invoiceAdapter
+        binding.invoiceItemsRecycler.adapter = invoiceAdapter
 
     }
 
@@ -440,7 +450,7 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 
         favoritesAdapter?.setData(catalogItems.reversed().toMutableList())
 
-        invoiceFavoritesRecycler.adapter = favoritesAdapter
+        binding.invoiceFavoritesRecycler.adapter = favoritesAdapter
     }
 
     private fun setupSelectableItemsList(catalogItems: MutableList<ItemModel>) {
@@ -487,7 +497,7 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 
         // Get PAC from session
         if (isVSDCSelected) {
-            val invoicePac = AppSession.pacCode.toUpperCase(Locale.getDefault())
+            val invoicePac = AppSession.pacCode.uppercase(Locale.getDefault())
             when {
                 invoicePac.isNotEmpty() and useCachedCredentials -> signVsdcInvoiceReceipt(
                     invoicePac
@@ -594,7 +604,8 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
             customView(R.layout.dialog_pin_layout)
 
             // Add input listener
-            getCustomView().pinInputView.onTextChanged { inputText ->
+            val pinBinding = DialogPinLayoutBinding.bind(getCustomView())
+            pinBinding.pinInputView.onTextChanged { inputText ->
                 setActionButtonEnabled(WhichButton.NEUTRAL, inputText.length == PIN_INPUT_LENGTH)
                 if (inputText.length == PIN_INPUT_LENGTH) {
                     signInvoiceWithPin(this)
@@ -605,7 +616,8 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
             setActionButtonEnabled(WhichButton.NEUTRAL, getClipboardText().isNotEmpty())
             neutralButton(R.string.paste_and_sign) {
                 val clipboardText = getClipboardText()
-                getCustomView().pinInputView.setText(clipboardText)
+                val pinBinding = DialogPinLayoutBinding.bind(getCustomView())
+                pinBinding.pinInputView.setText(clipboardText)
                 dismiss()
             }
 
@@ -617,7 +629,8 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
     }
 
     private fun signInvoiceWithPin(it: MaterialDialog) {
-        val inputPin = it.getCustomView().pinInputView.text.toString()
+        val pinBinding = DialogPinLayoutBinding.bind(it.getCustomView())
+        val inputPin = pinBinding.pinInputView.text.toString()
         verifyEsdcPin(inputPin)
     }
 
@@ -635,10 +648,11 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
             title(R.string.title_enter_pac)
             customView(R.layout.dialog_pac_layout)
 
-            getCustomView().pacInputView.onTextChanged { inputText ->
+            val pacBinding = DialogPacLayoutBinding.bind(getCustomView())
+            pacBinding.pacInputView.onTextChanged { inputText ->
                 if (inputText.length == PAC_INPUT_LENGTH) {
-                    val inputPac = this.getCustomView().pacInputView.text.toString()
-                        .toUpperCase(Locale.getDefault())
+                    val inputPac = pacBinding.pacInputView.text.toString()
+                        .uppercase(Locale.getDefault())
                     signVsdcInvoiceReceipt(inputPac)
                     dismiss()
                 }
@@ -647,7 +661,8 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
             setActionButtonEnabled(WhichButton.NEUTRAL, getClipboardText().isNotEmpty())
             neutralButton(R.string.paste_and_sign) {
                 val clipboardText = getClipboardText()
-                getCustomView().pacInputView.setText(clipboardText)
+                val pacBinding = DialogPacLayoutBinding.bind(getCustomView())
+                pacBinding.pacInputView.setText(clipboardText)
             }
 
             negativeButton(R.string.cancel) {
@@ -671,10 +686,8 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
     private fun showDateTimePicker() {
         MaterialDialog(requireContext()).show {
 
-            val refTimeBtn =
-                this@InvoiceFragment.view?.findViewById<AppCompatButton>(R.id.invoiceRefTimeButton)
-            val refTimeLabel =
-                this@InvoiceFragment.view?.findViewById<AppCompatTextView>(R.id.invoiceRefDTLabel)
+            val refTimeBtn = binding.invoiceRefTimeButton
+            val refTimeLabel = binding.invoiceRefDTLabel
 
             dateTimePicker(show24HoursView = true) { _, dateTime ->
                 val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZ")
@@ -700,7 +713,9 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 
     private fun createLoadingDialog(@StringRes stringId: Int = R.string.loading_please_wait): MaterialDialog =
         MaterialDialog(requireContext()).show {
-            customView(R.layout.dialog_loading).loadingDialogText.text = getString(stringId)
+            customView(R.layout.dialog_loading)
+            val loadingBinding = DialogLoadingBinding.bind(getCustomView())
+            loadingBinding.loadingDialogText.text = getString(stringId)
 
             cancelable(false)  // calls setCancelable on the underlying dialog
             cancelOnTouchOutside(false)  // calls setCanceledOnTouchOutside on the underlying dialog
@@ -713,20 +728,20 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
         val cashierId =
             if (selectedCashier?.id.isNullOrBlank()) null else selectedCashier?.id.orEmpty()
 
-        val referentDocNo = invoiceRefNumberInput.stringOrNull()
+        val referentDocNo = binding.invoiceRefNumberInput.stringOrNull()
 
-        val refDTText = invoiceRefTimeButton.text.toString()
+        val refDTText = binding.invoiceRefTimeButton.text.toString()
         val refDT =
             if (refDTText != getString(R.string.ref_dt)) refDTText else null
 
         with(invoiceRequest) {
             invoiceNumber = BuildConfig.VERSION_NAME
-            paymentType = invoicePaymentSelect.tag as String
-            transactionType = invoiceTransactionTypeSelect.tag as String?
-            invoiceType = invoiceTypeSelect.tag as String
+            paymentType = binding.invoicePaymentSelect.tag as String
+            transactionType = binding.invoiceTransactionTypeSelect.tag as String?
+            invoiceType = binding.invoiceTypeSelect.tag as String
             cashier = cashierId
-            buyerId = invoiceBuyerTinInput.stringOrNull()
-            buyerCostCenterId = invoiceBuyerCostCenterInput.stringOrNull()
+            buyerId = binding.invoiceBuyerTinInput.stringOrNull()
+            buyerCostCenterId = binding.invoiceBuyerCostCenterInput.stringOrNull()
             referentDocumentNumber = referentDocNo
             referentDocumentDT = refDT
             payment = listOf(PaymentItem(invoiceSumAmount.toDouble(), paymentType))
@@ -865,11 +880,11 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
     private fun saveJournalItem(signedInvoice: InvoiceResponse) {
         JournalManager.saveItem(
             body = signedInvoice,
-            buyerId = invoiceBuyerTinInput.text.toString(),
-            paymentType = invoicePaymentSelect.tag as String,
-            transactionType = invoiceTransactionTypeSelect.tag as String,
-            invoiceType = invoiceTypeSelect.tag as String,
-            buyerCostCenter = invoiceBuyerCostCenterInput.text.toString(),
+            buyerId = binding.invoiceBuyerTinInput.text.toString(),
+            paymentType = binding.invoicePaymentSelect.tag as String,
+            transactionType = binding.invoiceTransactionTypeSelect.tag as String,
+            invoiceType = binding.invoiceTypeSelect.tag as String,
+            buyerCostCenter = binding.invoiceBuyerCostCenterInput.text.toString(),
             items = InvoiceManager.selectedItems
         )
     }
@@ -878,19 +893,19 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
         isNewInvoiceTypeCopy = false
         isNewTransactionTypeRefund = false
 
-        invoiceRefNumberInput.setText("")
-        invoiceRefTimeButton.setText("")
-        invoiceBuyerTinInput.setText("")
-        invoiceBuyerCostCenterInput.setText("")
+        binding.invoiceRefNumberInput.setText("")
+        binding.invoiceRefTimeButton.setText("")
+        binding.invoiceBuyerTinInput.setText("")
+        binding.invoiceBuyerCostCenterInput.setText("")
 
-        invoiceTypeSelect.tag = NORMAL.value
-        invoiceTypeSelect.text = getString(R.string.normal)
+        binding.invoiceTypeSelect.tag = NORMAL.value
+        binding.invoiceTypeSelect.text = getString(R.string.normal)
 
-        invoiceTransactionTypeSelect.tag = SALE.value
-        invoiceTransactionTypeSelect.text = getString(R.string.sale)
+        binding.invoiceTransactionTypeSelect.tag = SALE.value
+        binding.invoiceTransactionTypeSelect.text = getString(R.string.sale)
 
-        invoicePaymentSelect.tag = CASH.value
-        invoicePaymentSelect.text = getString(R.string.cash)
+        binding.invoicePaymentSelect.tag = CASH.value
+        binding.invoicePaymentSelect.text = getString(R.string.cash)
 
         InvoiceManager.selectedItems.clear()
 
@@ -903,21 +918,21 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
         invoiceAdapter?.let { adapter ->
             invoiceSumAmount = adapter.getInvoiceItems().sumOf { it.price * it.quantity }
 
-            invoiceSumLabel.text = "$currency ${invoiceSumAmount.roundLocalized(2)}"
+            binding.invoiceSumLabel.text = "$currency ${invoiceSumAmount.roundLocalized(2)}"
         }
 
         validateInvoice()
     }
 
     private fun validateInvoice() {
-        val invoiceType = invoiceTypeSelect.text as String
-        val invoiceTypeTag = invoiceTypeSelect.tag as String?
+        val invoiceType = binding.invoiceTypeSelect.text as String
+        val invoiceTypeTag = binding.invoiceTypeSelect.tag as String?
 
-        val transactionType = invoiceTransactionTypeSelect.text as String
-        val transactionTypeTag = invoiceTransactionTypeSelect.tag as String?
+        val transactionType = binding.invoiceTransactionTypeSelect.text as String
+        val transactionTypeTag = binding.invoiceTransactionTypeSelect.tag as String?
 
-        val paymentType = invoicePaymentSelect.text as String
-        val paymentTypeTag = invoicePaymentSelect.tag as String?
+        val paymentType = binding.invoicePaymentSelect.text as String
+        val paymentTypeTag = binding.invoicePaymentSelect.tag as String?
 
         val refValid = isRefInputValid()
 
@@ -931,15 +946,15 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
                 refValid
 
         if (isRefInputRequired()) {
-            invoiceRefNumberLayout.error = getString(R.string.error_ref_doc_required)
+            binding.invoiceRefNumberLayout.error = getString(R.string.error_ref_doc_required)
         }
 
-        invoiceRefNumberLayout.isErrorEnabled = refValid.not()
-        invoiceFinishButton.isEnabled = isSubmitEnabled
+        binding.invoiceRefNumberLayout.isErrorEnabled = refValid.not()
+        binding.invoiceFinishButton.isEnabled = isSubmitEnabled
     }
 
     private fun isRefInputValid(): Boolean {
-        val invoiceRef = invoiceRefNumberInput.text.toString()
+        val invoiceRef = binding.invoiceRefNumberInput.text.toString()
 
         return if (isRefInputRequired()) {
             invoiceRef.isNotEmpty() and invoiceRef.matches(invoiceRefRegex)
@@ -956,7 +971,7 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 // INVOICE TYPE
 
     private fun findInvoiceTypeName(invoiceType: String): String {
-        return when (invoiceType.toLowerCase()) {
+        return when (invoiceType.lowercase()) {
             NORMAL.value -> getString(R.string.normal)
             PROFORMA.value -> getString(R.string.proforma)
             COPY.value -> getString(R.string.copy)
@@ -968,7 +983,7 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 // PAYMENT TYPE
 
     private fun findPaymentTypeName(paymentType: String): String {
-        return when (paymentType.toLowerCase()) {
+        return when (paymentType.lowercase()) {
             CASH.value -> getString(R.string.cash)
             CARD.value -> getString(R.string.card)
             OTHER.value -> getString(R.string.other)
@@ -984,7 +999,7 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 // TRANSACTION TYPE
 
     private fun findTransactionTypeName(transactionType: String): String {
-        return when (transactionType.toLowerCase()) {
+        return when (transactionType.lowercase()) {
             SALE.value -> getString(R.string.sale)
             REFUND.value -> getString(R.string.refund)
             else -> throw Error("Unknown transaction type")
@@ -994,7 +1009,7 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
 // LISTENERS
 
     override fun onInvoiceTypeChanged(invoiceType: InvoiceType, selectedValue: String) {
-        invoiceTypeSelect.tag = invoiceType.value
+        binding.invoiceTypeSelect.tag = invoiceType.value
         isNewInvoiceTypeCopy = when (invoiceType) {
             COPY -> true
             else -> false
@@ -1004,7 +1019,7 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
     }
 
     override fun onTransactionTypeChanged(transactionType: TransactionType, selectedValue: String) {
-        invoiceTransactionTypeSelect.tag = transactionType.value
+        binding.invoiceTransactionTypeSelect.tag = transactionType.value
         isNewTransactionTypeRefund = when (transactionType) {
             REFUND -> true
             else -> false
@@ -1014,14 +1029,14 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
     }
 
     override fun onPaymentChanged(paymentType: PaymentType, selectedValue: String) {
-        invoicePaymentSelect.tag = paymentType.value
+        binding.invoicePaymentSelect.tag = paymentType.value
     }
 
     override fun setTitle(result: String, option: InvoiceOption) {
         when (option) {
-            PAYMENT -> invoicePaymentSelect.text = result
-            TRANSACTION -> invoiceTransactionTypeSelect.text = result
-            INVOICE -> invoiceTypeSelect.text = result
+            PAYMENT -> binding.invoicePaymentSelect.text = result
+            TRANSACTION -> binding.invoiceTransactionTypeSelect.text = result
+            INVOICE -> binding.invoiceTypeSelect.text = result
         }
     }
 

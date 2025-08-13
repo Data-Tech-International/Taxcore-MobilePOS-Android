@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.bottom_fragment_invoice_type.*
-import kotlinx.android.synthetic.main.bottom_fragment_payment.*
-import kotlinx.android.synthetic.main.bottom_fragment_transaction_type.*
+import online.taxcore.pos.databinding.BottomFragmentInvoiceTypeBinding
+import online.taxcore.pos.databinding.BottomFragmentPaymentBinding
+import online.taxcore.pos.databinding.BottomFragmentTransactionTypeBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.enums.InvoiceOption
 import online.taxcore.pos.enums.InvoiceType
@@ -27,6 +27,9 @@ interface OnInvoiceOptionResult {
 class InvoiceBottomDialog : BottomSheetDialogFragment() {
 
     private var typeValue: Int? = null
+    private var invoiceBinding: BottomFragmentInvoiceTypeBinding? = null
+    private var transactionBinding: BottomFragmentTransactionTypeBinding? = null
+    private var paymentBinding: BottomFragmentPaymentBinding? = null
 
     companion object {
         var result: OnInvoiceOptionResult? = null
@@ -46,16 +49,23 @@ class InvoiceBottomDialog : BottomSheetDialogFragment() {
         }
     }
 
-    @SuppressLint("InflateParams")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view: View? = null
         typeValue = arguments?.getInt("Value")
-        when (typeValue) {
-            InvoiceOption.INVOICE.value -> view = inflater.inflate(R.layout.bottom_fragment_invoice_type, null)
-            InvoiceOption.TRANSACTION.value -> view = inflater.inflate(R.layout.bottom_fragment_transaction_type, null)
-            InvoiceOption.PAYMENT.value -> view = inflater.inflate(R.layout.bottom_fragment_payment, null)
+        return when (typeValue) {
+            InvoiceOption.INVOICE.value -> {
+                invoiceBinding = BottomFragmentInvoiceTypeBinding.inflate(inflater, container, false)
+                invoiceBinding?.root
+            }
+            InvoiceOption.TRANSACTION.value -> {
+                transactionBinding = BottomFragmentTransactionTypeBinding.inflate(inflater, container, false)
+                transactionBinding?.root
+            }
+            InvoiceOption.PAYMENT.value -> {
+                paymentBinding = BottomFragmentPaymentBinding.inflate(inflater, container, false)
+                paymentBinding?.root
+            }
+            else -> null
         }
-        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,101 +76,112 @@ class InvoiceBottomDialog : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        invoiceBinding = null
+        transactionBinding = null
+        paymentBinding = null
+    }
+
     private fun initListenerPayment() {
+        paymentBinding?.let { binding ->
+            binding.bottomFragmentCard.setOnClickListener {
+                result?.setTitle(binding.bottomFragmentCard.text as String, InvoiceOption.PAYMENT)
+                result?.onPaymentChanged(PaymentType.CARD, "")
+                dismiss()
+            }
 
-        bottom_fragment_card.setOnClickListener {
-            result?.setTitle(bottom_fragment_card.text as String, InvoiceOption.PAYMENT)
-            result?.onPaymentChanged(PaymentType.CARD, "")
-            dismiss()
-        }
+            binding.bottomFragmentCash.setOnClickListener {
+                result?.setTitle(binding.bottomFragmentCash.text as String, InvoiceOption.PAYMENT)
+                result?.onPaymentChanged(PaymentType.CASH, "")
+                dismiss()
+            }
 
-        bottom_fragment_cash.setOnClickListener {
-            result?.setTitle(bottom_fragment_cash.text as String, InvoiceOption.PAYMENT)
-            result?.onPaymentChanged(PaymentType.CASH, "")
-            dismiss()
-        }
+            binding.bottomFragmentOther.setOnClickListener {
+                result?.setTitle(binding.bottomFragmentOther.text as String, InvoiceOption.PAYMENT)
+                result?.onPaymentChanged(PaymentType.OTHER, "")
+                dismiss()
+            }
 
-        bottom_fragment_other.setOnClickListener {
-            result?.setTitle(bottom_fragment_other.text as String, InvoiceOption.PAYMENT)
-            result?.onPaymentChanged(PaymentType.OTHER, "")
-            dismiss()
-        }
+            binding.bottomFragmentCheck.setOnClickListener {
+                result?.setTitle(binding.bottomFragmentCheck.text as String, InvoiceOption.PAYMENT)
+                result?.onPaymentChanged(PaymentType.CHECK, "")
+                dismiss()
+            }
 
-        bottom_fragment_check.setOnClickListener {
-            result?.setTitle(bottom_fragment_check.text as String, InvoiceOption.PAYMENT)
-            result?.onPaymentChanged(PaymentType.CHECK, "")
-            dismiss()
-        }
+            binding.bottomFragmentWireTransfer.setOnClickListener {
+                result?.setTitle(binding.bottomFragmentWireTransfer.text as String, InvoiceOption.PAYMENT)
+                result?.onPaymentChanged(PaymentType.WIRE_TRANSFER, "")
+                dismiss()
+            }
 
-        bottom_fragment_wire_transfer.setOnClickListener {
-            result?.setTitle(bottom_fragment_wire_transfer.text as String, InvoiceOption.PAYMENT)
-            result?.onPaymentChanged(PaymentType.WIRE_TRANSFER, "")
-            dismiss()
-        }
+            binding.bottomFragmentVoucher.setOnClickListener {
+                result?.setTitle(binding.bottomFragmentVoucher.text as String, InvoiceOption.PAYMENT)
+                result?.onPaymentChanged(PaymentType.VOUCHER, "")
+                dismiss()
+            }
 
-        bottom_fragment_voucher.setOnClickListener {
-            result?.setTitle(bottom_fragment_voucher.text as String, InvoiceOption.PAYMENT)
-            result?.onPaymentChanged(PaymentType.VOUCHER, "")
-            dismiss()
-        }
-
-        bottom_fragment_mobile.setOnClickListener {
-            result?.setTitle(bottom_fragment_mobile.text as String, InvoiceOption.PAYMENT)
-            result?.onPaymentChanged(PaymentType.MOBILE_MONEY, "")
-            dismiss()
+            binding.bottomFragmentMobile.setOnClickListener {
+                result?.setTitle(binding.bottomFragmentMobile.text as String, InvoiceOption.PAYMENT)
+                result?.onPaymentChanged(PaymentType.MOBILE_MONEY, "")
+                dismiss()
+            }
         }
     }
 
     private fun initListenerTransaction() {
-        bottom_fragment_invoice.setOnClickListener {
-            val selectedValue = bottom_fragment_invoice.text as String
+        transactionBinding?.let { binding ->
+            binding.bottomFragmentInvoice.setOnClickListener {
+                val selectedValue = binding.bottomFragmentInvoice.text as String
 
-            result?.setTitle(selectedValue, InvoiceOption.TRANSACTION)
-            result?.onTransactionTypeChanged(TransactionType.SALE, selectedValue)
+                result?.setTitle(selectedValue, InvoiceOption.TRANSACTION)
+                result?.onTransactionTypeChanged(TransactionType.SALE, selectedValue)
 
-            dismiss()
-        }
+                dismiss()
+            }
 
-        bottom_fragment_refund.setOnClickListener {
-            val refundText = bottom_fragment_refund.text as String
+            binding.bottomFragmentRefund.setOnClickListener {
+                val refundText = binding.bottomFragmentRefund.text as String
 
-            result?.setTitle(refundText, InvoiceOption.TRANSACTION)
-            result?.onTransactionTypeChanged(TransactionType.REFUND, refundText)
+                result?.setTitle(refundText, InvoiceOption.TRANSACTION)
+                result?.onTransactionTypeChanged(TransactionType.REFUND, refundText)
 
-            dismiss()
+                dismiss()
+            }
         }
     }
 
     private fun initListenerInvoice() {
-        bottom_fragment_normal.setOnClickListener {
-            val normalText = bottom_fragment_normal.text as String
+        invoiceBinding?.let { binding ->
+            binding.bottomFragmentNormal.setOnClickListener {
+                val normalText = binding.bottomFragmentNormal.text as String
 
-            result?.setTitle(normalText, InvoiceOption.INVOICE)
-            result?.onInvoiceTypeChanged(InvoiceType.NORMAL, normalText)
+                result?.setTitle(normalText, InvoiceOption.INVOICE)
+                result?.onInvoiceTypeChanged(InvoiceType.NORMAL, normalText)
 
-            dismiss()
-        }
+                dismiss()
+            }
 
-        bottom_fragment_proforma.setOnClickListener {
-            val selectedText = bottom_fragment_proforma.text as String
+            binding.bottomFragmentProforma.setOnClickListener {
+                val selectedText = binding.bottomFragmentProforma.text as String
 
-            result?.setTitle(bottom_fragment_proforma.text as String, InvoiceOption.INVOICE)
-            result?.onInvoiceTypeChanged(InvoiceType.PROFORMA, selectedText)
+                result?.setTitle(binding.bottomFragmentProforma.text as String, InvoiceOption.INVOICE)
+                result?.onInvoiceTypeChanged(InvoiceType.PROFORMA, selectedText)
 
-            dismiss()
-        }
+                dismiss()
+            }
 
-        bottom_fragment_copy.setOnClickListener {
-            val selectedText = bottom_fragment_copy.text as String
+            binding.bottomFragmentCopy.setOnClickListener {
+                val selectedText = binding.bottomFragmentCopy.text as String
 
-            result?.setTitle(selectedText, InvoiceOption.INVOICE)
-            result?.onInvoiceTypeChanged(InvoiceType.COPY, selectedText)
+                result?.setTitle(selectedText, InvoiceOption.INVOICE)
+                result?.onInvoiceTypeChanged(InvoiceType.COPY, selectedText)
 
-            dismiss()
-        }
+                dismiss()
+            }
 
-//        bottom_fragment_advance.setOnClickListener {
-//            val selectedText = bottom_fragment_advance.text as String
+//        binding.bottomFragmentAdvance.setOnClickListener {
+//            val selectedText = binding.bottomFragmentAdvance.text as String
 //
 //            result?.setTitle(selectedText, InvoiceOption.INVOICE)
 //            result?.onInvoiceTypeChanged(InvoiceType.ADVANCE, selectedText)
@@ -168,13 +189,14 @@ class InvoiceBottomDialog : BottomSheetDialogFragment() {
 //            dismiss()
 //        }
 
-        bottom_fragment_training.setOnClickListener {
-            val selectedText = bottom_fragment_training.text as String
+            binding.bottomFragmentTraining.setOnClickListener {
+                val selectedText = binding.bottomFragmentTraining.text as String
 
-            result?.setTitle(bottom_fragment_training.text as String, InvoiceOption.INVOICE)
-            result?.onInvoiceTypeChanged(InvoiceType.TRAINING, selectedText)
+                result?.setTitle(binding.bottomFragmentTraining.text as String, InvoiceOption.INVOICE)
+                result?.onInvoiceTypeChanged(InvoiceType.TRAINING, selectedText)
 
-            dismiss()
+                dismiss()
+            }
         }
     }
 }

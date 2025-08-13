@@ -8,13 +8,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.taxes_fragment.*
+import online.taxcore.pos.databinding.TaxesFragmentBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
 import online.taxcore.pos.data.local.TaxesManager
 import javax.inject.Inject
 
 class TaxesFragment : Fragment() {
+
+    private var _binding: TaxesFragmentBinding? = null
+    private val binding get() = _binding!!
 
     @Inject
     lateinit var prefService: PrefService
@@ -36,16 +39,18 @@ class TaxesFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View =
-        inflater.inflate(R.layout.taxes_fragment, container, false)
+    ): View {
+        _binding = TaxesFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initList()
         if (useESDC) {
-            tv_taxes_are_configured.text =
+            binding.tvTaxesAreConfigured.text =
                 context?.getString(R.string.taxes_are_automatically_configured_from_server_settings)
         } else {
-            tv_taxes_are_configured.text = context?.getString(R.string.taxes_info)
+            binding.tvTaxesAreConfigured.text = context?.getString(R.string.taxes_info)
         }
     }
 
@@ -56,9 +61,12 @@ class TaxesFragment : Fragment() {
 
     private fun initList() {
         taxesAdapter = TaxesAdapter()
-        taxesRecyclerView.layoutManager = LinearLayoutManager(activity)
-        taxesRecyclerView.adapter = taxesAdapter
+        binding.taxesRecyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.taxesRecyclerView.adapter = taxesAdapter
     }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

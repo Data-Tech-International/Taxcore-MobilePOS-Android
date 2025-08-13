@@ -190,7 +190,7 @@ object CatalogFileManager {
                 .append(taxes)
                 .append(CSV_DATA_DELIMITER)
                 .append(
-                    item.isFavorite.toString().toUpperCase(Locale.ROOT)
+                    item.isFavorite.toString().uppercase(Locale.ROOT)
                 )
             output.appendLine(rowItem)
         }

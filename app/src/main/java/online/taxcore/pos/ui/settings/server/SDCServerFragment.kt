@@ -20,11 +20,9 @@ import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import online.taxcore.pos.utils.longToast
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.base_details_activity.*
-import kotlinx.android.synthetic.main.dialog_cert_pass_layout.view.*
-import kotlinx.android.synthetic.main.dialog_loading.*
-import kotlinx.android.synthetic.main.dialog_loading.view.*
-import kotlinx.android.synthetic.main.dialog_pac_layout.view.*
+import online.taxcore.pos.databinding.DialogLoadingBinding
+import online.taxcore.pos.databinding.DialogCertPassLayoutBinding
+import online.taxcore.pos.databinding.DialogPacLayoutBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -66,7 +64,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
 
     override fun onResume() {
         super.onResume()
-        (activity as SettingsDetailsActivity).baseToolbar.title =
+        (activity as SettingsDetailsActivity).binding.baseToolbar.title =
             getString(R.string.add_v_cdc_server)
     }
 
@@ -451,8 +449,8 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                 configDialog.show()
             },
             onSuccess = { pfx, p12File ->
-                configDialog.getCustomView().loadingDialogText.text =
-                    getString(R.string.msg_file_downloaded)
+                val dialogBinding = DialogLoadingBinding.bind(configDialog.getCustomView())
+                dialogBinding.loadingDialogText.text = getString(R.string.msg_file_downloaded)
                 showCertPassInputDialog(pfx, p12File)
             },
             onError = { errorType, _ ->
@@ -498,18 +496,20 @@ class SDCServerFragment : PreferenceFragmentCompat(),
             setActionButtonEnabled(WhichButton.NEUTRAL, getClipboardText().isNotEmpty())
             neutralButton(R.string.paste_and_continue) {
                 val clipboardText = getClipboardText()
-                getCustomView().pacInputView.setText(clipboardText)
+                val dialogBinding = DialogPacLayoutBinding.bind(getCustomView())
+                dialogBinding.pacInputView.setText(clipboardText)
             }
 
             negativeButton(R.string.cancel) {
                 dismiss()
             }
 
-            getCustomView().pacInputView.onTextChanged { inputText ->
+            val dialogBinding = DialogPacLayoutBinding.bind(getCustomView())
+            dialogBinding.pacInputView.onTextChanged { inputText ->
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PAC_INPUT_LENGTH)
                 if (inputText.length == PAC_INPUT_LENGTH) {
-                    val inputPac = this.getCustomView().pacInputView.text.toString()
-                        .toUpperCase(Locale.getDefault())
+                    val inputPac = dialogBinding.pacInputView.text.toString()
+                        .uppercase(Locale.getDefault())
                     callback(inputPac)
                     dismiss()
                 }
@@ -528,18 +528,20 @@ class SDCServerFragment : PreferenceFragmentCompat(),
             setActionButtonEnabled(WhichButton.NEUTRAL, getClipboardText().isNotEmpty())
             positiveButton(R.string.paste_and_continue) {
                 val clipboardText = getClipboardText()
-                getCustomView().certPassInput.setText(clipboardText)
+                val dialogBinding = DialogCertPassLayoutBinding.bind(getCustomView())
+                dialogBinding.certPassInput.setText(clipboardText)
             }
 
             negativeButton(R.string.cancel) {
                 dismiss()
             }
 
-            getCustomView().certPassInput.onTextChanged { inputText ->
+            val dialogBinding = DialogCertPassLayoutBinding.bind(getCustomView())
+            dialogBinding.certPassInput.onTextChanged { inputText ->
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PAC_INPUT_LENGTH)
                 if (inputText.length == PAC_INPUT_LENGTH) {
-                    val inputPass = this.getCustomView().certPassInput.text.toString()
-                        .toUpperCase(Locale.getDefault())
+                    val inputPass = dialogBinding.certPassInput.text.toString()
+                        .uppercase(Locale.getDefault())
                     callback(inputPass)
                     dismiss()
                 }
@@ -558,7 +560,9 @@ class SDCServerFragment : PreferenceFragmentCompat(),
 
     private fun createLoadingDialog(@StringRes stringId: Int = R.string.loading_please_wait): MaterialDialog =
         MaterialDialog(requireContext()).apply {
-            customView(R.layout.dialog_loading).loadingDialogText.text = getString(stringId)
+            customView(R.layout.dialog_loading)
+            val dialogBinding = DialogLoadingBinding.bind(getCustomView())
+            dialogBinding.loadingDialogText.text = getString(stringId)
 
             cancelable(false)  // calls setCancelable on the underlying dialog
             cancelOnTouchOutside(false)  // calls setCanceledOnTouchOutside on the underlying dialog

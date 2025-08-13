@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import kotlinx.android.synthetic.main.app_bar_main.*
+import online.taxcore.pos.databinding.InvoiceActivityBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.InvoiceManager
 import online.taxcore.pos.enums.InvoiceActivityType
@@ -15,6 +15,7 @@ import java.util.*
 
 class InvoiceActivity : BaseActivity() {
 
+    private lateinit var binding: InvoiceActivityBinding
     private val invoiceFragment by lazy { InvoiceFragment() }
 
     companion object {
@@ -37,7 +38,8 @@ class InvoiceActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.invoice_activity)
+        binding = InvoiceActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initToolbar()
 
@@ -62,14 +64,14 @@ class InvoiceActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.appBarMain.toolbar)
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        toolbar.setNavigationIcon(R.drawable.ic_exit)
+        binding.appBarMain.toolbar.setNavigationIcon(R.drawable.ic_exit)
     }
 
     private fun setDefaultFragment() {
@@ -77,9 +79,9 @@ class InvoiceActivity : BaseActivity() {
         val activityExtraType = intent.extras?.getString(ACTIVITY_EXTRA_TYPE) ?: "normal"
         val activityExtraValue = intent.extras?.getString(ACTIVITY_EXTRA_VALUE).orEmpty()
 
-        val fragmentType = InvoiceActivityType.valueOf(activityExtraType.toUpperCase(Locale.getDefault()))
+        val fragmentType = InvoiceActivityType.valueOf(activityExtraType.uppercase(Locale.getDefault()))
 
-        toolbar.title = when (fragmentType) {
+        binding.appBarMain.toolbar.title = when (fragmentType) {
             InvoiceActivityType.NORMAL -> getString(R.string.invoice_create_invoice)
             InvoiceActivityType.COPY -> getString(R.string.invoice_create_invoice_copy)
             InvoiceActivityType.REFUND -> getString(R.string.invoice_create_invoice_refund)

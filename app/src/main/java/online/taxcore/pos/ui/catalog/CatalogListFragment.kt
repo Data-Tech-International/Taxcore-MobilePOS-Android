@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import online.taxcore.pos.utils.onQueryChange
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.catalog_list_fragment.*
+import online.taxcore.pos.databinding.CatalogListFragmentBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.local.TaxesManager
@@ -19,6 +19,9 @@ import online.taxcore.pos.extensions.visible
 import online.taxcore.pos.utils.hideKeyboard
 
 class CatalogListFragment : Fragment() {
+
+    private var _binding: CatalogListFragmentBinding? = null
+    private val binding get() = _binding!!
 
     private var searchMenuItem: MenuItem? = null
     private var isFilterMode: Boolean = false
@@ -35,8 +38,9 @@ class CatalogListFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.catalog_list_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = CatalogListFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,6 +48,11 @@ class CatalogListFragment : Fragment() {
         initRecyclerView()
 
         setOnClickListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onResume() {
@@ -58,11 +67,11 @@ class CatalogListFragment : Fragment() {
     }
 
     private fun setOnClickListeners() {
-        filterFab.setOnClickListener {
+        binding.filterFab.setOnClickListener {
             replaceFragment(R.id.catalogDetailsFragment, CatalogFilterFragment())
         }
 
-        catalogTryAgainButton.setOnClickListener {
+        binding.catalogTryAgainButton.setOnClickListener {
             replaceFragment(R.id.catalogDetailsFragment, CatalogFilterFragment())
         }
     }
@@ -99,8 +108,8 @@ class CatalogListFragment : Fragment() {
             CatalogAdapter(it, appTaxLabels) { setCatalogData() }
         }
 
-        catalogRecyclerView.layoutManager = LinearLayoutManager(activity)
-        catalogRecyclerView.adapter = catalogAdapter
+        binding.catalogRecyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.catalogRecyclerView.adapter = catalogAdapter
     }
 
     private fun setCatalogData() {
@@ -115,10 +124,10 @@ class CatalogListFragment : Fragment() {
                 return@let
             }
 
-            filterFab.visible = empty.not() and isFilterMode
+            binding.filterFab.visible = empty.not() and isFilterMode
 
-            catalogNoResultsLayout.visible = empty
-            catalogRecyclerView.visible = empty.not()
+            binding.catalogNoResultsLayout.visible = empty
+            binding.catalogRecyclerView.visible = empty.not()
         }
     }
 

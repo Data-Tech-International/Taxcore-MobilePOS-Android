@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
-import kotlinx.android.synthetic.main.invoice_favorite_recycler_item.view.*
+import online.taxcore.pos.databinding.InvoiceFavoriteRecyclerItemBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.InvoiceManager
 import online.taxcore.pos.data.realm.Item
@@ -23,9 +23,10 @@ class FavoriteItemsAdapter(private val validTaxes: List<String>, private val onS
     override fun getItemCount() = favouritesList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteItemViewHolder {
-        val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.invoice_favorite_recycler_item, parent, false)
-        return FavoriteItemViewHolder(view)
+        val binding = InvoiceFavoriteRecyclerItemBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return FavoriteItemViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: FavoriteItemViewHolder, position: Int) {
@@ -34,7 +35,7 @@ class FavoriteItemsAdapter(private val validTaxes: List<String>, private val onS
 
         holder.bind(currentItem, validTaxes)
 
-        holder.itemView.favoriteCard.setOnClickListener { view ->
+        holder.binding.favoriteCard.setOnClickListener { view ->
 
             (view as MaterialCardView).toggle()
 
@@ -84,13 +85,13 @@ class FavoriteItemsAdapter(private val validTaxes: List<String>, private val onS
 
 }
 
-class FavoriteItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class FavoriteItemViewHolder(val binding: InvoiceFavoriteRecyclerItemBinding) : RecyclerView.ViewHolder(binding.root) {
     fun bind(item: Item, validTaxes: List<String>) {
 
-        itemView.favoriteItemTitle.text = item.name
-        itemView.favoriteItemUnitPrice.text = item.price.roundLocalized()
+        binding.favoriteItemTitle.text = item.name
+        binding.favoriteItemUnitPrice.text = item.price.roundLocalized()
 
-        itemView.favoriteCard.isChecked = item.isSelected
+        binding.favoriteCard.isChecked = item.isSelected
 
         try {
             val taxesSpans = item.tax.map {
@@ -101,7 +102,7 @@ class FavoriteItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 spannable
             }
 
-            val labelPrefix = itemView.context.getString(R.string.taxes)
+            val labelPrefix = binding.root.context.getString(R.string.taxes)
 
             val spannableString = SpannableStringBuilder()
             spannableString.append("$labelPrefix: ")
@@ -112,13 +113,13 @@ class FavoriteItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
             spannableString.delete(spannableString.length - 2, spannableString.length)
 
-            itemView.favoriteItemTaxLabels.text = spannableString
+            binding.favoriteItemTaxLabels.text = spannableString
         } catch (err: Error) {
-            itemView.favoriteItemTaxLabels.text = item.tax.joinToString(",") { it.code }
+            binding.favoriteItemTaxLabels.text = item.tax.joinToString(",") { it.code }
         }
 
         val itemEan = if (item.barcode.isNotEmpty()) item.barcode else "n/a"
-        itemView.favoriteItemBarcode.text = "EAN: $itemEan"
+        binding.favoriteItemBarcode.text = "EAN: $itemEan"
 
     }
 }

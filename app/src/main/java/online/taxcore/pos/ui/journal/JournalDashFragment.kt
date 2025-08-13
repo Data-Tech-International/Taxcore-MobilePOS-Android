@@ -33,7 +33,7 @@ import online.taxcore.pos.utils.longToast
 import online.taxcore.pos.utils.runOnUiThread
 import online.taxcore.pos.utils.toast
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.journal_dashboard_fragment.*
+import online.taxcore.pos.databinding.JournalDashboardFragmentBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.JournalManager
@@ -47,6 +47,9 @@ import java.io.*
 @Suppress("PrivatePropertyName")
 class JournalDashFragment : Fragment() {
 
+    private var _binding: JournalDashboardFragmentBinding? = null
+    private val binding get() = _binding!!
+
     // Request code for selecting a PDF document.
     private val IMPORT_JOURNAL_FILE = 10
     private val EXPORT_JOURNAL = 100
@@ -58,7 +61,10 @@ class JournalDashFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.journal_dashboard_fragment, container, false)
+    ): View {
+        _binding = JournalDashboardFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setClickListeners()
@@ -67,6 +73,11 @@ class JournalDashFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setDashboardButtons()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun setDashboardButtons() {
@@ -78,34 +89,34 @@ class JournalDashFragment : Fragment() {
         val configuredWithItemsColor =
             if (isAppConfigured and hasInvoiceItems) Color.TRANSPARENT else Color.parseColor("#90EEEEEE")
 
-        journalViewItemsButton.isEnabled = hasInvoiceItems and isAppConfigured
-        journalViewItemsButton.foreground = ColorDrawable(configuredWithItemsColor)
+        binding.journalViewItemsButton.isEnabled = hasInvoiceItems and isAppConfigured
+        binding.journalViewItemsButton.foreground = ColorDrawable(configuredWithItemsColor)
 
-        journalSearchItemsButton.isEnabled = hasInvoiceItems and isAppConfigured
-        journalSearchItemsButton.foreground = ColorDrawable(configuredWithItemsColor)
+        binding.journalSearchItemsButton.isEnabled = hasInvoiceItems and isAppConfigured
+        binding.journalSearchItemsButton.foreground = ColorDrawable(configuredWithItemsColor)
 
-        journalImportButton.isEnabled = isAppConfigured
-        journalImportButton.foreground = ColorDrawable(configuredColor)
+        binding.journalImportButton.isEnabled = isAppConfigured
+        binding.journalImportButton.foreground = ColorDrawable(configuredColor)
 
-        journalExportButton.isEnabled = hasInvoiceItems and isAppConfigured
-        journalExportButton.foreground = ColorDrawable(configuredWithItemsColor)
+        binding.journalExportButton.isEnabled = hasInvoiceItems and isAppConfigured
+        binding.journalExportButton.foreground = ColorDrawable(configuredWithItemsColor)
 
     }
 
     private fun setClickListeners() {
-        journalViewItemsButton.setOnClickListener {
+        binding.journalViewItemsButton.setOnClickListener {
             baseActivity()?.let { activity ->
                 JournalDetailsActivity.start(activity)
             }
         }
 
-        journalSearchItemsButton.setOnClickListener {
+        binding.journalSearchItemsButton.setOnClickListener {
             baseActivity()?.let {
                 JournalDetailsActivity.start(it, "JOURNAL_SEARCH")
             }
         }
 
-        journalExportButton.setOnClickListener {
+        binding.journalExportButton.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 startJournalExport()
             } else {
@@ -113,7 +124,7 @@ class JournalDashFragment : Fragment() {
             }
         }
 
-        journalImportButton.setOnClickListener {
+        binding.journalImportButton.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 openFile(ExportMimeType.JSON)
             } else {
