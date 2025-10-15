@@ -14,7 +14,6 @@ import io.realm.RealmConfiguration
 import online.taxcore.pos.di.DaggerAppComponent
 import javax.inject.Inject
 
-
 class TaxCoreApp : Application(), HasActivityInjector {
 
     @Inject
@@ -38,7 +37,7 @@ class TaxCoreApp : Application(), HasActivityInjector {
     private fun initRealm() {
         Realm.init(this)
         val config = RealmConfiguration.Builder()
-            .schemaVersion(1)
+            .schemaVersion(3)
             .allowQueriesOnUiThread(true)
             .allowWritesOnUiThread(true)
             .name("taxcore3.realm")

@@ -7,13 +7,11 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import online.taxcore.pos.utils.longToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.saveAll
-import okhttp3.internal.toImmutableList
 import online.taxcore.pos.data.realm.Journal
 import org.json.JSONException
 import java.io.*
@@ -26,7 +24,7 @@ object JsonFileManager {
 
             val invoicesList: List<Journal> =
                 gson.fromJson(buffered, object : TypeToken<List<Journal>>() {}.type)
-            val savedInvoices = Journal().queryAll().toImmutableList()
+            val savedInvoices = Journal().queryAll().toList()
 
             if (invoicesList.isNotEmpty() && invoicesList.first().type == "Journal" && invoicesList.first().id.isNotEmpty()) {
 
