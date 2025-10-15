@@ -1,17 +1,22 @@
 package online.taxcore.pos.ui.settings.cashiers
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import online.taxcore.pos.utils.onQueryChange
 import com.vicpin.krealmextensions.queryAll
-import online.taxcore.pos.databinding.CashiersListFragmentBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Cashier
+import online.taxcore.pos.databinding.CashiersListFragmentBinding
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.utils.hideKeyboard
+import online.taxcore.pos.utils.onQueryChange
 
 class CashiersListFragment : Fragment() {
 

@@ -4,22 +4,29 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.fragment.app.Fragment
-import online.taxcore.pos.utils.longToast
-import online.taxcore.pos.databinding.JournalFiltersFragmentBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.JournalManager
+import online.taxcore.pos.databinding.JournalFiltersFragmentBinding
 import online.taxcore.pos.enums.InvoiceType
 import online.taxcore.pos.enums.TransactionType
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.replaceFragment
 import online.taxcore.pos.utils.hideKeyboard
+import online.taxcore.pos.utils.longToast
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @SuppressLint("ValidFragment")
 class JournalFilterFragment : Fragment() {

@@ -1,13 +1,11 @@
 package online.taxcore.pos.ui.common
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import online.taxcore.pos.databinding.ItemCheckedTaxesBinding
-import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Taxes
 import online.taxcore.pos.data.realm.TaxesSettings
+import online.taxcore.pos.databinding.ItemCheckedTaxesBinding
 import online.taxcore.pos.extensions.roundLocalized
 
 class TaxesCheckedAdapter(private val checkedChangeListener: () -> Unit) : RecyclerView.Adapter<TaxesCheckedAdapter.TaxesCheckedViewHolder>() {

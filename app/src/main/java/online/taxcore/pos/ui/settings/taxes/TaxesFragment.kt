@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.AndroidSupportInjection
-import online.taxcore.pos.databinding.TaxesFragmentBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
 import online.taxcore.pos.data.local.TaxesManager
+import online.taxcore.pos.databinding.TaxesFragmentBinding
 import javax.inject.Inject
 
 class TaxesFragment : Fragment() {

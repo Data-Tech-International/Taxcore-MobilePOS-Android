@@ -15,8 +15,12 @@ import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.realm.Item
 import online.taxcore.pos.data.realm.Taxes
 import online.taxcore.pos.extensions.sizeInKb
-import java.io.*
-import java.util.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.FileReader
+import java.util.Locale
 
 object CatalogFileManager {
 

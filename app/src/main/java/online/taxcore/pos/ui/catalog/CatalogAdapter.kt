@@ -3,7 +3,6 @@ package online.taxcore.pos.ui.catalog
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -12,10 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.chip.Chip
 import com.vicpin.krealmextensions.delete
-import online.taxcore.pos.databinding.CatalogCardItemBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.realm.Item
+import online.taxcore.pos.databinding.CatalogCardItemBinding
 import online.taxcore.pos.extensions.fromHtml
 
 class CatalogAdapter(

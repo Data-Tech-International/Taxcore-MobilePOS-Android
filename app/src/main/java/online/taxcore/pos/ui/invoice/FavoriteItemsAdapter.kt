@@ -6,14 +6,13 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
-import online.taxcore.pos.databinding.InvoiceFavoriteRecyclerItemBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.InvoiceManager
 import online.taxcore.pos.data.realm.Item
+import online.taxcore.pos.databinding.InvoiceFavoriteRecyclerItemBinding
 import online.taxcore.pos.extensions.roundLocalized
 
 class FavoriteItemsAdapter(private val validTaxes: List<String>, private val onSelectItem: () -> Unit) : RecyclerView.Adapter<FavoriteItemViewHolder>() {

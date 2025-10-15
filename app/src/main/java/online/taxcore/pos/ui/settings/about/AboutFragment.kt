@@ -10,13 +10,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import dagger.android.support.AndroidSupportInjection
-import online.taxcore.pos.databinding.AboutFragmentBinding
 import online.taxcore.pos.BuildConfig
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
+import online.taxcore.pos.databinding.AboutFragmentBinding
 import online.taxcore.pos.utils.TCUtil
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 import javax.inject.Inject
 
 class AboutFragment : Fragment() {

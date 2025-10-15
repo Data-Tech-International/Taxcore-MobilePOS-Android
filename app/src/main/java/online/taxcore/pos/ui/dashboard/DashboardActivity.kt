@@ -30,11 +30,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import online.taxcore.pos.utils.longToast
-import online.taxcore.pos.databinding.DashboardActivityBinding
-import online.taxcore.pos.databinding.DialogLoadingBinding
-import online.taxcore.pos.databinding.DialogCertPassLayoutBinding
-import online.taxcore.pos.databinding.DialogPacLayoutBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -45,6 +40,10 @@ import online.taxcore.pos.data.realm.Cert
 import online.taxcore.pos.data.services.DownloadService
 import online.taxcore.pos.data.services.ErrorType
 import online.taxcore.pos.data.services.SdcService
+import online.taxcore.pos.databinding.DashboardActivityBinding
+import online.taxcore.pos.databinding.DialogCertPassLayoutBinding
+import online.taxcore.pos.databinding.DialogLoadingBinding
+import online.taxcore.pos.databinding.DialogPacLayoutBinding
 import online.taxcore.pos.enums.InvoiceActivityType
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.visible
@@ -57,8 +56,9 @@ import online.taxcore.pos.ui.settings.SettingsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity.Companion.FRAGMENT_SDC_CONFIGURE
 import online.taxcore.pos.utils.isOffline
-import java.io.*
-import java.util.*
+import online.taxcore.pos.utils.longToast
+import java.io.IOException
+import java.util.Locale
 import javax.inject.Inject
 
 class DashboardActivity : BaseActivity() {

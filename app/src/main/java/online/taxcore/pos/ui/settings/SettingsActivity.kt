@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import online.taxcore.pos.databinding.SecundaryActivityBinding
 import online.taxcore.pos.R
+import online.taxcore.pos.databinding.SecundaryActivityBinding
 import online.taxcore.pos.extensions.addFragment
 import online.taxcore.pos.ui.base.BaseActivity
 

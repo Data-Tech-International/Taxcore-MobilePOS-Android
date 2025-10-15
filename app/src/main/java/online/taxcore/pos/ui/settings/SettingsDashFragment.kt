@@ -12,10 +12,10 @@ import androidx.fragment.app.Fragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import dagger.android.support.AndroidSupportInjection
-import online.taxcore.pos.databinding.SettingsDashboardFragmentBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
+import online.taxcore.pos.databinding.SettingsDashboardFragmentBinding
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.ui.dashboard.DashboardActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity.Companion.FRAGMENT_ABOUT

@@ -29,20 +29,23 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
-import online.taxcore.pos.utils.longToast
-import online.taxcore.pos.utils.runOnUiThread
-import online.taxcore.pos.utils.toast
 import dagger.android.support.AndroidSupportInjection
-import online.taxcore.pos.databinding.JournalDashboardFragmentBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.JournalManager
+import online.taxcore.pos.databinding.JournalDashboardFragmentBinding
 import online.taxcore.pos.enums.ExportMimeType
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.helpers.StorageHelper
 import online.taxcore.pos.utils.JsonFileManager
-import java.io.*
+import online.taxcore.pos.utils.longToast
+import online.taxcore.pos.utils.runOnUiThread
+import online.taxcore.pos.utils.toast
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
 @Suppress("PrivatePropertyName")
 class JournalDashFragment : Fragment() {

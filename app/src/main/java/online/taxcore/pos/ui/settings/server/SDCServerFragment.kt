@@ -9,7 +9,10 @@ import android.text.InputType
 import android.util.Patterns
 import android.view.View
 import androidx.annotation.StringRes
-import androidx.preference.*
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreferenceCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
@@ -18,11 +21,7 @@ import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import online.taxcore.pos.utils.longToast
 import dagger.android.support.AndroidSupportInjection
-import online.taxcore.pos.databinding.DialogLoadingBinding
-import online.taxcore.pos.databinding.DialogCertPassLayoutBinding
-import online.taxcore.pos.databinding.DialogPacLayoutBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -33,13 +32,17 @@ import online.taxcore.pos.data.services.AppService
 import online.taxcore.pos.data.services.DownloadService
 import online.taxcore.pos.data.services.ErrorType
 import online.taxcore.pos.data.services.SdcService
+import online.taxcore.pos.databinding.DialogCertPassLayoutBinding
+import online.taxcore.pos.databinding.DialogLoadingBinding
+import online.taxcore.pos.databinding.DialogPacLayoutBinding
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.replaceFragment
 import online.taxcore.pos.helpers.AlertDialogHelper
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity
 import online.taxcore.pos.utils.isOffline
+import online.taxcore.pos.utils.longToast
 import java.io.IOException
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 class SDCServerFragment : PreferenceFragmentCompat(),

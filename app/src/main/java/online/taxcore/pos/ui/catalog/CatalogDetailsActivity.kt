@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import online.taxcore.pos.databinding.CatalogDetailsActivityBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.CatalogManager
+import online.taxcore.pos.databinding.CatalogDetailsActivityBinding
 import online.taxcore.pos.extensions.addFragment
 import online.taxcore.pos.ui.base.BaseActivity
 

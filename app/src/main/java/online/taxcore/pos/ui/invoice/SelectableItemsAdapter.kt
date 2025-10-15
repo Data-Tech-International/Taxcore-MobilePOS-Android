@@ -10,10 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
-import online.taxcore.pos.databinding.InvoiceSelectableRecyclerItemBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.InvoiceManager
 import online.taxcore.pos.data.realm.Item
+import online.taxcore.pos.databinding.InvoiceSelectableRecyclerItemBinding
 import online.taxcore.pos.extensions.roundLocalized
 
 class SelectableItemsAdapter(private val validTaxes: List<String>, private val onSelectItem: () -> Unit) : RecyclerView.Adapter<SelectableItemViewHolder>() {

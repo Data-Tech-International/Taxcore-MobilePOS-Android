@@ -2,7 +2,7 @@ package online.taxcore.pos.data.realm
 
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
-import java.util.*
+import java.util.UUID
 
 open class Cashier : RealmObject() {
     @PrimaryKey

@@ -37,24 +37,27 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
-import online.taxcore.pos.utils.longToast
-import online.taxcore.pos.utils.runOnUiThread
-import online.taxcore.pos.utils.toast
 import dagger.android.support.AndroidSupportInjection
-import online.taxcore.pos.databinding.CatalogDashboardFragmentBinding
-import online.taxcore.pos.databinding.DialogLoadingBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
 import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.realm.Item
+import online.taxcore.pos.databinding.CatalogDashboardFragmentBinding
+import online.taxcore.pos.databinding.DialogLoadingBinding
 import online.taxcore.pos.enums.ExportMimeType
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.helpers.StorageHelper
 import online.taxcore.pos.utils.CatalogFileManager
-import java.io.*
-import java.util.*
+import online.taxcore.pos.utils.longToast
+import online.taxcore.pos.utils.runOnUiThread
+import online.taxcore.pos.utils.toast
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.Locale
 import javax.inject.Inject
 
 class CatalogDashFragment : Fragment() {

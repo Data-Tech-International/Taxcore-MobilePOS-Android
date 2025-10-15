@@ -11,14 +11,13 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 import com.vicpin.krealmextensions.count
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
-import online.taxcore.pos.databinding.CashiersFragmentBinding
-import online.taxcore.pos.databinding.DialogAddCashierBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Cashier
+import online.taxcore.pos.databinding.CashiersFragmentBinding
+import online.taxcore.pos.databinding.DialogAddCashierBinding
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.replaceFragment
 import online.taxcore.pos.extensions.visible

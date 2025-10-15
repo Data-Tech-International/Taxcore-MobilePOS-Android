@@ -2,18 +2,16 @@ package online.taxcore.pos.ui.journal
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import online.taxcore.pos.databinding.JournalCardItemBinding
-import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Journal
+import online.taxcore.pos.databinding.JournalCardItemBinding
 import online.taxcore.pos.enums.InvoiceActivityType
 import online.taxcore.pos.extensions.roundToDecimalPlaces
 import online.taxcore.pos.helpers.EventBusHelper
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 class JournalAdapter : RecyclerView.Adapter<JournalAdapter.JournalViewHolder>() {
 

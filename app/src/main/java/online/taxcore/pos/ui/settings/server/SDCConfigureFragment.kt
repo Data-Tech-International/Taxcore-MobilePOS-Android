@@ -12,21 +12,20 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
-import online.taxcore.pos.utils.longToast
 import dagger.android.support.AndroidSupportInjection
-import online.taxcore.pos.databinding.BaseDetailsActivityBinding
-import online.taxcore.pos.databinding.DialogLoadingBinding
-import online.taxcore.pos.databinding.DropdownItemBinding
-import online.taxcore.pos.databinding.SdcConfigureFragmentBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
 import online.taxcore.pos.data.services.SdcService
+import online.taxcore.pos.databinding.DialogLoadingBinding
+import online.taxcore.pos.databinding.DropdownItemBinding
+import online.taxcore.pos.databinding.SdcConfigureFragmentBinding
 import online.taxcore.pos.extensions.checkRequiredFields
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity
 import online.taxcore.pos.utils.IPAddressFilter
 import online.taxcore.pos.utils.IPAddressFilterInterface
-import java.util.*
+import online.taxcore.pos.utils.longToast
+import java.util.Locale
 import javax.inject.Inject
 
 class SDCConfigureFragment : Fragment(R.layout.sdc_configure_fragment), IPAddressFilterInterface {

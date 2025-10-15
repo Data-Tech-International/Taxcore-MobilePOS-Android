@@ -2,7 +2,6 @@ package online.taxcore.pos.ui.settings.cashiers
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -12,17 +11,16 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 import com.google.android.material.card.MaterialCardView
 import com.vicpin.krealmextensions.createOrUpdate
 import com.vicpin.krealmextensions.delete
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryFirst
 import io.realm.Case
-import online.taxcore.pos.databinding.CashiersRecyclerItemBinding
-import online.taxcore.pos.databinding.DialogAddCashierBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Cashier
+import online.taxcore.pos.databinding.CashiersRecyclerItemBinding
+import online.taxcore.pos.databinding.DialogAddCashierBinding
 import online.taxcore.pos.extensions.onTextChanged
 
 class CashiersAdapter : RecyclerView.Adapter<CashierViewHolder>() {

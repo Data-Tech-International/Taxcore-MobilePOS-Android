@@ -1,12 +1,10 @@
 package online.taxcore.pos.ui.settings.taxes
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import online.taxcore.pos.databinding.TaxesListItemBinding
-import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.TaxesSettings
+import online.taxcore.pos.databinding.TaxesListItemBinding
 import online.taxcore.pos.extensions.roundLocalized
 
 class TaxesAdapter() : RecyclerView.Adapter<TaxesAdapter.TaxesViewHolder>() {

@@ -13,16 +13,15 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import online.taxcore.pos.utils.longToast
 import com.vicpin.krealmextensions.queryAndUpdate
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
-import online.taxcore.pos.databinding.ItemDetailsActivityBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
 import online.taxcore.pos.data.local.TaxesManager
 import online.taxcore.pos.data.realm.Item
 import online.taxcore.pos.data.realm.TaxesSettings
+import online.taxcore.pos.databinding.ItemDetailsActivityBinding
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.roundTo2DecimalPlaces
 import online.taxcore.pos.extensions.roundToDecimal
@@ -33,6 +32,7 @@ import online.taxcore.pos.ui.common.TaxesCheckedAdapter
 import online.taxcore.pos.ui.invoice.InvoiceFragment
 import online.taxcore.pos.ui.invoice.InvoiceFragment.Companion.BARCODE_EAN_EXTRA
 import online.taxcore.pos.utils.hideKeyboard
+import online.taxcore.pos.utils.longToast
 import javax.inject.Inject
 
 class ItemDetailActivity : BaseActivity() {

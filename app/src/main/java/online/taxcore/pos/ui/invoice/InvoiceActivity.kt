@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import online.taxcore.pos.databinding.InvoiceActivityBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.InvoiceManager
+import online.taxcore.pos.databinding.InvoiceActivityBinding
 import online.taxcore.pos.enums.InvoiceActivityType
 import online.taxcore.pos.extensions.addFragment
 import online.taxcore.pos.ui.base.BaseActivity
-import java.util.*
+import java.util.Locale
 
 class InvoiceActivity : BaseActivity() {
 

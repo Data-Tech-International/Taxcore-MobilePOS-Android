@@ -1,14 +1,19 @@
 package online.taxcore.pos.ui.catalog
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vicpin.krealmextensions.queryAll
-import online.taxcore.pos.databinding.CatalogFiltersFragmentBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.realm.TaxesSettings
+import online.taxcore.pos.databinding.CatalogFiltersFragmentBinding
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.replaceFragment

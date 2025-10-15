@@ -6,7 +6,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.os.LocaleList
-import java.util.*
+import java.util.Locale
 
 class CtxUtils(base: Context) : ContextWrapper(base) {
 

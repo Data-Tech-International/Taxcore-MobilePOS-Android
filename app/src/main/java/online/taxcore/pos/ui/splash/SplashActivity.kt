@@ -6,8 +6,6 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
-import online.taxcore.pos.utils.longToast
-import online.taxcore.pos.databinding.SplashActivityBinding
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -18,11 +16,13 @@ import online.taxcore.pos.data.local.CertManager
 import online.taxcore.pos.data.local.TaxesManager
 import online.taxcore.pos.data.models.StatusResponse
 import online.taxcore.pos.data.services.AppService
+import online.taxcore.pos.databinding.SplashActivityBinding
 import online.taxcore.pos.helpers.AlertDialogHelper
 import online.taxcore.pos.ui.base.BaseActivity
 import online.taxcore.pos.ui.dashboard.DashboardActivity
 import online.taxcore.pos.utils.TCUtil
 import online.taxcore.pos.utils.isOffline
+import online.taxcore.pos.utils.longToast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

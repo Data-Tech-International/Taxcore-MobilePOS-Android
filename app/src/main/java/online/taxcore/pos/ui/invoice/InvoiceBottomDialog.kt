@@ -1,6 +1,5 @@
 package online.taxcore.pos.ui.invoice
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import online.taxcore.pos.databinding.BottomFragmentInvoiceTypeBinding
 import online.taxcore.pos.databinding.BottomFragmentPaymentBinding
 import online.taxcore.pos.databinding.BottomFragmentTransactionTypeBinding
-import online.taxcore.pos.R
 import online.taxcore.pos.enums.InvoiceOption
 import online.taxcore.pos.enums.InvoiceType
 import online.taxcore.pos.enums.PaymentType

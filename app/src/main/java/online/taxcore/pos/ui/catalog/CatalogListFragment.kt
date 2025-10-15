@@ -2,21 +2,26 @@ package online.taxcore.pos.ui.catalog
 
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import online.taxcore.pos.utils.onQueryChange
 import dagger.android.support.AndroidSupportInjection
-import online.taxcore.pos.databinding.CatalogListFragmentBinding
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.local.TaxesManager
 import online.taxcore.pos.data.realm.Item
+import online.taxcore.pos.databinding.CatalogListFragmentBinding
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.extensions.replaceFragment
 import online.taxcore.pos.extensions.visible
 import online.taxcore.pos.utils.hideKeyboard
+import online.taxcore.pos.utils.onQueryChange
 
 class CatalogListFragment : Fragment() {
 

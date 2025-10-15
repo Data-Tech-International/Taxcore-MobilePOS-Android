@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import online.taxcore.pos.databinding.BaseDetailsActivityBinding
 import online.taxcore.pos.R
+import online.taxcore.pos.databinding.BaseDetailsActivityBinding
 import online.taxcore.pos.extensions.addFragment
 import online.taxcore.pos.ui.base.BaseActivity
 import online.taxcore.pos.ui.settings.about.AboutFragment

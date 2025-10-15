@@ -1,5 +1,6 @@
 package online.taxcore.pos.ui.invoice
 
+// import online.taxcore.pos.utils.CreatePdf // TODO: Migrate to iText7
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -24,14 +25,13 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
-import online.taxcore.pos.utils.toast
-import online.taxcore.pos.databinding.InvoicePreviewDialogBinding
 import online.taxcore.pos.BuildConfig
 import online.taxcore.pos.R
 import online.taxcore.pos.constants.PrefConstants
+import online.taxcore.pos.databinding.InvoicePreviewDialogBinding
 import online.taxcore.pos.enums.ExportMimeType
 import online.taxcore.pos.ui.base.BaseActivity
-// import online.taxcore.pos.utils.CreatePdf // TODO: Migrate to iText7
+import online.taxcore.pos.utils.toast
 import java.io.File
 
 class FiscalInvoiceFragment : DialogFragment() {
