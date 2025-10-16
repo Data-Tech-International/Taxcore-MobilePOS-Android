@@ -30,6 +30,15 @@ Before you can start using the TaxCore mobile POS app, make sure you have met se
 
 For detailed instructions on how to install and use TaxCore mobile POS, see [official user manual](https://github.com/Data-Tech-International/Taxcore-MobilePOS-Android/wiki)
 
+## Technology Stack
+
+-   **Language**: Kotlin 2.1.0
+-   **Min SDK**: Android 7.0 (API 24)
+-   **Target SDK**: Android 36
+-   **Architecture**: MVP with Dagger 2 dependency injection
+-   **Database**: Realm 10.19.0
+-   **Networking**: Retrofit 2.9.0
+
 # Contributing
 
 The main purpose of this repository is to continue evolving TaxCore mobile POS, making it better and easier to use. Development of TaxCore mobile POS happens in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. Read below to learn how you can take part in improving this app.
@@ -37,7 +46,25 @@ The main purpose of this repository is to continue evolving TaxCore mobile POS, 
 ## Contributing Prerequisites
 
 -   Android Studio
--   Android SDK
+-   Android SDK 36
+-   Gradle 8.13
+-   JDK 17
+
+## Building the Project
+
+```bash
+# Clone the repository
+git clone https://github.com/Data-Tech-International/Taxcore-MobilePOS-Android.git
+
+# Build debug variant
+./gradlew assembleDebug
+
+# Run tests
+./gradlew test
+
+# Clean build
+./gradlew clean
+```
 
 ## How to contribute
 
@@ -54,6 +81,6 @@ If you are looking to make your first contribution, follow the steps below.
 
 And last but not least: Always write your commit messages in the present tense. Your commit message should describe what the commit, when applied, does to the code – not what you did to the code.
 
-### License
+## License
 
-React is [MIT licensed](./LICENSE).
+TaxCore mobile POS is [MIT licensed](./LICENSE).

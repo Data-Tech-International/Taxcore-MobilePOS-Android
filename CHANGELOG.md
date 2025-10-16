@@ -13,6 +13,23 @@ All notable changes to this project will be documented in this file.
 
 - **TBD** Configuration response error handling
 
+## [3.5.0] - 2025-10-16
+
+### Added
+
+- Support for Android 14+ (API 36)
+- View Binding support for all activities and fragments
+
+### Changed
+
+- Enhanced file management utilities for Android scoped storage
+- Improved PDF creation utilities
+- Updated dependencies to latest versions
+- Migrated from Kotlin synthetic extensions to View Binding
+- Updated Gradle to version 8.13
+- Updated Kotlin to version 2.1.0
+- Optimized imports across the project
+
 ## [3.4.0] - 2024-07-22
 
 ### Added
