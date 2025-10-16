@@ -7,14 +7,20 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.pawegio.kandroid.longToast
-import com.pawegio.kandroid.runAsync
 import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.saveAll
-import okhttp3.internal.toImmutableList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import online.taxcore.pos.data.realm.Journal
 import org.json.JSONException
-import java.io.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.FileReader
+import java.io.OutputStreamWriter
 
 object JsonFileManager {
     fun importJournals(activity: Activity?, sourceFile: File): List<Journal> {
@@ -24,7 +30,7 @@ object JsonFileManager {
 
             val invoicesList: List<Journal> =
                 gson.fromJson(buffered, object : TypeToken<List<Journal>>() {}.type)
-            val savedInvoices = Journal().queryAll().toImmutableList()
+            val savedInvoices = Journal().queryAll().toList()
 
             if (invoicesList.isNotEmpty() && invoicesList.first().type == "Journal" && invoicesList.first().id.isNotEmpty()) {
 
@@ -45,7 +51,6 @@ object JsonFileManager {
             FirebaseCrashlytics.getInstance().recordException(e)
         } catch (e: FileNotFoundException) {
             Log.wtf("ERROR", e)
-            activity?.longToast("File not found")
             FirebaseCrashlytics.getInstance().recordException(e)
         } catch (e: IllegalStateException) {
             Log.wtf("ERROR", e)
@@ -70,7 +75,7 @@ object JsonFileManager {
         onSuccess: (Boolean) -> Unit,
         onError: (String) -> Unit
     ) {
-        runAsync {
+        GlobalScope.launch(Dispatchers.IO) {
             var outStream: FileOutputStream? = null
             try {
                 val outputFile = File(destinationFilePath)

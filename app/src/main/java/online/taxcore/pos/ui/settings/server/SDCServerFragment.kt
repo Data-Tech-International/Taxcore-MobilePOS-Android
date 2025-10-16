@@ -9,7 +9,10 @@ import android.text.InputType
 import android.util.Patterns
 import android.view.View
 import androidx.annotation.StringRes
-import androidx.preference.*
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreferenceCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
@@ -18,13 +21,7 @@ import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import com.pawegio.kandroid.longToast
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.base_details_activity.*
-import kotlinx.android.synthetic.main.dialog_cert_pass_layout.view.*
-import kotlinx.android.synthetic.main.dialog_loading.*
-import kotlinx.android.synthetic.main.dialog_loading.view.*
-import kotlinx.android.synthetic.main.dialog_pac_layout.view.*
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -35,13 +32,17 @@ import online.taxcore.pos.data.services.AppService
 import online.taxcore.pos.data.services.DownloadService
 import online.taxcore.pos.data.services.ErrorType
 import online.taxcore.pos.data.services.SdcService
+import online.taxcore.pos.databinding.DialogCertPassLayoutBinding
+import online.taxcore.pos.databinding.DialogLoadingBinding
+import online.taxcore.pos.databinding.DialogPacLayoutBinding
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.replaceFragment
 import online.taxcore.pos.helpers.AlertDialogHelper
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity
 import online.taxcore.pos.utils.isOffline
+import online.taxcore.pos.utils.longToast
 import java.io.IOException
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 class SDCServerFragment : PreferenceFragmentCompat(),
@@ -66,7 +67,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
 
     override fun onResume() {
         super.onResume()
-        (activity as SettingsDetailsActivity).baseToolbar.title =
+        (activity as SettingsDetailsActivity).binding.baseToolbar.title =
             getString(R.string.add_v_cdc_server)
     }
 
@@ -216,6 +217,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                 esdcUidPref.isEnabled = true
                 vsdcBaseUrl.shouldDisableView = true
             }
+
             else -> {
                 esdcUidPref.isEnabled = false
                 esdcBaseUrlPref.isEnabled = false
@@ -277,9 +279,11 @@ class SDCServerFragment : PreferenceFragmentCompat(),
 
                 replaceFragment(R.id.baseFragment, SDCConfigureFragment(), true)
             }
+
             esdcEnabled and esdcConfigured -> {
                 fetchEsdcConfiguration()
             }
+
             else -> {
                 AppService.resetConfiguration {
                     prefService.removeConfiguration()
@@ -292,7 +296,8 @@ class SDCServerFragment : PreferenceFragmentCompat(),
         val configDialog = createLoadingDialog(R.string.text_loading_settings)
         val endpoint = prefService.loadEsdcEndpoint()
 
-        SdcService.fetchEsdcConfiguration(endpoint,
+        SdcService.fetchEsdcConfiguration(
+            endpoint,
             onStart = {
                 configDialog.show()
             },
@@ -306,7 +311,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                 activity?.onBackPressed()
             },
             onError = {
-                longToast(getMessageForStatus(it))
+                longToast(getString(getMessageForStatus(it)))
             },
             onEnd = {
                 configDialog.dismiss()
@@ -316,7 +321,8 @@ class SDCServerFragment : PreferenceFragmentCompat(),
     private fun fetchConfig(pac: String, clientAuthority: ClientAuthority, certName: String) {
         val configDialog = createLoadingDialog()
 
-        SdcService.fetchVsdcConfiguration(clientAuthority, pac,
+        SdcService.fetchVsdcConfiguration(
+            clientAuthority, pac,
             onStart = {
                 configDialog.show()
             },
@@ -334,16 +340,16 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                     vsdcBaseUrl.summary = prefService.loadVsdcEndpoint()
                     refreshPrefFields()
 
-                    longToast(R.string.toast_configuration_changed)
+                    longToast(getString(R.string.toast_configuration_changed))
 
                 } catch (e: IllegalArgumentException) {
                     resetAppSettings(false)
-                    longToast(R.string.error_general)
+                    longToast(getString(R.string.error_general))
                 }
 
             },
             onError = {
-                longToast(R.string.error_provide_valid_pac)
+                longToast(getString(R.string.error_provide_valid_pac))
             },
             onEnd = {
                 configDialog.cancel()
@@ -402,7 +408,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
 
                         fetchConfig(pacInput, clientAuthority, cert.name)
                     } catch (ex: IOException) {
-                        longToast(R.string.error_wrong_pass_or_file)
+                        longToast(getString(R.string.error_wrong_pass_or_file))
                     }
                 }
             }
@@ -457,15 +463,15 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                 configDialog.show()
             },
             onSuccess = { pfx, p12File ->
-                configDialog.getCustomView().loadingDialogText.text =
-                    getString(R.string.msg_file_downloaded)
+                val dialogBinding = DialogLoadingBinding.bind(configDialog.getCustomView())
+                dialogBinding.loadingDialogText.text = getString(R.string.msg_file_downloaded)
                 showCertPassInputDialog(pfx, p12File)
             },
             onError = { errorType, _ ->
                 when (errorType) {
-                    ErrorType.INVALID_OR_USED_LINK -> longToast(R.string.msg_nothing_to_download)
-                    ErrorType.NO_CERT_FILE_FOUND -> longToast(R.string.error_no_cert_files_found)
-                    else -> longToast(R.string.msg_failed_try_again)
+                    ErrorType.INVALID_OR_USED_LINK -> longToast(getString(R.string.msg_nothing_to_download))
+                    ErrorType.NO_CERT_FILE_FOUND -> longToast(getString(R.string.error_no_cert_files_found))
+                    else -> longToast(getString(R.string.msg_failed_try_again))
                 }
             },
             onEnd = {
@@ -488,7 +494,7 @@ class SDCServerFragment : PreferenceFragmentCompat(),
                     fetchConfig(pacInput, clientAuthority, certName)
                 }
             } catch (e: IOException) {
-                longToast(R.string.error_wrong_pass_or_file)
+                longToast(getString(R.string.error_wrong_pass_or_file))
             }
         }
     }
@@ -505,17 +511,19 @@ class SDCServerFragment : PreferenceFragmentCompat(),
             @Suppress("DEPRECATION")
             neutralButton(R.string.paste_and_continue) {
                 val clipboardText = getClipboardText()
-                getCustomView().pacInputView.setText(clipboardText)
+                val dialogBinding = DialogPacLayoutBinding.bind(getCustomView())
+                dialogBinding.pacInputView.setText(clipboardText)
             }
 
             negativeButton(R.string.cancel) {
                 dismiss()
             }
 
-            getCustomView().pacInputView.onTextChanged { inputText ->
+            val dialogBinding = DialogPacLayoutBinding.bind(getCustomView())
+            dialogBinding.pacInputView.onTextChanged { inputText ->
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PAC_INPUT_LENGTH)
                 if (inputText.length == PAC_INPUT_LENGTH) {
-                    val inputPac = this.getCustomView().pacInputView.text.toString()
+                    val inputPac = dialogBinding.pacInputView.text.toString()
                         .uppercase(Locale.getDefault())
                     callback(inputPac)
                     dismiss()
@@ -535,17 +543,19 @@ class SDCServerFragment : PreferenceFragmentCompat(),
             setActionButtonEnabled(WhichButton.NEUTRAL, getClipboardText().isNotEmpty())
             positiveButton(R.string.paste_and_continue) {
                 val clipboardText = getClipboardText()
-                getCustomView().certPassInput.setText(clipboardText)
+                val dialogBinding = DialogCertPassLayoutBinding.bind(getCustomView())
+                dialogBinding.certPassInput.setText(clipboardText)
             }
 
             negativeButton(R.string.cancel) {
                 dismiss()
             }
 
-            getCustomView().certPassInput.onTextChanged { inputText ->
+            val dialogBinding = DialogCertPassLayoutBinding.bind(getCustomView())
+            dialogBinding.certPassInput.onTextChanged { inputText ->
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PAC_INPUT_LENGTH)
                 if (inputText.length == PAC_INPUT_LENGTH) {
-                    val inputPass = this.getCustomView().certPassInput.text.toString()
+                    val inputPass = dialogBinding.certPassInput.text.toString()
                         .uppercase(Locale.getDefault())
                     callback(inputPass)
                     dismiss()
@@ -565,7 +575,9 @@ class SDCServerFragment : PreferenceFragmentCompat(),
 
     private fun createLoadingDialog(@StringRes stringId: Int = R.string.loading_please_wait): MaterialDialog =
         MaterialDialog(requireContext()).apply {
-            customView(R.layout.dialog_loading).loadingDialogText.text = getString(stringId)
+            customView(R.layout.dialog_loading)
+            val dialogBinding = DialogLoadingBinding.bind(getCustomView())
+            dialogBinding.loadingDialogText.text = getString(stringId)
 
             cancelable(false)  // calls setCancelable on the underlying dialog
             cancelOnTouchOutside(false)  // calls setCanceledOnTouchOutside on the underlying dialog

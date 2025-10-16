@@ -8,13 +8,19 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import com.pawegio.kandroid.runAsync
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.realm.Item
 import online.taxcore.pos.data.realm.Taxes
 import online.taxcore.pos.extensions.sizeInKb
-import java.io.*
-import java.util.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.FileReader
+import java.util.Locale
 
 object CatalogFileManager {
 
@@ -33,7 +39,7 @@ object CatalogFileManager {
         onSuccess: (List<Item>) -> Unit,
         onError: (String) -> Unit
     ) {
-        runAsync {
+        GlobalScope.launch(Dispatchers.IO) {
             try {
                 val catalogList: ArrayList<Item> = arrayListOf()
                 val buffered = BufferedReader(FileReader(sourceFile))
@@ -109,6 +115,7 @@ object CatalogFileManager {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
                 onError("Wrong data type.")
+            } catch (e: java.lang.IndexOutOfBoundsException) {
             } catch (e: IndexOutOfBoundsException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
@@ -132,7 +139,7 @@ object CatalogFileManager {
         onSuccess: (Boolean) -> Unit,
         onError: (String) -> Unit
     ) {
-        runAsync {
+        GlobalScope.launch(Dispatchers.IO) {
             var outStream: FileOutputStream? = null
             try {
                 val outputFile = File(csvFilePath)
@@ -149,7 +156,7 @@ object CatalogFileManager {
 
                 if (outputFile.sizeInKb > availableSize) {
                     onError("Not enough space to export catalog.")
-                    return@runAsync
+                    return@launch
                 }
 
                 onSuccess(true)
@@ -157,6 +164,7 @@ object CatalogFileManager {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
                 onError("Unable to export catalog. File not found.")
+            } catch (e: RuntimeException) {
             } catch (e: Exception) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
@@ -189,7 +197,7 @@ object CatalogFileManager {
                 .append(taxes)
                 .append(CSV_DATA_DELIMITER)
                 .append(
-                    item.isFavorite.toString().toUpperCase(Locale.ROOT)
+                    item.isFavorite.toString().uppercase(Locale.ROOT)
                 )
             output.appendLine(rowItem)
         }
@@ -203,13 +211,50 @@ object CatalogFileManager {
         return GsonBuilder().setPrettyPrinting().create().toJson(catalogItems)
     }
 
+    fun exportJsonCatalog(
+        context: Context?,
+        destinationFilePath: String,
+        items: MutableList<Item>,
+        onSuccess: (Boolean) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val outputFile = File(destinationFilePath)
+                val json = generateJsonFileContent(items)
+
+                outputFile.writeText(json, Charsets.UTF_8)
+
+                val availableSize = FileUtils.getAvailableSpaceInKB()
+
+                if (outputFile.sizeInKb > availableSize) {
+                    onError("Not enough space to export catalog.")
+                    return@launch
+                }
+
+                onSuccess(true)
+            } catch (e: FileNotFoundException) {
+                Log.wtf("ERROR", e)
+                FirebaseCrashlytics.getInstance().recordException(e)
+                onError("Unable to export catalog. File not found.")
+            } catch (e: RuntimeException) {
+                Log.wtf("ERROR", e)
+                FirebaseCrashlytics.getInstance().recordException(e)
+
+                onError("Unable to export catalog.")
+            } finally {
+                FileUtils.trimCache(context)
+            }
+        }
+    }
+
     fun importJsonCatalog(
         sourceFile: File,
         context: Context?,
         onSuccess: (List<Item>) -> Unit,
         onError: (String) -> Unit
     ) {
-        runAsync {
+        GlobalScope.launch(Dispatchers.IO) {
             try {
                 val buffered = BufferedReader(FileReader(sourceFile))
                 val catalogList = Gson().fromJson<List<Item>>(
@@ -226,6 +271,8 @@ object CatalogFileManager {
             } catch (e: FileNotFoundException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
+            } catch (e: IllegalStateException) {
+                Log.wtf("ERROR", e)
                 onError("Unable to complete operation")
             } catch (e: JsonSyntaxException) {
                 Log.wtf("ERROR", e)

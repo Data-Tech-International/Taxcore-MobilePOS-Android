@@ -2,12 +2,10 @@ package online.taxcore.pos.ui.settings.taxes
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.taxes_list_item.view.*
-import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.TaxesSettings
+import online.taxcore.pos.databinding.TaxesListItemBinding
 import online.taxcore.pos.extensions.roundLocalized
 
 @SuppressLint("NotifyDataSetChanged")
@@ -16,9 +14,12 @@ class TaxesAdapter : RecyclerView.Adapter<TaxesAdapter.TaxesViewHolder>() {
     private var taxesList = ArrayList<TaxesSettings>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaxesViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.taxes_list_item, parent, false)
-        return TaxesViewHolder(view)
+        val binding = TaxesListItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return TaxesViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: TaxesViewHolder, position: Int) {
@@ -33,9 +34,9 @@ class TaxesAdapter : RecyclerView.Adapter<TaxesAdapter.TaxesViewHolder>() {
         notifyDataSetChanged()
     }
 
-    inner class TaxesViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class TaxesViewHolder(private val binding: TaxesListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: TaxesSettings) {
-            itemView.taxItemNameLabel.text = item.name
+            binding.taxItemNameLabel.text = item.name
 
             val labelText = if (item.value == "%") {
                 "${item.rate.roundLocalized(1)} ${item.value}"
@@ -43,8 +44,8 @@ class TaxesAdapter : RecyclerView.Adapter<TaxesAdapter.TaxesViewHolder>() {
                 "${item.value} ${item.rate.roundLocalized(1)}"
             }
 
-            itemView.taxLabelChip.text = item.code
-            itemView.taxItemRateLabel.text = labelText
+            binding.taxLabelChip.text = item.code
+            binding.taxItemRateLabel.text = labelText
         }
     }
 }

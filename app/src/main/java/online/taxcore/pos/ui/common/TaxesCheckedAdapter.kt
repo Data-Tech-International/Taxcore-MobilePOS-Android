@@ -2,13 +2,11 @@ package online.taxcore.pos.ui.common
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_checked_taxes.view.*
-import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Taxes
 import online.taxcore.pos.data.realm.TaxesSettings
+import online.taxcore.pos.databinding.ItemCheckedTaxesBinding
 import online.taxcore.pos.extensions.roundLocalized
 
 @SuppressLint("NotifyDataSetChanged")
@@ -18,10 +16,13 @@ class TaxesCheckedAdapter(private val checkedChangeListener: () -> Unit) :
     private var taxesList: MutableList<TaxesSettings> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaxesCheckedViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_checked_taxes, parent, false)
+        val binding = ItemCheckedTaxesBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
 
-        return TaxesCheckedViewHolder(view)
+        return TaxesCheckedViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: TaxesCheckedViewHolder, position: Int) {
@@ -37,17 +38,17 @@ class TaxesCheckedAdapter(private val checkedChangeListener: () -> Unit) :
     }
 
     fun getAppliedTaxes(): List<Taxes> = taxesList
-        .filter { it.isChecked }
-        .map {
-            val appliedTaxLabel = Taxes()
-            appliedTaxLabel.code = it.code
-            appliedTaxLabel.name = it.name
-            appliedTaxLabel.rate = it.rate
-            appliedTaxLabel.value = it.value
-            appliedTaxLabel
-        }
+            .filter { it.isChecked }
+            .map {
+                val appliedTaxLabel = Taxes()
+                appliedTaxLabel.code = it.code
+                appliedTaxLabel.name = it.name
+                appliedTaxLabel.rate = it.rate
+                appliedTaxLabel.value = it.value
+                appliedTaxLabel
+            }
 
-    class TaxesCheckedViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class TaxesCheckedViewHolder(private val binding: ItemCheckedTaxesBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: TaxesSettings, checkedChangeListener: () -> Unit) {
 
@@ -57,11 +58,11 @@ class TaxesCheckedAdapter(private val checkedChangeListener: () -> Unit) :
                 "${item.value} ${item.rate.roundLocalized(1)}"
             }
 
-            itemView.item_taxes_checked_title_label.text = "${item.name} (${taxRate})"
-            itemView.item_taxes_checked_title.text = item.code
-            itemView.item_taxes_checked.isChecked = item.isChecked
+            binding.itemTaxesCheckedTitleLabel.text = "${item.name} (${taxRate})"
+            binding.itemTaxesCheckedTitle.text = item.code
+            binding.itemTaxesChecked.isChecked = item.isChecked
 
-            itemView.item_taxes_checked.setOnCheckedChangeListener { _, _ ->
+            binding.itemTaxesChecked.setOnCheckedChangeListener { _, _ ->
                 item.isChecked = !item.isChecked
                 checkedChangeListener()
             }

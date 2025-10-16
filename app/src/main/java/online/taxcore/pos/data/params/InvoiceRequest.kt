@@ -3,7 +3,6 @@ package online.taxcore.pos.data.params
 import online.taxcore.pos.data.models.Item
 
 class InvoiceRequest {
-    var dateAndTimeOfIssue: String? = null
     var cashier: String? = null
     var buyerId: String? = null
     var buyerCostCenterId: String? = null

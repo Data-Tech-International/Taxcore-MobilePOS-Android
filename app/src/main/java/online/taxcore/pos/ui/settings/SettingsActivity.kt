@@ -4,13 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import kotlinx.android.synthetic.main.secundary_activity.*
 import online.taxcore.pos.R
+import online.taxcore.pos.databinding.SecundaryActivityBinding
 import online.taxcore.pos.extensions.addFragment
 import online.taxcore.pos.ui.base.BaseActivity
 
 class SettingsActivity : BaseActivity() {
 
+    private lateinit var binding: SecundaryActivityBinding
     private val settingsDashFragment by lazy { SettingsDashFragment() }
 
     companion object {
@@ -24,7 +25,8 @@ class SettingsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.secundary_activity)
+        binding = SecundaryActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initToolbar()
 
@@ -32,7 +34,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(fragmentToolbar)
+        setSupportActionBar(binding.fragmentToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -40,7 +42,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun setActiveFragment() {
-        fragmentToolbar.title = getString(R.string.title_settings)
+        binding.fragmentToolbar.title = getString(R.string.title_settings)
         addFragment(settingsDashFragment, R.id.activityFragment)
     }
 }

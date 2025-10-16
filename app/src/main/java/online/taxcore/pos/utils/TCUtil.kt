@@ -5,7 +5,7 @@ import online.taxcore.pos.R
 import online.taxcore.pos.constants.CertConstants
 import online.taxcore.pos.constants.CountryConstants
 import java.security.cert.X509Certificate
-import java.util.*
+import java.util.Locale
 
 /**
  * TaxCore Helpers
@@ -55,7 +55,11 @@ object TCUtil {
         }
     }
 
-    fun getCurrencyBy(countryCode: String): String {
+    fun getCurrencyBy(countryCode: String?): String {
+        if (countryCode.isNullOrEmpty()) {
+            return ""
+        }
+
         return when (countryCode.uppercase(Locale.getDefault())) {
             "FJ" -> "FJ\$"
             "WS" -> "WS\$"

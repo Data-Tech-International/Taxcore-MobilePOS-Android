@@ -4,14 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import kotlinx.android.synthetic.main.catalog_details_activity.*
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.CatalogManager
+import online.taxcore.pos.databinding.CatalogDetailsActivityBinding
 import online.taxcore.pos.extensions.addFragment
 import online.taxcore.pos.ui.base.BaseActivity
 
 class CatalogDetailsActivity : BaseActivity() {
 
+    private lateinit var binding: CatalogDetailsActivityBinding
     private val catalogListFragment by lazy { CatalogListFragment() }
     private val catalogFilterFragment by lazy { CatalogFilterFragment() }
 
@@ -32,7 +33,8 @@ class CatalogDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.catalog_details_activity)
+        binding = CatalogDetailsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initToolbar()
 
@@ -47,7 +49,7 @@ class CatalogDetailsActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(catalogDetailsToolbar)
+        setSupportActionBar(binding.catalogDetailsToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -57,12 +59,12 @@ class CatalogDetailsActivity : BaseActivity() {
     private fun setActiveFragment() {
         when (intent.extras?.getString(ACTIVITY_EXTRA)) {
             CATALOG_SEARCH -> {
-                catalogDetailsToolbar.setNavigationIcon(R.drawable.ic_exit)
-                catalogDetailsToolbar.title = getString(R.string.title_search_catalog)
+                binding.catalogDetailsToolbar.setNavigationIcon(R.drawable.ic_exit)
+                binding.catalogDetailsToolbar.title = getString(R.string.title_search_catalog)
                 addFragment(catalogFilterFragment, R.id.catalogDetailsFragment)
             }
             else -> {
-                catalogDetailsToolbar.title = getString(R.string.title_catalog_items)
+                binding.catalogDetailsToolbar.title = getString(R.string.title_catalog_items)
                 addFragment(catalogListFragment, R.id.catalogDetailsFragment)
             }
 

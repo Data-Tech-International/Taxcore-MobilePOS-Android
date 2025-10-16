@@ -3,7 +3,6 @@ package online.taxcore.pos.ui.catalog
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
@@ -13,11 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.chip.Chip
 import com.vicpin.krealmextensions.delete
-import kotlinx.android.synthetic.main.catalog_card_item.view.*
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.realm.Item
+import online.taxcore.pos.databinding.CatalogCardItemBinding
 import online.taxcore.pos.extensions.fromHtml
+import java.util.Locale
 
 class CatalogAdapter(
     private var context: Context,
@@ -29,19 +29,22 @@ class CatalogAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         PluViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.catalog_card_item, parent, false)
+            CatalogCardItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
 
     override fun onBindViewHolder(holder: PluViewHolder, position: Int) {
         val catalogItem = items[position]
 
         holder.bind(catalogItem, validTaxes)
-        holder.itemView.item_plu_delete?.setOnClickListener {
+        holder.binding.itemPluDelete?.setOnClickListener {
             confirmRemoveItem(position, catalogItem, update)
         }
 
-        holder.itemView.item_plu_favorite.setOnClickListener {
+        holder.binding.itemPluFavorite.setOnClickListener {
             catalogItem.isFavorite = !catalogItem.isFavorite
 
             CatalogManager.toggleFavoriteItem(catalogItem) {
@@ -99,10 +102,10 @@ class CatalogAdapter(
         items.isEmpty().let { update() }
     }
 
-    inner class PluViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class PluViewHolder(val binding: CatalogCardItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Item, validTaxes: List<String>) {
-            itemView.item_plu_edit.setOnClickListener {
+            binding.itemPluEdit.setOnClickListener {
                 ItemDetailActivity.start(it.context, item.uuid)
             }
 
@@ -115,19 +118,19 @@ class CatalogAdapter(
                 item.price
             )
 
-            itemView.item_plu_title.text = itemTitle
+            binding.itemPluTitle.text = itemTitle
 
             val priceText =
                 "${context.getString(R.string.price)} <font color='#FF5722'><b>${itemPrice}</b></font>".fromHtml()
 
             val inflater =
-                itemView.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            itemView.itemTaxLabelsChipGroup.removeAllViews()
+                binding.root.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            binding.itemTaxLabelsChipGroup.removeAllViews()
 
             item.tax.forEach { tax ->
                 val chipView = inflater.inflate(
                     R.layout.chip_tax_label,
-                    itemView.itemTaxLabelsChipGroup,
+                    binding.itemTaxLabelsChipGroup,
                     false
                 ) as Chip
                 chipView.text = tax.code
@@ -136,19 +139,19 @@ class CatalogAdapter(
                     chipView.setChipBackgroundColorResource(R.color.colorRedis)
                 }
 
-                itemView.itemTaxLabelsChipGroup.addView(chipView)
-                itemView.itemTaxLabelsChipGroup.chipSpacingHorizontal = 0
+                binding.itemTaxLabelsChipGroup.addView(chipView)
+                binding.itemTaxLabelsChipGroup.chipSpacingHorizontal = 0
             }
 
             val itemEan = item.barcode.ifEmpty { "n/a" }
-            itemView.item_plu_barcode.text = "EAN: $itemEan"
-            itemView.item_plu_price.text = priceText
+            binding.itemPluBarcode.text = "EAN: $itemEan"
+            binding.itemPluPrice.text = priceText
 
             // start
             val startTintColor = if (item.isFavorite) {
-                ContextCompat.getColor(itemView.context, R.color.accent)
+                ContextCompat.getColor(binding.root.context, R.color.accent)
             } else {
-                ContextCompat.getColor(itemView.context, R.color.primaryDark)
+                ContextCompat.getColor(binding.root.context, R.color.primaryDark)
             }
 
             val starDrawable = if (item.isFavorite) {
@@ -158,10 +161,10 @@ class CatalogAdapter(
             }
 
             ImageViewCompat.setImageTintList(
-                itemView.item_plu_favorite,
+                binding.itemPluFavorite,
                 ColorStateList.valueOf(startTintColor)
             )
-            itemView.item_plu_favorite.setImageDrawable(starDrawable)
+            binding.itemPluFavorite.setImageDrawable(starDrawable)
         }
 
     }

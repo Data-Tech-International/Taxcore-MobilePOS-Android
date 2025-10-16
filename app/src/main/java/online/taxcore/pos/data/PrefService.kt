@@ -10,7 +10,8 @@ import online.taxcore.pos.data.models.EnvData
 import online.taxcore.pos.data.models.EnvResponse
 import online.taxcore.pos.data.models.StatusResponse
 import java.security.cert.X509Certificate
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class PrefService(context: Context) {
 

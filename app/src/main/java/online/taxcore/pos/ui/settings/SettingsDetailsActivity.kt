@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import kotlinx.android.synthetic.main.base_details_activity.*
 import online.taxcore.pos.R
+import online.taxcore.pos.databinding.BaseDetailsActivityBinding
 import online.taxcore.pos.extensions.addFragment
 import online.taxcore.pos.ui.base.BaseActivity
 import online.taxcore.pos.ui.settings.about.AboutFragment
@@ -17,6 +17,7 @@ import online.taxcore.pos.ui.settings.taxes.TaxesFragment
 
 class SettingsDetailsActivity : BaseActivity() {
 
+    lateinit var binding: BaseDetailsActivityBinding
     private val taxesFragment by lazy { TaxesFragment() }
     private val aboutFragment by lazy { AboutFragment() }
     private val serverFragment by lazy { SDCServerFragment() }
@@ -45,7 +46,8 @@ class SettingsDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.base_details_activity)
+        binding = BaseDetailsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initToolbar()
 
@@ -53,7 +55,7 @@ class SettingsDetailsActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(baseToolbar)
+        setSupportActionBar(binding.baseToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -64,23 +66,23 @@ class SettingsDetailsActivity : BaseActivity() {
 
         when (intent.extras?.getString(ACTIVITY_EXTRA)) {
             FRAGMENT_TAX -> {
-                baseToolbar.title = getString(R.string.title_active_taxes)
+                binding.baseToolbar.title = getString(R.string.title_active_taxes)
                 addFragment(taxesFragment, R.id.baseFragment)
             }
             FRAGMENT_ABOUT -> {
-                baseToolbar.title = getString(R.string.title_about)
+                binding.baseToolbar.title = getString(R.string.title_about)
                 addFragment(aboutFragment, R.id.baseFragment)
             }
             FRAGMENT_SERVER -> {
-                baseToolbar.title = getString(R.string.add_v_cdc_server)
+                binding.baseToolbar.title = getString(R.string.add_v_cdc_server)
                 addFragment(serverFragment, R.id.baseFragment)
             }
             FRAGMENT_CASHIERS -> {
-                baseToolbar.title = getString(R.string.title_manage_cashiers)
+                binding.baseToolbar.title = getString(R.string.title_manage_cashiers)
                 addFragment(cashiersFragment, R.id.baseFragment)
             }
             FRAGMENT_SDC_CONFIGURE -> {
-                baseToolbar.title = getString(R.string.esdc_server_title)
+                binding.baseToolbar.title = getString(R.string.esdc_server_title)
                 addFragment(sdcConfigureFragment, R.id.baseFragment)
             }
             else -> finish()
