@@ -6,9 +6,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.InputType
 import android.util.Patterns
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -111,39 +114,43 @@ class DashboardActivity : BaseActivity() {
         initHeader()
         setClickListeners()
         askPermission()
+        setupBackPressedCallback()
     }
 
-//    private var doubleBackToExitPressedOnce = false
+    private var doubleBackToExitPressedOnce = false
 
-//    @Deprecated("Deprecated in Java")
-//    override fun onBackPressed() {
-//
-//        if (!isAppConfigured) {
-//            showAppNotConfiguredDialog(titleText = R.string.title_finish_configuration,
-//                messageText = R.string.msg_exit_without_configuration,
-//                negativeBtnText = R.string.btn_close,
-//                onNotNow = {
-//                    AppSession.resetSessionCredentials()
-//                    finishAffinity()
-//                })
-//            return
-//        }
-//
-//        if (doubleBackToExitPressedOnce) {
-//            AppSession.resetSessionCredentials()
-//            @Suppress("DEPRECATION")
-//            super.onBackPressed()
-//            return
-//        }
-//
-//        this.doubleBackToExitPressedOnce = true
-//        longToast(getString(R.string.exit_app))
-//
-//        @Suppress("DEPRECATION")
-//        Handler().postDelayed({
-//            doubleBackToExitPressedOnce = false
-//        }, 3000)
-//    }
+    private fun setupBackPressedCallback() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (!isAppConfigured) {
+                    showAppNotConfiguredDialog(
+                        titleText = R.string.title_finish_configuration,
+                        messageText = R.string.msg_exit_without_configuration,
+                        negativeBtnText = R.string.btn_close,
+                        onNotNow = {
+                            AppSession.resetSessionCredentials()
+                            finishAffinity()
+                        }
+                    )
+                    return
+                }
+
+                if (doubleBackToExitPressedOnce) {
+                    AppSession.resetSessionCredentials()
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    return
+                }
+
+                doubleBackToExitPressedOnce = true
+                longToast(getString(R.string.exit_app))
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    doubleBackToExitPressedOnce = false
+                }, 3000)
+            }
+        })
+    }
 
     override fun onResume() {
         super.onResume()
@@ -172,6 +179,7 @@ class DashboardActivity : BaseActivity() {
         Glide.with(this)
             .load(envLogo)
             .optionalFitCenter()
+            .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.AUTOMATIC)
             .transition(DrawableTransitionOptions.withCrossFade(factory))
             .error(R.drawable.logo_text)
             .into(binding.dashboardHeaderImageView)

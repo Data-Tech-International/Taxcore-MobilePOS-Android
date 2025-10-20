@@ -17,7 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Support for Android 14+ (API 36)
+- Support for Android 16+ (API 36)
 - View Binding support for all activities and fragments
 
 ### Changed
