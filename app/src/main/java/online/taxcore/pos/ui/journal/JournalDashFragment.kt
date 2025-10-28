@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -13,6 +12,8 @@ import android.provider.DocumentsContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.files.FileFilter
@@ -88,21 +89,21 @@ class JournalDashFragment : Fragment() {
         val isAppConfigured = AppSession.isAppConfigured
 
         val configuredColor =
-            if (isAppConfigured) Color.TRANSPARENT else Color.parseColor("#90EEEEEE")
+            if (isAppConfigured) Color.TRANSPARENT else "#90EEEEEE".toColorInt()
         val configuredWithItemsColor =
-            if (isAppConfigured and hasInvoiceItems) Color.TRANSPARENT else Color.parseColor("#90EEEEEE")
+            if (isAppConfigured and hasInvoiceItems) Color.TRANSPARENT else "#90EEEEEE".toColorInt()
 
         binding.journalViewItemsButton.isEnabled = hasInvoiceItems and isAppConfigured
-        binding.journalViewItemsButton.foreground = ColorDrawable(configuredWithItemsColor)
+        binding.journalViewItemsButton.foreground = configuredWithItemsColor.toDrawable()
 
         binding.journalSearchItemsButton.isEnabled = hasInvoiceItems and isAppConfigured
-        binding.journalSearchItemsButton.foreground = ColorDrawable(configuredWithItemsColor)
+        binding.journalSearchItemsButton.foreground = configuredWithItemsColor.toDrawable()
 
         binding.journalImportButton.isEnabled = isAppConfigured
-        binding.journalImportButton.foreground = ColorDrawable(configuredColor)
+        binding.journalImportButton.foreground = configuredColor.toDrawable()
 
         binding.journalExportButton.isEnabled = hasInvoiceItems and isAppConfigured
-        binding.journalExportButton.foreground = ColorDrawable(configuredWithItemsColor)
+        binding.journalExportButton.foreground = configuredWithItemsColor.toDrawable()
 
     }
 
@@ -125,15 +126,14 @@ class JournalDashFragment : Fragment() {
             } else {
                 attemptJournalExport()
             }
+        }
 
-            binding.journalImportButton.setOnClickListener {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    openFile(ExportMimeType.JSON)
-                } else {
-                    attemptJournalImport()
-                }
+        binding.journalImportButton.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                openFile(ExportMimeType.JSON)
+            } else {
+                attemptJournalImport()
             }
-
         }
     }
 
