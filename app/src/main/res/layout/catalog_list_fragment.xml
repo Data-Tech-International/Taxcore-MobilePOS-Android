@@ -2,13 +2,13 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:paddingBottom="@dimen/xlarge"
         android:splitMotionEvents="false">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -17,9 +17,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/xlarge"
             android:splitMotionEvents="false"
             android:visibility="visible"
-            tools:itemCount="1"
+            tools:itemCount="6"
             tools:listitem="@layout/catalog_card_item"
             tools:visibility="visible" />
 
