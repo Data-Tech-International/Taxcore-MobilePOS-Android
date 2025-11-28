@@ -100,8 +100,8 @@ kotlin {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.20"
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.2.20"))
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.21"
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.2.21"))
 
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
 
