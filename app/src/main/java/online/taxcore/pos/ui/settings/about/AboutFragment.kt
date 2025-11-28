@@ -15,8 +15,6 @@ import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
 import online.taxcore.pos.databinding.AboutFragmentBinding
 import online.taxcore.pos.utils.TCUtil
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import javax.inject.Inject
 
 class AboutFragment : Fragment() {
@@ -46,7 +44,7 @@ class AboutFragment : Fragment() {
         setImage()
         setAppCountry()
         setAppVersion()
-        setDateUpdate(getCurrentDate())
+        setDateUpdate()
     }
 
     override fun onResume() {
@@ -54,16 +52,9 @@ class AboutFragment : Fragment() {
         setImage()
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private fun getCurrentDate(): String {
-        val dateFormat = SimpleDateFormat("MM.yyyy")
-        val currentCal = Calendar.getInstance()
-        return dateFormat.format(currentCal.time)
-    }
-
     @SuppressLint("SetTextI18n")
-    private fun setDateUpdate(date: String) {
-        binding.fragmentAboutAppDateUpdate.text = getString(R.string.update_date) + " " + date
+    private fun setDateUpdate() {
+        binding.fragmentAboutAppDateUpdate.text = getString(R.string.update_date) + " " + BuildConfig.BUILD_DATE
     }
 
     @SuppressLint("SetTextI18n")
