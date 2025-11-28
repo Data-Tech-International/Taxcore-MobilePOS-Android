@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/dashboard"
@@ -17,12 +16,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/primary"
+            android:fitsSystemWindows="true"
             android:gravity="center_horizontal"
             android:minHeight="400dp"
             android:orientation="vertical"
-            android:paddingTop="24dp"
-            android:paddingBottom="70dp"
-            android:fitsSystemWindows="true">
+            android:paddingBottom="70dp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/dashboardHeaderImageView"
@@ -207,7 +205,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/dashboardHeaderLayout"
-            android:layout_marginTop="-80dp"
+            android:layout_marginTop="-70dp"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="vertical">
@@ -215,9 +213,9 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/xsmall"
                 android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/invoiceCardButton"
