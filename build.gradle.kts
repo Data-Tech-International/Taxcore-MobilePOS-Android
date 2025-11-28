@@ -2,20 +2,19 @@
 buildscript {
 
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.5.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
-        classpath("io.realm:realm-gradle-plugin:10.15.1")
+        classpath("com.android.tools.build:gradle:8.13.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.20")
+        classpath("io.realm:realm-gradle-plugin:10.19.0")
 
         // Add the Google Services plugin
-        classpath("com.google.gms:google-services:4.3.15")
+        classpath("com.google.gms:google-services:4.4.4")
 
-        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.4")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:3.0.6")
     }
 }
 
@@ -23,12 +22,18 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url = uri("https://www.jitpack.io" )
+    }
+
+    afterEvaluate {
+        extensions.findByName("kapt")?.let {
+            (it as org.jetbrains.kotlin.gradle.plugin.KaptExtension).arguments {
+                arg("dagger.formatGeneratedSource", "disabled")
+                arg("dagger.gradle.incremental", "enabled")
+            }
         }
     }
 }
 
 tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+    delete(rootProject.layout.buildDirectory)
 }
