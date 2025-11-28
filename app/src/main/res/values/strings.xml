@@ -389,4 +389,19 @@
     <string name="esdc_status_2110">Card Locked</string>
     <string name="esdc_status_2210">SE Locked</string>
     <string name="esdc_status_2400">SDC device is not fully configured</string>
+
+    <string name="toast_storage_unavailable">Storage unavailable</string>
+    <string name="toast_export_file_not_found">Unable to export catalog. File not found.</string>
+    <string name="toast_invalid_file_format">Invalid format</string>
+
+    <string name="error_wrong_csv_type">Wrong CSV type</string>
+    <string name="error_file_not_found">File not found</string>
+    <string name="error_wrong_data_type">Wrong data type.</string>
+    <string name="error_invalid_file_content">Invalid file content.</string>
+    <string name="error_unable_to_complete">Unable to complete operation</string>
+    <string name="error_not_enough_space">Not enough space to export catalog.</string>
+    <string name="error_unable_to_export">Unable to export catalog.</string>
+    <string name="error_wrong_json_type">Wrong JSON type</string>
+    <string name="error_invalid_json_format">Invalid JSON format</string>
+    <string name="error_unable_to_import_journal">Unable to import journal</string>
 </resources>

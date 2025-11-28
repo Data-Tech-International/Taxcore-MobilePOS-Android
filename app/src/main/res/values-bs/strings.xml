@@ -391,4 +391,19 @@
     <string name="esdc_status_2110">Kartica blokirana</string>
     <string name="esdc_status_2210">Bezbjednosni element blokiran</string>
     <string name="esdc_status_2400">L-PFR nije konfigurisan</string>
+
+    <string name="toast_storage_unavailable">Memorija nije dostupna</string>
+    <string name="toast_export_file_not_found">Izvoz kataloga nije moguć. Datoteka nije pronađena.</string>
+    <string name="toast_invalid_file_format">Neispravan format</string>
+
+    <string name="error_wrong_csv_type">Pogrešan CSV format</string>
+    <string name="error_file_not_found">Datoteka nije pronađena</string>
+    <string name="error_wrong_data_type">Pogrešan format podataka.</string>
+    <string name="error_invalid_file_content">Neispravan sadržaj datoteke.</string>
+    <string name="error_unable_to_complete">Operacija nije uspjela</string>
+    <string name="error_not_enough_space">Nedovoljno prostora za izvoz kataloga.</string>
+    <string name="error_unable_to_export">Izvoz kataloga nije moguć.</string>
+    <string name="error_wrong_json_type">Pogrešan JSON format</string>
+    <string name="error_invalid_json_format">Neispravan JSON format</string>
+    <string name="error_unable_to_import_journal">Uvoz žurnala nije moguć</string>
 </resources>

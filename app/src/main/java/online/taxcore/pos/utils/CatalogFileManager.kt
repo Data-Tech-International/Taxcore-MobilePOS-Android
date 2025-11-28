@@ -14,11 +14,11 @@ import kotlinx.coroutines.launch
 import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.realm.Item
 import online.taxcore.pos.data.realm.Taxes
+import online.taxcore.pos.enums.CatalogError
 import online.taxcore.pos.extensions.sizeInKb
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.io.FileReader
 import java.util.Locale
 
@@ -37,7 +37,7 @@ object CatalogFileManager {
         sourceFile: File,
         context: Context?,
         onSuccess: (List<Item>) -> Unit,
-        onError: (String) -> Unit
+        onError: (CatalogError) -> Unit
     ) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
@@ -105,73 +105,26 @@ object CatalogFileManager {
                     CatalogManager.replaceCatalog(catalogList)
                     onSuccess(catalogList)
                 } else {
-                    onError("Wrong CSV type")
+                    onError(CatalogError.WRONG_CSV_TYPE)
                 }
             } catch (e: FileNotFoundException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                onError("File not found")
+                onError(CatalogError.FILE_NOT_FOUND)
             } catch (e: NumberFormatException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Wrong data type.")
+                onError(CatalogError.WRONG_DATA_TYPE)
             } catch (e: java.lang.IndexOutOfBoundsException) {
             } catch (e: IndexOutOfBoundsException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Invalid file content.")
+                onError(CatalogError.INVALID_FILE_CONTENT)
             } catch (e: Exception) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Unable to complete operation")
+                onError(CatalogError.UNABLE_TO_COMPLETE)
             } finally {
-                FileUtils.trimCache(context)
-            }
-        }
-    }
-
-    @Deprecated("Deprecated")
-    fun exportCsvCatalog(
-        context: Context?,
-        csvFilePath: String,
-        items: MutableList<Item>,
-        header: List<String> = CSV_HEADER,
-        onSuccess: (Boolean) -> Unit,
-        onError: (String) -> Unit
-    ) {
-        GlobalScope.launch(Dispatchers.IO) {
-            var outStream: FileOutputStream? = null
-            try {
-                val outputFile = File(csvFilePath)
-                outStream = FileOutputStream(outputFile)
-
-                // Write file encoding
-                val bom = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
-                outStream.write(bom)
-
-                val fileContent = generateCsvFileContent(header, items)
-                outStream.write(fileContent.toByteArray(Charsets.UTF_8))
-
-                val availableSize = FileUtils.getAvailableSpaceInKB()
-
-                if (outputFile.sizeInKb > availableSize) {
-                    onError("Not enough space to export catalog.")
-                    return@launch
-                }
-
-                onSuccess(true)
-            } catch (e: FileNotFoundException) {
-                Log.wtf("ERROR", e)
-                FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Unable to export catalog. File not found.")
-            } catch (e: RuntimeException) {
-            } catch (e: Exception) {
-                Log.wtf("ERROR", e)
-                FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Unable to export catalog.")
-            } finally {
-                outStream?.flush()
-                outStream?.close()
                 FileUtils.trimCache(context)
             }
         }
@@ -216,7 +169,7 @@ object CatalogFileManager {
         destinationFilePath: String,
         items: MutableList<Item>,
         onSuccess: (Boolean) -> Unit,
-        onError: (String) -> Unit
+        onError: (CatalogError) -> Unit
     ) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
@@ -228,7 +181,7 @@ object CatalogFileManager {
                 val availableSize = FileUtils.getAvailableSpaceInKB()
 
                 if (outputFile.sizeInKb > availableSize) {
-                    onError("Not enough space to export catalog.")
+                    onError(CatalogError.NOT_ENOUGH_SPACE)
                     return@launch
                 }
 
@@ -236,12 +189,12 @@ object CatalogFileManager {
             } catch (e: FileNotFoundException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Unable to export catalog. File not found.")
+                onError(CatalogError.EXPORT_FILE_NOT_FOUND)
             } catch (e: RuntimeException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
 
-                onError("Unable to export catalog.")
+                onError(CatalogError.UNABLE_TO_EXPORT)
             } finally {
                 FileUtils.trimCache(context)
             }
@@ -252,7 +205,7 @@ object CatalogFileManager {
         sourceFile: File,
         context: Context?,
         onSuccess: (List<Item>) -> Unit,
-        onError: (String) -> Unit
+        onError: (CatalogError) -> Unit
     ) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
@@ -266,22 +219,23 @@ object CatalogFileManager {
                     CatalogManager.replaceCatalog(catalogList)
                     onSuccess(catalogList)
                 } else {
-                    onError("Wrong JSON type")
+                    onError(CatalogError.WRONG_JSON_TYPE)
                 }
             } catch (e: FileNotFoundException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
+                onError(CatalogError.FILE_NOT_FOUND)
             } catch (e: IllegalStateException) {
                 Log.wtf("ERROR", e)
-                onError("Unable to complete operation")
+                onError(CatalogError.UNABLE_TO_COMPLETE)
             } catch (e: JsonSyntaxException) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Wrong JSON type")
+                onError(CatalogError.WRONG_JSON_TYPE)
             } catch (e: Exception) {
                 Log.wtf("ERROR", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Unable to complete operation")
+                onError(CatalogError.UNABLE_TO_COMPLETE)
             } finally {
                 FileUtils.trimCache(context)
             }

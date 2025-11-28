@@ -36,6 +36,7 @@ import online.taxcore.pos.R
 import online.taxcore.pos.data.local.JournalManager
 import online.taxcore.pos.databinding.JournalDashboardFragmentBinding
 import online.taxcore.pos.enums.ExportMimeType
+import online.taxcore.pos.enums.JournalError
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.helpers.StorageHelper
@@ -157,7 +158,7 @@ class JournalDashFragment : Fragment() {
                         return
                     }
 
-                    longToast("Storage unavailable")
+                    longToast(getString(R.string.toast_storage_unavailable))
                 }
             }
 
@@ -276,15 +277,21 @@ class JournalDashFragment : Fragment() {
     }
 
     private fun importJournalFrom(file: File) {
-        val journalList = JsonFileManager.importJournals(activity, file)
-
-        if (journalList.isNotEmpty()) {
-
-            // Update UI
-            setDashboardButtons()
-
-            longToast(getString(R.string.toast_journal_imported))
-        }
+        JsonFileManager.importJournals(
+            context = context,
+            sourceFile = file,
+            onSuccess = { journalList ->
+                if (journalList.isNotEmpty()) {
+                    setDashboardButtons()
+                    longToast(getString(R.string.toast_journal_imported))
+                } else {
+                    longToast(getString(R.string.toast_nothing_to_import))
+                }
+            },
+            onError = { error ->
+                longToast(getString(error.messageResId))
+            }
+        )
     }
 
     private fun openFile(exportFileType: ExportMimeType) {

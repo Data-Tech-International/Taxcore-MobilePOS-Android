@@ -1,29 +1,28 @@
 package online.taxcore.pos.utils
 
-import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.saveAll
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import online.taxcore.pos.data.realm.Journal
+import online.taxcore.pos.enums.JournalError
 import org.json.JSONException
 import java.io.BufferedReader
-import java.io.BufferedWriter
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.io.FileReader
-import java.io.OutputStreamWriter
 
 object JsonFileManager {
-    fun importJournals(activity: Activity?, sourceFile: File): List<Journal> {
+
+    fun importJournals(
+        context: Context?,
+        sourceFile: File,
+        onSuccess: (List<Journal>) -> Unit,
+        onError: (JournalError) -> Unit
+    ) {
         try {
             val buffered = BufferedReader(FileReader(sourceFile))
             val gson = Gson()
@@ -41,71 +40,29 @@ object JsonFileManager {
 
                 importInvoices.saveAll()
 
-                return importInvoices
+                onSuccess(importInvoices)
+            } else {
+                onError(JournalError.WRONG_JSON_TYPE)
             }
-
-            activity?.longToast("Wrong JSON type")
         } catch (e: JSONException) {
             Log.wtf("ERROR", e)
-            activity?.longToast("Invalid JSON format")
             FirebaseCrashlytics.getInstance().recordException(e)
+            onError(JournalError.INVALID_JSON_FORMAT)
         } catch (e: FileNotFoundException) {
             Log.wtf("ERROR", e)
             FirebaseCrashlytics.getInstance().recordException(e)
+            onError(JournalError.FILE_NOT_FOUND)
         } catch (e: IllegalStateException) {
             Log.wtf("ERROR", e)
-            activity?.longToast("Invalid JSON format")
             FirebaseCrashlytics.getInstance().recordException(e)
+            onError(JournalError.INVALID_JSON_FORMAT)
         } catch (e: Exception) {
             Log.wtf("ERROR", e)
-            activity?.longToast("Unable to import journal")
             FirebaseCrashlytics.getInstance().recordException(e)
+            onError(JournalError.UNABLE_TO_IMPORT)
         } finally {
-            FileUtils.trimCache(activity)
-        }
-
-        return arrayListOf()
-    }
-
-    @Deprecated("Deprecated")
-    fun exportJournal(
-        context: Context?,
-        destinationFilePath: String,
-        items: MutableList<Journal>,
-        onSuccess: (Boolean) -> Unit,
-        onError: (String) -> Unit
-    ) {
-        GlobalScope.launch(Dispatchers.IO) {
-            var outStream: FileOutputStream? = null
-            try {
-                val outputFile = File(destinationFilePath)
-
-                outStream = FileOutputStream(outputFile)
-                val bufferedWriter = BufferedWriter(OutputStreamWriter(outStream, "UTF-8"))
-
-                val gson = GsonBuilder().setPrettyPrinting().create()
-                gson.toJson(items, bufferedWriter)
-
-                bufferedWriter.close()
-
-                onSuccess(true)
-            } catch (e: FileNotFoundException) {
-                Log.wtf("ERROR", e)
-                onError("Unable to export journals. File not found.")
-            } catch (e: RuntimeException) {
-                Log.wtf("ERROR", e)
-                FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Unable to export journals.")
-            } catch (e: Exception) {
-                Log.wtf("ERROR", e)
-                FirebaseCrashlytics.getInstance().recordException(e)
-                onError("Unable to export journal.")
-            } finally {
-                outStream?.flush()
-                outStream?.close()
-
-                FileUtils.trimCache(context)
-            }
+            FileUtils.trimCache(context)
         }
     }
+
 }

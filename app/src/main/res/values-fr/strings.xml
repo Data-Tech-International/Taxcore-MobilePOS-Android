@@ -391,4 +391,19 @@
     <string name="esdc_status_2110">Carte bloquée</string>
     <string name="esdc_status_2210">ES verrouillé</string>
     <string name="esdc_status_2400">Non configuré</string>
+
+    <string name="toast_storage_unavailable">Stockage indisponible</string>
+    <string name="toast_export_file_not_found">Impossible d\'exporter le catalogue. Fichier non trouvé.</string>
+    <string name="toast_invalid_file_format">Format invalide</string>
+
+    <string name="error_wrong_csv_type">Mauvais type de CSV</string>
+    <string name="error_file_not_found">Fichier non trouvé</string>
+    <string name="error_wrong_data_type">Mauvais type de données.</string>
+    <string name="error_invalid_file_content">Contenu du fichier invalide.</string>
+    <string name="error_unable_to_complete">Impossible de terminer l\'opération</string>
+    <string name="error_not_enough_space">Pas assez d\'espace pour exporter le catalogue.</string>
+    <string name="error_unable_to_export">Impossible d\'exporter le catalogue.</string>
+    <string name="error_wrong_json_type">Mauvais type de JSON</string>
+    <string name="error_invalid_json_format">Format JSON invalide</string>
+    <string name="error_unable_to_import_journal">Impossible d\'importer le journal</string>
 </resources>

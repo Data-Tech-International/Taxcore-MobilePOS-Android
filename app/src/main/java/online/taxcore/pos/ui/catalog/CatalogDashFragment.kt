@@ -46,6 +46,7 @@ import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.realm.Item
 import online.taxcore.pos.databinding.CatalogDashboardFragmentBinding
 import online.taxcore.pos.databinding.DialogLoadingBinding
+import online.taxcore.pos.enums.CatalogError
 import online.taxcore.pos.enums.ExportMimeType
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.extensions.onTextChanged
@@ -135,7 +136,7 @@ class CatalogDashFragment : Fragment() {
                 return
             }
 
-            longToast("Storage unavailable")
+            longToast(getString(R.string.toast_storage_unavailable))
         }
     }
 
@@ -166,7 +167,7 @@ class CatalogDashFragment : Fragment() {
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(e)
-            toast("Unable to export catalog. File not found.")
+            toast(getString(R.string.toast_export_file_not_found))
         } catch (e: Exception) {
             FirebaseCrashlytics.getInstance().recordException(e)
             toast(getString(R.string.error_general))
@@ -430,7 +431,7 @@ class CatalogDashFragment : Fragment() {
                 onError = { error ->
                     runOnUiThread {
                         loadingDialog.dismiss()
-                        toast(error)
+                        toast(getString(error.messageResId))
                     }
                 })
             "json" -> CatalogFileManager.importJsonCatalog(file, context,
@@ -440,12 +441,12 @@ class CatalogDashFragment : Fragment() {
                 onError = { error ->
                     runOnUiThread {
                         loadingDialog.dismiss()
-                        toast(error)
+                        toast(getString(error.messageResId))
                     }
                 })
             else -> {
                 loadingDialog.dismiss()
-                longToast("Invalid format")
+                longToast(getString(R.string.toast_invalid_file_format))
             }
         }
     }
