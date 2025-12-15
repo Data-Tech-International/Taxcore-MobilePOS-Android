@@ -22,7 +22,9 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.getInputLayout
 import com.afollestad.materialdialogs.input.input
 import com.google.gson.GsonBuilder
+import com.google.gson.stream.JsonWriter
 import com.karumi.dexter.Dexter
+import io.realm.Realm
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -48,6 +50,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStreamWriter
 
 @Suppress("PrivatePropertyName")
 class JournalDashFragment : Fragment() {
@@ -167,12 +170,7 @@ class JournalDashFragment : Fragment() {
                     resultData?.data?.also { uri ->
                         requireActivity().contentResolver.openFileDescriptor(uri, "w")?.use {
                             FileOutputStream(it.fileDescriptor).use { fileOS ->
-                                val journalItems = JournalManager.loadJournalItems()
-
-                                val gson = GsonBuilder().setPrettyPrinting().create()
-                                val itemsJson = gson.toJson(journalItems)
-
-                                fileOS.write(itemsJson.toByteArray(Charsets.UTF_8))
+                                exportJournalsStreaming(fileOS)
                                 runOnUiThread {
                                     toast(getString(R.string.toast_journal_exported))
                                 }
@@ -183,6 +181,11 @@ class JournalDashFragment : Fragment() {
                     e.printStackTrace()
                 } catch (e: IOException) {
                     e.printStackTrace()
+                } catch (e: OutOfMemoryError) {
+                    e.printStackTrace()
+                    runOnUiThread {
+                        longToast(getString(R.string.toast_export_failed))
+                    }
                 }
             }
         }
@@ -322,5 +325,57 @@ class JournalDashFragment : Fragment() {
         }
 
         startActivityForResult(intent, EXPORT_JOURNAL)
+    }
+
+    /**
+     * Exports journals using streaming JSON to avoid OOM errors.
+     * Writes each journal item directly to the output stream without
+     * loading all items into memory at once.
+     */
+    private fun exportJournalsStreaming(fileOS: FileOutputStream) {
+        val realm = Realm.getDefaultInstance()
+        try {
+            val journalResults = JournalManager.queryJournalItems(realm)
+
+            OutputStreamWriter(fileOS, Charsets.UTF_8).use { writer ->
+                JsonWriter(writer).use { jsonWriter ->
+                    jsonWriter.setIndent("  ")
+                    jsonWriter.beginArray()
+
+                    for (journal in journalResults) {
+                        jsonWriter.beginObject()
+                        jsonWriter.name("id").value(journal.id)
+                        jsonWriter.name("date").value(journal.date)
+                        jsonWriter.name("rec").value(journal.rec)
+                        jsonWriter.name("total").value(journal.total)
+                        jsonWriter.name("qrCode").value(journal.qrCode)
+                        jsonWriter.name("message").value(journal.message)
+                        jsonWriter.name("invoiceNumber").value(journal.invoiceNumber)
+                        jsonWriter.name("RequestedBy").value(journal.RequestedBy)
+                        jsonWriter.name("IC").value(journal.IC)
+                        jsonWriter.name("InvoiceCounterExtension").value(journal.InvoiceCounterExtension)
+                        jsonWriter.name("VerificationUrl").value(journal.VerificationUrl)
+                        jsonWriter.name("SignedBy").value(journal.SignedBy)
+                        jsonWriter.name("ID").value(journal.ID)
+                        jsonWriter.name("S").value(journal.S)
+                        jsonWriter.name("TotalCounter").value(journal.TotalCounter)
+                        jsonWriter.name("TransactionTypeCounter").value(journal.TransactionTypeCounter)
+                        jsonWriter.name("TaxGroupRevision").value(journal.TaxGroupRevision)
+                        jsonWriter.name("buyerTin").value(journal.buyerTin)
+                        jsonWriter.name("transactionType").value(journal.transactionType)
+                        jsonWriter.name("paymentType").value(journal.paymentType)
+                        jsonWriter.name("invoiceType").value(journal.invoiceType)
+                        jsonWriter.name("buyerCostCenter").value(journal.buyerCostCenter)
+                        jsonWriter.name("invoiceItemsData").value(journal.invoiceItemsData)
+                        jsonWriter.name("type").value(journal.type)
+                        jsonWriter.endObject()
+                    }
+
+                    jsonWriter.endArray()
+                }
+            }
+        } finally {
+            realm.close()
+        }
     }
 }

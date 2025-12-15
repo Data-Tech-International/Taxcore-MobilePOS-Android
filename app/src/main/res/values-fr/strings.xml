@@ -350,6 +350,7 @@
     <string name="toast_nothing_to_import">Rien à importer </string>
     <string name="toast_catalog_exported">Catalogue exporté avec succès </string>
     <string name="toast_journal_exported">Journal exporté avec succès </string>
+    <string name="toast_export_failed">Échec de l\'exportation. Mémoire insuffisante.</string>
     <string name="toast_item_removed_from_fav">Article supprimé des favoris </string>
     <string name="toast_item_added_to_fav">Article ajouté aux favoris </string>
     <string name="toast_item_with_name_removed">Article `%1$s` supprimé </string>

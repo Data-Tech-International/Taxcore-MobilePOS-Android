@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.realm.Realm
 import io.realm.Sort
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.JournalManager
@@ -42,6 +43,9 @@ class JournalListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var sortJournalsMenuItem: MenuItem? = null
 
+    private lateinit var realm: Realm
+    private var journalResults: List<Journal>? = null
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
@@ -63,6 +67,7 @@ class JournalListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        realm = Realm.getDefaultInstance()
         initUI()
         initJournalRecyclerView()
     }
@@ -74,6 +79,10 @@ class JournalListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        journalResults = null
+        if (::realm.isInitialized && !realm.isClosed) {
+            realm.close()
+        }
         _binding = null
     }
 
@@ -121,12 +130,13 @@ class JournalListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         throw UnsupportedOperationException("not implemented")
     }
 
-    private fun getJournalItems(sort: Sort = Sort.DESCENDING): MutableList<Journal> {
-        return if (isFilterMode) {
-            JournalManager.loadFilteredItems(sort)
+    private fun getJournalItems(sort: Sort = Sort.DESCENDING): List<Journal> {
+        journalResults = if (isFilterMode) {
+            JournalManager.queryFilteredItems(realm, sort)
         } else {
-            JournalManager.loadJournalItems(sort)
+            JournalManager.queryJournalItems(realm, sort)
         }
+        return journalResults!!
     }
 
     private fun updateJournalData() {

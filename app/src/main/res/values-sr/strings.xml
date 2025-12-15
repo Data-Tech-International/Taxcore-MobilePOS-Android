@@ -350,6 +350,7 @@
     <string name="toast_nothing_to_import">Nema podataka za uvoz</string>
     <string name="toast_catalog_exported">Katalog uspešno izvezen</string>
     <string name="toast_journal_exported">Žurnal uspešno izvezen</string>
+    <string name="toast_export_failed">Izvoz neuspešan. Nedovoljno memorije.</string>
     <string name="toast_item_removed_from_fav">Artikal uklonjen iz favorita</string>
     <string name="toast_item_added_to_fav">Artikal dodat u favorite</string>
     <string name="toast_item_with_name_removed">Artikal `%1$s` uklinjen</string>

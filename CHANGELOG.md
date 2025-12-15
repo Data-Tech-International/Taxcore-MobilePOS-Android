@@ -13,6 +13,13 @@ All notable changes to this project will be documented in this file.
 
 - **TBD** Configuration response error handling
 
+## [3.5.1] - 2025-12-15
+
+### Fixed
+
+- Fixed `OutOfMemoryError` when loading large journal lists by implementing lazy loading
+- Fixed `OutOfMemoryError` during journal export by implementing streaming JSON writer
+
 ## [3.5.0] - 2025-10-16
 
 ### Added

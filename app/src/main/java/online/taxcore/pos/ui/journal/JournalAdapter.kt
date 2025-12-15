@@ -16,7 +16,7 @@ import java.util.Date
 @SuppressLint("NotifyDataSetChanged")
 class JournalAdapter : RecyclerView.Adapter<JournalAdapter.JournalViewHolder>() {
 
-    private var journalList: MutableList<Journal> = mutableListOf()
+    private var journalList: List<Journal> = emptyList()
 
     override fun getItemCount() = journalList.size
 
@@ -32,7 +32,7 @@ class JournalAdapter : RecyclerView.Adapter<JournalAdapter.JournalViewHolder>() 
         holder.bind(item)
     }
 
-    fun setData(journalList: MutableList<Journal>) {
+    fun setData(journalList: List<Journal>) {
         this.journalList = journalList
         notifyDataSetChanged()
     }
