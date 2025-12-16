@@ -6,6 +6,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.vicpin.krealmextensions.queryAll
+import com.vicpin.krealmextensions.save
 import com.vicpin.krealmextensions.saveAll
 import online.taxcore.pos.data.realm.Journal
 import online.taxcore.pos.enums.JournalError
@@ -20,6 +21,16 @@ object JsonFileManager {
     fun importJournals(
         context: Context?,
         sourceFile: File,
+        onSuccess: (List<Journal>) -> Unit,
+        onError: (JournalError) -> Unit
+    ) {
+        importJournalsWithProgress(context, sourceFile, null, onSuccess, onError)
+    }
+
+    fun importJournalsWithProgress(
+        context: Context?,
+        sourceFile: File,
+        onProgress: ((current: Int, total: Int) -> Unit)?,
         onSuccess: (List<Journal>) -> Unit,
         onError: (JournalError) -> Unit
     ) {
@@ -38,7 +49,20 @@ object JsonFileManager {
                     .distinctBy { it.invoiceNumber }
                     .filter { existingInvoiceIds.contains(it.invoiceNumber).not() }
 
-                importInvoices.saveAll()
+                if (onProgress != null && importInvoices.size > 10) {
+                    // Save with progress reporting for large imports
+                    val total = importInvoices.size
+                    importInvoices.forEachIndexed { index, journal ->
+                        journal.save()
+                        val current = index + 1
+                        // Update progress every 10 items to avoid too frequent UI updates
+                        if (current % 10 == 0 || current == total) {
+                            onProgress(current, total)
+                        }
+                    }
+                } else {
+                    importInvoices.saveAll()
+                }
 
                 onSuccess(importInvoices)
             } else {

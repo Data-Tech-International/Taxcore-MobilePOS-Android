@@ -15,13 +15,13 @@ import android.view.ViewGroup
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.files.FileFilter
 import com.afollestad.materialdialogs.files.fileChooser
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.getInputLayout
 import com.afollestad.materialdialogs.input.input
-import com.google.gson.GsonBuilder
 import com.google.gson.stream.JsonWriter
 import com.karumi.dexter.Dexter
 import io.realm.Realm
@@ -33,6 +33,9 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.JournalManager
@@ -44,7 +47,6 @@ import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.helpers.StorageHelper
 import online.taxcore.pos.utils.JsonFileManager
 import online.taxcore.pos.utils.longToast
-import online.taxcore.pos.utils.runOnUiThread
 import online.taxcore.pos.utils.toast
 import java.io.File
 import java.io.FileNotFoundException
@@ -166,26 +168,8 @@ class JournalDashFragment : Fragment() {
             }
 
             EXPORT_JOURNAL -> {
-                try {
-                    resultData?.data?.also { uri ->
-                        requireActivity().contentResolver.openFileDescriptor(uri, "w")?.use {
-                            FileOutputStream(it.fileDescriptor).use { fileOS ->
-                                exportJournalsStreaming(fileOS)
-                                runOnUiThread {
-                                    toast(getString(R.string.toast_journal_exported))
-                                }
-                            }
-                        }
-                    }
-                } catch (e: FileNotFoundException) {
-                    e.printStackTrace()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } catch (e: OutOfMemoryError) {
-                    e.printStackTrace()
-                    runOnUiThread {
-                        longToast(getString(R.string.toast_export_failed))
-                    }
+                resultData?.data?.also { uri ->
+                    exportJournalWithProgress(uri)
                 }
             }
         }
@@ -280,21 +264,44 @@ class JournalDashFragment : Fragment() {
     }
 
     private fun importJournalFrom(file: File) {
-        JsonFileManager.importJournals(
-            context = context,
-            sourceFile = file,
-            onSuccess = { journalList ->
-                if (journalList.isNotEmpty()) {
-                    setDashboardButtons()
-                    longToast(getString(R.string.toast_journal_imported))
-                } else {
-                    longToast(getString(R.string.toast_nothing_to_import))
-                }
-            },
-            onError = { error ->
-                longToast(getString(error.messageResId))
+        val progressDialog = MaterialDialog(requireContext()).show {
+            title(R.string.title_import)
+            message(R.string.msg_reading_file)
+            cancelable(false)
+        }
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                JsonFileManager.importJournalsWithProgress(
+                    context = context,
+                    sourceFile = file,
+                    onProgress = { current, total ->
+                        launch(Dispatchers.Main) {
+                            progressDialog.message(
+                                text = getString(R.string.msg_import_progress, current, total)
+                            )
+                        }
+                    },
+                    onSuccess = { journalList ->
+                        launch(Dispatchers.Main) {
+                            progressDialog.dismiss()
+                            if (journalList.isNotEmpty()) {
+                                setDashboardButtons()
+                                longToast(getString(R.string.toast_journal_imported))
+                            } else {
+                                longToast(getString(R.string.toast_nothing_to_import))
+                            }
+                        }
+                    },
+                    onError = { error ->
+                        launch(Dispatchers.Main) {
+                            progressDialog.dismiss()
+                            longToast(getString(error.messageResId))
+                        }
+                    }
+                )
             }
-        )
+        }
     }
 
     private fun openFile(exportFileType: ExportMimeType) {
@@ -328,14 +335,67 @@ class JournalDashFragment : Fragment() {
     }
 
     /**
+     * Exports journals with a progress dialog.
+     * Shows progress to the user while exporting large datasets.
+     */
+    private fun exportJournalWithProgress(uri: android.net.Uri) {
+        val progressDialog = MaterialDialog(requireContext()).show {
+            title(R.string.title_export_journal)
+            message(R.string.msg_exporting_journal)
+            cancelable(false)
+        }
+
+        lifecycleScope.launch {
+            try {
+                val success = withContext(Dispatchers.IO) {
+                    requireActivity().contentResolver.openFileDescriptor(uri, "w")?.use { pfd ->
+                        FileOutputStream(pfd.fileDescriptor).use { fileOS ->
+                            exportJournalsStreaming(fileOS) { current, total ->
+                                launch(Dispatchers.Main) {
+                                    progressDialog.message(
+                                        text = getString(R.string.msg_export_progress, current, total)
+                                    )
+                                }
+                            }
+                        }
+                        true
+                    } ?: false
+                }
+
+                progressDialog.dismiss()
+                if (success) {
+                    toast(getString(R.string.toast_journal_exported))
+                }
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+                progressDialog.dismiss()
+            } catch (e: IOException) {
+                e.printStackTrace()
+                progressDialog.dismiss()
+            } catch (e: OutOfMemoryError) {
+                e.printStackTrace()
+                progressDialog.dismiss()
+                longToast(getString(R.string.toast_export_failed))
+            }
+        }
+    }
+
+    /**
      * Exports journals using streaming JSON to avoid OOM errors.
      * Writes each journal item directly to the output stream without
      * loading all items into memory at once.
+     *
+     * @param onProgress Callback to report progress (current, total)
      */
-    private fun exportJournalsStreaming(fileOS: FileOutputStream) {
+    private fun exportJournalsStreaming(
+        fileOS: FileOutputStream,
+        onProgress: ((current: Int, total: Int) -> Unit)? = null
+    ) {
         val realm = Realm.getDefaultInstance()
         try {
             val journalResults = JournalManager.queryJournalItems(realm)
+            val totalCount = journalResults.size
+            var currentCount = 0
 
             OutputStreamWriter(fileOS, Charsets.UTF_8).use { writer ->
                 JsonWriter(writer).use { jsonWriter ->
@@ -369,6 +429,12 @@ class JournalDashFragment : Fragment() {
                         jsonWriter.name("invoiceItemsData").value(journal.invoiceItemsData)
                         jsonWriter.name("type").value(journal.type)
                         jsonWriter.endObject()
+
+                        currentCount++
+                        // Update progress every 10 items to avoid too frequent UI updates
+                        if (currentCount % 10 == 0 || currentCount == totalCount) {
+                            onProgress?.invoke(currentCount, totalCount)
+                        }
                     }
 
                     jsonWriter.endArray()

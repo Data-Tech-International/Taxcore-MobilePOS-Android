@@ -349,6 +349,11 @@
     <string name="toast_catalog_exported">Catalog exported successfully</string>
     <string name="toast_journal_exported">Journal exported successfully</string>
     <string name="toast_export_failed">Export failed. Not enough memory.</string>
+    <string name="msg_exporting_journal">Exporting journal…</string>
+    <string name="msg_export_progress">Exported %1$d of %2$d records</string>
+    <string name="msg_importing_journal">Importing journal…</string>
+    <string name="msg_import_progress">Imported %1$d of %2$d records</string>
+    <string name="msg_reading_file">Reading file…</string>
     <string name="toast_item_removed_from_fav">Item removed from favorites</string>
     <string name="toast_item_added_to_fav">Item added to favorites</string>
     <string name="toast_item_with_name_removed">Item `%1$s` removed</string>
