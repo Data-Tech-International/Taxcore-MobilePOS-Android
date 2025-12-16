@@ -19,8 +19,9 @@ import online.taxcore.pos.extensions.roundLocalized
 class SelectableItemsAdapter(private val validTaxes: List<String>, private val onSelectItem: () -> Unit) : RecyclerView.Adapter<SelectableItemViewHolder>() {
 
     private var catalogItemsList = mutableListOf<Item>()
+    private var filteredItemsList = mutableListOf<Item>()
 
-    override fun getItemCount() = catalogItemsList.size
+    override fun getItemCount() = filteredItemsList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectableItemViewHolder {
         val binding = InvoiceSelectableRecyclerItemBinding.inflate(
@@ -31,7 +32,7 @@ class SelectableItemsAdapter(private val validTaxes: List<String>, private val o
 
     override fun onBindViewHolder(holder: SelectableItemViewHolder, position: Int) {
         val ctx = holder.itemView.context
-        val currentItem = catalogItemsList[position]
+        val currentItem = filteredItemsList[position]
 
         holder.bind(currentItem, validTaxes)
 
@@ -57,6 +58,20 @@ class SelectableItemsAdapter(private val validTaxes: List<String>, private val o
 
     fun setData(arrayList: MutableList<Item>) {
         this.catalogItemsList = arrayList
+        this.filteredItemsList = arrayList.toMutableList()
+        notifyDataSetChanged()
+    }
+
+    fun filter(query: String) {
+        filteredItemsList = if (query.isEmpty()) {
+            catalogItemsList.toMutableList()
+        } else {
+            val lowerCaseQuery = query.lowercase()
+            catalogItemsList.filter { item ->
+                item.name.lowercase().contains(lowerCaseQuery) ||
+                        item.barcode.lowercase().contains(lowerCaseQuery)
+            }.toMutableList()
+        }
         notifyDataSetChanged()
     }
 
@@ -64,6 +79,7 @@ class SelectableItemsAdapter(private val validTaxes: List<String>, private val o
         invoiceItem.isSelected = true
 
         this.catalogItemsList.add(0, invoiceItem)
+        this.filteredItemsList.add(0, invoiceItem)
 
         notifyItemInserted(0)
     }
@@ -72,11 +88,17 @@ class SelectableItemsAdapter(private val validTaxes: List<String>, private val o
         val removedItem = this.catalogItemsList.find { it.uuid == item.uuid }
 
         removedItem?.let { it ->
-            val itemIndex = catalogItemsList.indexOf(it)
-
             it.isSelected = false
 
-            notifyItemChanged(itemIndex, it)
+            val catalogIndex = catalogItemsList.indexOf(it)
+            val filteredIndex = filteredItemsList.indexOf(it)
+
+            if (catalogIndex >= 0) {
+                notifyItemChanged(catalogIndex, it)
+            }
+            if (filteredIndex >= 0) {
+                notifyItemChanged(filteredIndex, it)
+            }
             notifyDataSetChanged()
         }
     }

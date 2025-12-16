@@ -53,6 +53,7 @@ import online.taxcore.pos.data.realm.Journal
 import online.taxcore.pos.databinding.DialogLoadingBinding
 import online.taxcore.pos.databinding.DialogPacLayoutBinding
 import online.taxcore.pos.databinding.DialogPinLayoutBinding
+import online.taxcore.pos.databinding.DialogSearchableItemsBinding
 import online.taxcore.pos.databinding.InvoiceFragmentBinding
 import online.taxcore.pos.enums.InvoiceOption
 import online.taxcore.pos.enums.InvoiceOption.INVOICE
@@ -262,9 +263,7 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
     private fun setupClickListeners() {
 
         binding.invoiceAddItemButton.setOnClickListener {
-            MaterialDialog(requireContext(), BottomSheet(LayoutMode.MATCH_PARENT)).show {
-                customListAdapter(selectableItemsAdapter!!)
-            }
+            showSearchableItemsBottomSheet()
         }
 
         binding.invoiceCreateItemButton.setOnClickListener {
@@ -811,6 +810,19 @@ class InvoiceFragment : Fragment(), OnInvoiceOptionResult {
         }
 
         return items
+    }
+
+    private fun showSearchableItemsBottomSheet() {
+        MaterialDialog(requireContext(), BottomSheet(LayoutMode.MATCH_PARENT)).show {
+            customView(R.layout.dialog_searchable_items)
+
+            val searchBinding = DialogSearchableItemsBinding.bind(getCustomView())
+            searchBinding.searchableItemsRecycler.adapter = selectableItemsAdapter
+
+            searchBinding.searchInput.onTextChanged { query ->
+                selectableItemsAdapter?.filter(query)
+            }
+        }
     }
 
     private fun showBottomDialog(invoiceOption: InvoiceOption) =
