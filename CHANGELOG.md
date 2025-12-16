@@ -15,6 +15,11 @@ All notable changes to this project will be documented in this file.
 
 ## [3.5.1] - 2025-12-15
 
+### Added
+
+- Added progress dialogs to journal import/export operations
+- Added recovery for corrupted EncryptedSharedPreferences
+
 ### Fixed
 
 - Fixed `OutOfMemoryError` when loading large journal lists by implementing lazy loading
