@@ -1,7 +1,10 @@
 package online.taxcore.pos.data
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.security.keystore.KeyGenParameterSpec
 import android.util.Base64
+import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import online.taxcore.pos.constants.PrefConstants
@@ -9,23 +12,24 @@ import online.taxcore.pos.data.models.CertData
 import online.taxcore.pos.data.models.EnvData
 import online.taxcore.pos.data.models.EnvResponse
 import online.taxcore.pos.data.models.StatusResponse
+import java.io.File
+import java.security.KeyStore
 import java.security.cert.X509Certificate
 import java.util.Date
 import java.util.Locale
 
 class PrefService(context: Context) {
 
-    private val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
-    private val mainKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+    companion object {
+        private const val TAG = "PrefService"
+        private const val ANDROID_KEYSTORE = "AndroidKeyStore"
+    }
 
-    private val encryptedSharedPreferences =
-        EncryptedSharedPreferences.create(
-            PrefConstants.SP_SECURED_NAME_KEY,
-            mainKeyAlias,
-            context,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+    private val keyGenParameterSpec: KeyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+    private val mainKeyAlias: String = MasterKeys.getOrCreate(keyGenParameterSpec)
+
+    private val encryptedSharedPreferences: SharedPreferences =
+        createEncryptedSharedPreferences(context)
 
     private val sharedPreferences = context.getSharedPreferences(
         PrefConstants.SP_NAME_KEY,
@@ -282,6 +286,67 @@ class PrefService(context: Context) {
 
     private fun encodeString(value: String): String {
         return Base64.encodeToString(value.toByteArray(), Base64.DEFAULT)
+    }
+
+    private fun createEncryptedSharedPreferences(context: Context): SharedPreferences {
+        return try {
+            EncryptedSharedPreferences.create(
+                PrefConstants.SP_SECURED_NAME_KEY,
+                mainKeyAlias,
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to create EncryptedSharedPreferences, clearing corrupted data", e)
+            clearCorruptedEncryptedPreferences(context)
+
+            // Regenerate master key and retry after clearing corrupted data
+            val newMasterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+            EncryptedSharedPreferences.create(
+                PrefConstants.SP_SECURED_NAME_KEY,
+                newMasterKeyAlias,
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        }
+    }
+
+    private fun clearCorruptedEncryptedPreferences(context: Context) {
+        try {
+            // Clear the encrypted SharedPreferences file
+            val sharedPrefsFile = File(
+                context.applicationInfo.dataDir + "/shared_prefs",
+                PrefConstants.SP_SECURED_NAME_KEY + ".xml"
+            )
+            if (sharedPrefsFile.exists()) {
+                sharedPrefsFile.delete()
+                Log.d(TAG, "Deleted corrupted SharedPreferences file")
+            }
+
+            // Clear the keyset from Android Keystore
+            try {
+                val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
+                keyStore.load(null)
+                if (keyStore.containsAlias(mainKeyAlias)) {
+                    keyStore.deleteEntry(mainKeyAlias)
+                    Log.d(TAG, "Deleted corrupted key from Android Keystore")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to clear key from Keystore", e)
+            }
+
+            // Mark app as not configured since encrypted data is lost
+            context.getSharedPreferences(PrefConstants.SP_NAME_KEY, Context.MODE_PRIVATE)
+                .edit()
+                .putBoolean(PrefConstants.IS_APP_CONFIGURED, false)
+                .apply()
+            Log.d(TAG, "Marked app as not configured due to data loss")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error clearing corrupted encrypted preferences", e)
+        }
     }
 
 }
