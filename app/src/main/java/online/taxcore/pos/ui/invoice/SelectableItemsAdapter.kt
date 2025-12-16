@@ -31,15 +31,11 @@ class SelectableItemsAdapter(private val validTaxes: List<String>, private val o
     }
 
     override fun onBindViewHolder(holder: SelectableItemViewHolder, position: Int) {
-        val ctx = holder.itemView.context
         val currentItem = filteredItemsList[position]
 
         holder.bind(currentItem, validTaxes)
 
-        holder.binding.itemCard.setOnClickListener { view ->
-
-            (view as MaterialCardView).toggle()
-
+        holder.binding.itemCard.setOnClickListener {
             currentItem.isSelected = currentItem.isSelected.not()
 
             if (currentItem.isSelected) {
@@ -51,7 +47,7 @@ class SelectableItemsAdapter(private val validTaxes: List<String>, private val o
                 InvoiceManager.selectedItems.remove(currentItem)
             }
 
-            notifyDataSetChanged()
+            notifyItemChanged(holder.bindingAdapterPosition)
             onSelectItem()
         }
     }
@@ -87,19 +83,13 @@ class SelectableItemsAdapter(private val validTaxes: List<String>, private val o
     fun removeSelection(item: Item) {
         val removedItem = this.catalogItemsList.find { it.uuid == item.uuid }
 
-        removedItem?.let { it ->
+        removedItem?.let {
             it.isSelected = false
 
-            val catalogIndex = catalogItemsList.indexOf(it)
             val filteredIndex = filteredItemsList.indexOf(it)
-
-            if (catalogIndex >= 0) {
-                notifyItemChanged(catalogIndex, it)
-            }
             if (filteredIndex >= 0) {
-                notifyItemChanged(filteredIndex, it)
+                notifyItemChanged(filteredIndex)
             }
-            notifyDataSetChanged()
         }
     }
 

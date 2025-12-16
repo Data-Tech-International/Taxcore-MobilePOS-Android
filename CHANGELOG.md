@@ -19,6 +19,8 @@ All notable changes to this project will be documented in this file.
 
 - Added progress dialogs to journal import/export operations
 - Secret export and clear journal option (5-second long press on export button)
+- Added search filter to item selection bottom sheet
+- Added drag handle and clear button to item search dialog
 
 ### Fixed
 

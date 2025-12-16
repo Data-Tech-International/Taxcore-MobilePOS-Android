@@ -5,6 +5,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <View
+        android:layout_width="32dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bottom_sheet_drag_handle" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -12,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/activity_all_padding"
         android:hint="@string/search_by_name_or_EAN"
+        app:endIconMode="clear_text"
         app:startIconDrawable="@drawable/ic_search_black_24dp">
 
         <com.google.android.material.textfield.TextInputEditText
