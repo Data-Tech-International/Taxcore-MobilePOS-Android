@@ -233,6 +233,9 @@
     <string name="dialog_message_confirm_catalog_import">Već imaš artikle u katalogu - ako nastaviš sa unosom, trenutni artikli iz kataloga biće trajno obrisani, uključujući i sačuvane favorite.\n\nDa li želiš da nastaviš sa unosom?</string>
     <string name="dialog_message_confirm_journal_import">U aplikaciji već imaš stavke u žurnalu -  ako nastaviš sa unosom, trenutne stavke u žurnalu biće trajno obrisane.\n\nDa li želiš da nastaviš sa unosom?</string>
 
+    <string name="dialog_title_export_and_clear">Izvezi i obriši žurnal</string>
+    <string name="dialog_message_export_and_clear_warning">UPOZORENJE: Ovo je destruktivna akcija!\n\nNakon završetka izvoza, SVE stavke žurnala biće trajno obrisane sa ovog uređaja.\n\nOva akcija se ne može poništiti.\n\nDa li želiš da nastaviš?</string>
+
     <string name="msg_product_already_exists">Ovaj artikal već postoji</string>
     <string name="msg_configure_application">Da bi omogućio sve funkcije, potrebno je da podesiš aplikaciju i instaliraš odgovarajući sertifikat.</string>
     <string name="msg_exit_without_configuration">Aplikacija nije potpuno podešena. Da li želiš da zatvoriš aplikaciju bez podešavanja?</string>

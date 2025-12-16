@@ -8,8 +8,11 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.DocumentsContract
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.drawable.toDrawable
@@ -24,6 +27,7 @@ import com.afollestad.materialdialogs.input.getInputLayout
 import com.afollestad.materialdialogs.input.input
 import com.google.gson.stream.JsonWriter
 import com.karumi.dexter.Dexter
+import com.vicpin.krealmextensions.deleteAll
 import io.realm.Realm
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -39,6 +43,7 @@ import kotlinx.coroutines.withContext
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.JournalManager
+import online.taxcore.pos.data.realm.Journal
 import online.taxcore.pos.databinding.JournalDashboardFragmentBinding
 import online.taxcore.pos.enums.ExportMimeType
 import online.taxcore.pos.enums.JournalError
@@ -55,6 +60,7 @@ import java.io.IOException
 import java.io.OutputStreamWriter
 
 @Suppress("PrivatePropertyName")
+@android.annotation.SuppressLint("ClickableViewAccessibility")
 class JournalDashFragment : Fragment() {
 
     private var _binding: JournalDashboardFragmentBinding? = null
@@ -63,6 +69,12 @@ class JournalDashFragment : Fragment() {
     // Request code for selecting a PDF document.
     private val IMPORT_JOURNAL_FILE = 10
     private val EXPORT_JOURNAL = 100
+    private val EXPORT_AND_CLEAR_JOURNAL = 101
+
+    // Secret long press duration (5 seconds)
+    private val SECRET_HOLD_DURATION = 5000L
+    private val secretExportHandler = Handler(Looper.getMainLooper())
+    private var secretExportRunnable: Runnable? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -87,6 +99,7 @@ class JournalDashFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        secretExportRunnable?.let { secretExportHandler.removeCallbacks(it) }
         _binding = null
     }
 
@@ -134,6 +147,29 @@ class JournalDashFragment : Fragment() {
             }
         }
 
+        // Secret long press (5 seconds) to export and clear journal
+        binding.journalExportButton.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    secretExportRunnable = Runnable {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            startJournalExportAndClear()
+                        } else {
+                            attemptJournalExportAndClear()
+                        }
+                    }
+                    secretExportHandler.postDelayed(secretExportRunnable!!, SECRET_HOLD_DURATION)
+                    false
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    secretExportRunnable?.let { secretExportHandler.removeCallbacks(it) }
+                    secretExportRunnable = null
+                    false
+                }
+                else -> false
+            }
+        }
+
         binding.journalImportButton.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 openFile(ExportMimeType.JSON)
@@ -172,6 +208,12 @@ class JournalDashFragment : Fragment() {
                     exportJournalWithProgress(uri)
                 }
             }
+
+            EXPORT_AND_CLEAR_JOURNAL -> {
+                resultData?.data?.also { uri ->
+                    exportJournalWithProgress(uri, clearAfterExport = true)
+                }
+            }
         }
     }
 
@@ -201,6 +243,59 @@ class JournalDashFragment : Fragment() {
 
             val dialog = input { _, fileName ->
                 createFile(fileName.toString())
+            }
+
+            getInputField().onTextChanged { input ->
+                val exportPath = if (input.isEmpty()) "" else "$input.json"
+                dialog.getInputLayout().hint = exportPath
+            }
+
+            positiveButton(R.string.title_export)
+            negativeButton(R.string.btn_close) {
+                dismiss()
+            }
+        }
+    }
+
+    private fun attemptJournalExportAndClear() {
+        Dexter.withContext(activity).withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            .withListener(object : PermissionListener {
+                override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                    startJournalExportAndClear()
+                }
+
+                override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                    toast(getString(R.string.denied_permission))
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permission: PermissionRequest, token: PermissionToken
+                ) {
+                    token.continuePermissionRequest()
+                }
+            }).check()
+    }
+
+    private fun startJournalExportAndClear() {
+        MaterialDialog(requireContext()).show {
+            title(R.string.dialog_title_export_and_clear)
+            message(R.string.dialog_message_export_and_clear_warning)
+            positiveButton(R.string.title_export) {
+                showExportAndClearFileNameDialog()
+            }
+            negativeButton(R.string.btn_close) {
+                dismiss()
+            }
+        }
+    }
+
+    private fun showExportAndClearFileNameDialog() {
+        MaterialDialog(requireContext()).show {
+            title(R.string.dialog_title_export_and_clear)
+            message(text = getString(R.string.title_enter_file_name))
+
+            val dialog = input { _, fileName ->
+                createFileForExportAndClear(fileName.toString())
             }
 
             getInputField().onTextChanged { input ->
@@ -334,11 +429,27 @@ class JournalDashFragment : Fragment() {
         startActivityForResult(intent, EXPORT_JOURNAL)
     }
 
+    private fun createFileForExportAndClear(fileName: String) {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+
+            type = "application/json"
+
+            putExtra(Intent.EXTRA_TITLE, "$fileName.json")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOCUMENTS)
+            }
+        }
+
+        startActivityForResult(intent, EXPORT_AND_CLEAR_JOURNAL)
+    }
+
     /**
      * Exports journals with a progress dialog.
      * Shows progress to the user while exporting large datasets.
+     * @param clearAfterExport If true, clears all journal entries after successful export
      */
-    private fun exportJournalWithProgress(uri: android.net.Uri) {
+    private fun exportJournalWithProgress(uri: android.net.Uri, clearAfterExport: Boolean = false) {
         val progressDialog = MaterialDialog(requireContext()).show {
             title(R.string.title_export_journal)
             message(R.string.msg_exporting_journal)
@@ -364,7 +475,13 @@ class JournalDashFragment : Fragment() {
 
                 progressDialog.dismiss()
                 if (success) {
-                    toast(getString(R.string.toast_journal_exported))
+                    if (clearAfterExport) {
+                        Journal().deleteAll()
+                        setDashboardButtons()
+                        toast(getString(R.string.toast_journal_exported))
+                    } else {
+                        toast(getString(R.string.toast_journal_exported))
+                    }
                 }
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
@@ -431,8 +548,8 @@ class JournalDashFragment : Fragment() {
                         jsonWriter.endObject()
 
                         currentCount++
-                        // Update progress every 10 items to avoid too frequent UI updates
-                        if (currentCount % 10 == 0 || currentCount == totalCount) {
+                        // Update progress every 100 items to avoid too frequent UI updates
+                        if (currentCount % 100 == 0 || currentCount == totalCount) {
                             onProgress?.invoke(currentCount, totalCount)
                         }
                     }

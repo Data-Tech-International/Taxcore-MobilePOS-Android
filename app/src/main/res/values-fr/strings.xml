@@ -233,6 +233,9 @@
     <string name="dialog_message_confirm_catalog_import">Tu as déjà des articles du catalogue sur ton app - si tu continues avec l\'importation, les articles du catalogue actuel seront définitivement supprimés, y compris tes favoris.\n\nEst-ce que tu veux continuer avec l\'importation ?</string>
     <string name="dialog_message_confirm_journal_import">Tu as déjà des articles du journal sur ton app - si tu continues avec l\'importation, les articles du journal actuel seront définitivement supprimés, y compris tes favoris.\n\nEst-ce que tu veux continuer avec l\'importation ?</string>
 
+    <string name="dialog_title_export_and_clear">Exporter et effacer le journal</string>
+    <string name="dialog_message_export_and_clear_warning">ATTENTION: Ceci est une action destructive!\n\nAprès l\'exportation, TOUTES les entrées du journal seront définitivement supprimées de cet appareil.\n\nCette action est irréversible.\n\nVeux-tu continuer?</string>
+
     <string name="msg_product_already_exists">Ce produit existe déjà</string>
     <string name="msg_configure_application">Pour activer toutes les fonctionnalités dont tu as besoin, tu dois configurer l\'application et installer le certificat approprié.</string>
     <string name="msg_exit_without_configuration">L\'application n\'est pas complètement configurée. Est-ce que tu veux fermer l\'app sans la configurer ?</string>

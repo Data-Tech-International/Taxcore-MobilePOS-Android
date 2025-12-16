@@ -231,6 +231,8 @@
     <string name="dialog_message_confirm_cashier_delete">Are you sure you want to delete this Cashier?</string>
     <string name="dialog_message_confirm_catalog_import">You already have Catalog items on your app - if you proceed with the import, the current catalog items will be overwritten permanently, including your Favorites.\n\nDo you wish to proceed with the import?</string>
     <string name="dialog_message_confirm_journal_import">You already have Journal items on your app - if you proceed with the import, the current journal items will be overwritten permanently.\n\nDo you wish to proceed with the import?</string>
+    <string name="dialog_title_export_and_clear">Export &amp; Clear Journal</string>
+    <string name="dialog_message_export_and_clear_warning">WARNING: This is a destructive action!\n\nAfter the export completes, ALL journal entries will be permanently deleted from this device.\n\nThis action cannot be undone.\n\nDo you want to proceed?</string>
 
     <string name="msg_product_already_exists">This product already exist</string>
     <string name="msg_configure_application">In order to enable all features you need to configure application and install appropriate certificate.</string>

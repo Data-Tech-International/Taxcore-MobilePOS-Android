@@ -49,16 +49,13 @@ object JsonFileManager {
                     .distinctBy { it.invoiceNumber }
                     .filter { existingInvoiceIds.contains(it.invoiceNumber).not() }
 
-                if (onProgress != null && importInvoices.size > 10) {
-                    // Save with progress reporting for large imports
+                if (onProgress != null && importInvoices.size > 100) {
+                    // Save in batches of 100 for better performance (fewer Realm transactions)
                     val total = importInvoices.size
-                    importInvoices.forEachIndexed { index, journal ->
-                        journal.save()
-                        val current = index + 1
-                        // Update progress every 10 items to avoid too frequent UI updates
-                        if (current % 10 == 0 || current == total) {
-                            onProgress(current, total)
-                        }
+                    importInvoices.chunked(100).forEachIndexed { batchIndex, batch ->
+                        batch.saveAll()
+                        val current = minOf((batchIndex + 1) * 100, total)
+                        onProgress(current, total)
                     }
                 } else {
                     importInvoices.saveAll()

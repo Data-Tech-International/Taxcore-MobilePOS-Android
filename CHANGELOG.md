@@ -13,15 +13,16 @@ All notable changes to this project will be documented in this file.
 
 - **TBD** Configuration response error handling
 
-## [3.5.1] - 2025-12-15
+## [3.5.1] - 2025-12-16
 
 ### Added
 
 - Added progress dialogs to journal import/export operations
-- Added recovery for corrupted EncryptedSharedPreferences
+- Secret export and clear journal option (5-second long press on export button)
 
 ### Fixed
 
+- Fixed recovery for corrupted EncryptedSharedPreferences
 - Fixed `OutOfMemoryError` when loading large journal lists by implementing lazy loading
 - Fixed `OutOfMemoryError` during journal export by implementing streaming JSON writer
 
