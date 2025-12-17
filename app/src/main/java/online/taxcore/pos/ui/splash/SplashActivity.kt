@@ -7,6 +7,7 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -41,21 +42,15 @@ class SplashActivity : BaseActivity() {
         binding = SplashActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // PrefService has internal recovery for corrupted EncryptedSharedPreferences.
+        // This outer try-catch is a last-resort fallback for edge cases like
+        // MasterKeys.getOrCreate() failing before internal recovery can handle it.
         prefService = try {
             PrefService(this)
-        } catch (ex: SecurityException) {
+        } catch (ex: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(ex)
             cacheDir.deleteRecursively()
-            PrefService(this)
-        }
-
-        // This is needed since on some devices encrypted storage
-        // is not working properly. cache and data clean is needed
-        // to instantiate pref service
-        prefService = try {
-            PrefService(this)
-        } catch (ex: java.lang.Exception) {
-            this.cacheDir.deleteRecursively()
-            this.dataDir.deleteRecursively()
+            dataDir.deleteRecursively()
             PrefService(this)
         }
 
