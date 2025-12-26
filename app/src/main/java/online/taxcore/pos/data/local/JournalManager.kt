@@ -33,6 +33,21 @@ object JournalManager {
     }
 
     /**
+     * Returns a set of existing invoice numbers without loading full Journal objects.
+     * This is memory-efficient as it only extracts the invoiceNumber field.
+     */
+    fun getExistingInvoiceNumbers(): Set<String> {
+        val realm = Realm.getDefaultInstance()
+        return try {
+            val results = realm.where<Journal>().findAll()
+            // Extract only invoiceNumber field - Realm will NOT load other fields
+            results.mapTo(HashSet(results.size)) { it.invoiceNumber }
+        } finally {
+            realm.close()
+        }
+    }
+
+    /**
      * Returns managed RealmResults for lazy loading (memory efficient).
      * Use this for displaying in RecyclerView.
      * The caller must manage the Realm instance lifecycle.

@@ -5,9 +5,8 @@ import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.vicpin.krealmextensions.queryAll
-import com.vicpin.krealmextensions.save
 import com.vicpin.krealmextensions.saveAll
+import online.taxcore.pos.data.local.JournalManager
 import online.taxcore.pos.data.realm.Journal
 import online.taxcore.pos.enums.JournalError
 import org.json.JSONException
@@ -40,11 +39,11 @@ object JsonFileManager {
 
             val invoicesList: List<Journal> =
                 gson.fromJson(buffered, object : TypeToken<List<Journal>>() {}.type)
-            val savedInvoices = Journal().queryAll().toList()
+
+            // Use memory-efficient query that only loads invoiceNumber field
+            val existingInvoiceIds = JournalManager.getExistingInvoiceNumbers()
 
             if (invoicesList.isNotEmpty() && invoicesList.first().type == "Journal" && invoicesList.first().id.isNotEmpty()) {
-
-                val existingInvoiceIds = savedInvoices.map { it.invoiceNumber }
                 val importInvoices = invoicesList
                     .distinctBy { it.invoiceNumber }
                     .filter { existingInvoiceIds.contains(it.invoiceNumber).not() }
