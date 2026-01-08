@@ -10,7 +10,11 @@ import okhttp3.logging.HttpLoggingInterceptor
 import online.taxcore.pos.BuildConfig
 import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.*
+import javax.net.ssl.KeyManager
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSession
+import javax.net.ssl.TrustManager
 
 class TrustAuthority {
     companion object {

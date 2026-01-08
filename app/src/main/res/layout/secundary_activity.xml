@@ -4,15 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    app:statusBarBackground="@color/primary">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/topappbar_tall_toolbar_height"
         android:background="?android:attr/colorPrimary"
+        android:elevation="0dp"
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp"
         app:expanded="true"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 

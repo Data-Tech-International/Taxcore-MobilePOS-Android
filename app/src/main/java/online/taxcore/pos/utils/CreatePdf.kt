@@ -31,7 +31,7 @@ object CreatePdf {
             val headerElements = invoiceHeader.split("\r\n".toRegex())
 
             val headerStart = headerElements.first()
-            val companyHeader = headerElements.subList(1, 6).joinToString("\r\n")
+            val companyHeader = headerElements.subList(1, 6).joinToString("\r\n") { it.trim() }
             val headerInfo = headerElements.subList(6, headerElements.size - 1).joinToString("\r\n")
 
             val invoiceFooter = invoiceJournal.split(delimiter).last()

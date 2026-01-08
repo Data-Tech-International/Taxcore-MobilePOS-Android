@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:padding="@dimen/items_all_padding">
+        android:padding="@dimen/small">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="20dp"
@@ -40,7 +40,7 @@
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="top"
                 android:ellipsize="end"
                 android:maxLines="1"
                 tools:text="@string/cashier_one" />
@@ -61,11 +61,12 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/xsmall"
                     android:text="@string/price" />
 
                 <androidx.appcompat.widget.AppCompatTextView

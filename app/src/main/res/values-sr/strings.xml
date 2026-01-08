@@ -233,6 +233,9 @@
     <string name="dialog_message_confirm_catalog_import">Već imaš artikle u katalogu - ako nastaviš sa unosom, trenutni artikli iz kataloga biće trajno obrisani, uključujući i sačuvane favorite.\n\nDa li želiš da nastaviš sa unosom?</string>
     <string name="dialog_message_confirm_journal_import">U aplikaciji već imaš stavke u žurnalu -  ako nastaviš sa unosom, trenutne stavke u žurnalu biće trajno obrisane.\n\nDa li želiš da nastaviš sa unosom?</string>
 
+    <string name="dialog_title_export_and_clear">Izvezi i obriši žurnal</string>
+    <string name="dialog_message_export_and_clear_warning">UPOZORENJE: Ovo je destruktivna akcija!\n\nNakon završetka izvoza, SVE stavke žurnala biće trajno obrisane sa ovog uređaja.\n\nOva akcija se ne može poništiti.\n\nDa li želiš da nastaviš?</string>
+
     <string name="msg_product_already_exists">Ovaj artikal već postoji</string>
     <string name="msg_configure_application">Da bi omogućio sve funkcije, potrebno je da podesiš aplikaciju i instaliraš odgovarajući sertifikat.</string>
     <string name="msg_exit_without_configuration">Aplikacija nije potpuno podešena. Da li želiš da zatvoriš aplikaciju bez podešavanja?</string>
@@ -350,6 +353,12 @@
     <string name="toast_nothing_to_import">Nema podataka za uvoz</string>
     <string name="toast_catalog_exported">Katalog uspešno izvezen</string>
     <string name="toast_journal_exported">Žurnal uspešno izvezen</string>
+    <string name="toast_export_failed">Izvoz neuspešan. Nedovoljno memorije.</string>
+    <string name="msg_exporting_journal">Izvoz žurnala…</string>
+    <string name="msg_export_progress">Izvezeno %1$d od %2$d zapisa</string>
+    <string name="msg_importing_journal">Uvoz žurnala…</string>
+    <string name="msg_import_progress">Uvezeno %1$d od %2$d zapisa</string>
+    <string name="msg_reading_file">Čitanje fajla…</string>
     <string name="toast_item_removed_from_fav">Artikal uklonjen iz favorita</string>
     <string name="toast_item_added_to_fav">Artikal dodat u favorite</string>
     <string name="toast_item_with_name_removed">Artikal `%1$s` uklinjen</string>
@@ -391,4 +400,19 @@
     <string name="esdc_status_2110">Kartica blokirana</string>
     <string name="esdc_status_2210">Bezbednosni element blikiran</string>
     <string name="esdc_status_2400">L-PFR nije konfigurisan</string>
+
+    <string name="toast_storage_unavailable">Memorija nije dostupna</string>
+    <string name="toast_export_file_not_found">Izvoz kataloga nije moguć. Datoteka nije pronađena.</string>
+    <string name="toast_invalid_file_format">Neispravan format</string>
+
+    <string name="error_wrong_csv_type">Pogrešan CSV format</string>
+    <string name="error_file_not_found">Datoteka nije pronađena</string>
+    <string name="error_wrong_data_type">Pogrešan format podataka.</string>
+    <string name="error_invalid_file_content">Neispravan sadržaj datoteke.</string>
+    <string name="error_unable_to_complete">Operacija nije uspela</string>
+    <string name="error_not_enough_space">Nedovoljno prostora za izvoz kataloga.</string>
+    <string name="error_unable_to_export">Izvoz kataloga nije moguć.</string>
+    <string name="error_wrong_json_type">Pogrešan JSON format</string>
+    <string name="error_invalid_json_format">Neispravan JSON format</string>
+    <string name="error_unable_to_import_journal">Uvoz žurnala nije moguć</string>
 </resources>

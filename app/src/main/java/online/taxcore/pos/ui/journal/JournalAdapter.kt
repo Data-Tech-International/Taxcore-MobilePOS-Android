@@ -2,30 +2,29 @@ package online.taxcore.pos.ui.journal
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.journal_card_item.view.*
-import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Journal
+import online.taxcore.pos.databinding.JournalCardItemBinding
 import online.taxcore.pos.enums.InvoiceActivityType
 import online.taxcore.pos.extensions.roundToDecimalPlaces
 import online.taxcore.pos.helpers.EventBusHelper
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 @SuppressLint("NotifyDataSetChanged")
 class JournalAdapter : RecyclerView.Adapter<JournalAdapter.JournalViewHolder>() {
 
-    private var journalList: MutableList<Journal> = mutableListOf()
+    private var journalList: List<Journal> = emptyList()
 
     override fun getItemCount() = journalList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JournalViewHolder {
-        val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.journal_card_item, parent, false)
-        return JournalViewHolder(view)
+        val binding = JournalCardItemBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return JournalViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: JournalViewHolder, position: Int) {
@@ -33,28 +32,28 @@ class JournalAdapter : RecyclerView.Adapter<JournalAdapter.JournalViewHolder>() 
         holder.bind(item)
     }
 
-    fun setData(journalList: MutableList<Journal>) {
+    fun setData(journalList: List<Journal>) {
         this.journalList = journalList
         notifyDataSetChanged()
     }
 
-    class JournalViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class JournalViewHolder(val binding: JournalCardItemBinding) : RecyclerView.ViewHolder(binding.root) {
         lateinit var item: Journal
 
         init {
-            itemView.journalItemView.setOnClickListener {
+            binding.journalItemView.setOnClickListener {
                 EventBusHelper.showFiscalDialog(item.id, item.qrCode, item.invoiceNumber, item.VerificationUrl)
             }
 
-            itemView.journalItemCopyButton.setOnClickListener {
+            binding.journalItemCopyButton.setOnClickListener {
                 EventBusHelper.showInvoiceActivity(InvoiceActivityType.COPY, item.invoiceNumber)
             }
 
-            itemView.journalItemRefundButton.setOnClickListener {
+            binding.journalItemRefundButton.setOnClickListener {
                 EventBusHelper.showInvoiceActivity(InvoiceActivityType.REFUND, item.invoiceNumber)
             }
 
-            itemView.journalItemCard.setOnLongClickListener {
+            binding.journalItemCard.setOnLongClickListener {
                 EventBusHelper.copyInvoiceNumber(item.invoiceNumber)
                 true
             }
@@ -62,9 +61,9 @@ class JournalAdapter : RecyclerView.Adapter<JournalAdapter.JournalViewHolder>() 
 
         fun bind(item: Journal) {
             this.item = item
-            itemView.item_journal_date.text = showDate(item.date)
-            itemView.item_journal_rec.text = item.invoiceNumber
-            itemView.item_journal_total.text = (item.total.toString().roundToDecimalPlaces(2)).toString()
+            binding.itemJournalDate.text = showDate(item.date)
+            binding.itemJournalRec.text = item.invoiceNumber
+            binding.itemJournalTotal.text = (item.total.toString().roundToDecimalPlaces(2)).toString()
         }
 
         @SuppressLint("SimpleDateFormat")

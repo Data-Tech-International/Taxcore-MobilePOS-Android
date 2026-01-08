@@ -1,19 +1,27 @@
 package online.taxcore.pos.ui.settings.cashiers
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.pawegio.kandroid.onQueryChange
 import com.vicpin.krealmextensions.queryAll
-import kotlinx.android.synthetic.main.cashiers_list_fragment.*
 import online.taxcore.pos.R
 import online.taxcore.pos.data.realm.Cashier
+import online.taxcore.pos.databinding.CashiersListFragmentBinding
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.utils.hideKeyboard
+import online.taxcore.pos.utils.onQueryChange
 
 class CashiersListFragment : Fragment() {
+
+    private var _binding: CashiersListFragmentBinding? = null
+    private val binding get() = _binding!!
 
     private var searchMenuItem: MenuItem? = null
     private var cashiersAdapter: CashiersAdapter? = null
@@ -23,11 +31,19 @@ class CashiersListFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.cashiers_list_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = CashiersListFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) =
-            initList()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initList()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onResume() {
         super.onResume()
@@ -61,8 +77,8 @@ class CashiersListFragment : Fragment() {
     private fun initList() {
         cashiersAdapter = CashiersAdapter()
 
-        cashiersRecyclerView.layoutManager = LinearLayoutManager(baseActivity())
-        cashiersRecyclerView.adapter = cashiersAdapter
+        binding.cashiersRecyclerView.layoutManager = LinearLayoutManager(baseActivity())
+        binding.cashiersRecyclerView.adapter = cashiersAdapter
 
     }
 }

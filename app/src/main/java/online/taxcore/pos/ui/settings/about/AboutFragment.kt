@@ -10,16 +10,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.about_fragment.*
 import online.taxcore.pos.BuildConfig
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
+import online.taxcore.pos.databinding.AboutFragmentBinding
 import online.taxcore.pos.utils.TCUtil
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
 class AboutFragment : Fragment() {
+
+    private var _binding: AboutFragmentBinding? = null
+    private val binding get() = _binding!!
 
     @Inject
     lateinit var prefService: PrefService
@@ -29,8 +30,10 @@ class AboutFragment : Fragment() {
         super.onAttach(context)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.about_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = AboutFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
         menu.clear()
@@ -41,7 +44,7 @@ class AboutFragment : Fragment() {
         setImage()
         setAppCountry()
         setAppVersion()
-        setDateUpdate(getCurrentDate())
+        setDateUpdate()
     }
 
     override fun onResume() {
@@ -49,27 +52,20 @@ class AboutFragment : Fragment() {
         setImage()
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private fun getCurrentDate(): String {
-        val dateFormat = SimpleDateFormat("MM.yyyy")
-        val currentCal = Calendar.getInstance()
-        return dateFormat.format(currentCal.time)
-    }
-
     @SuppressLint("SetTextI18n")
-    private fun setDateUpdate(date: String) {
-        fragment_about_app_date_update.text = getString(R.string.update_date) + " " + date
+    private fun setDateUpdate() {
+        binding.fragmentAboutAppDateUpdate.text = getString(R.string.update_date) + " " + BuildConfig.BUILD_DATE
     }
 
     @SuppressLint("SetTextI18n")
     private fun setAppCountry() {
-        fragment_about_app_country.text = prefService.loadCertCountry()
+        binding.fragmentAboutAppCountry.text = prefService.loadCertCountry()
     }
 
     @SuppressLint("SetTextI18n")
     private fun setAppVersion() {
         val version = BuildConfig.VERSION_NAME
-        fragment_about_app_version.text = getString(R.string.app_version) + " " + version
+        binding.fragmentAboutAppVersion.text = getString(R.string.app_version) + " " + version
     }
 
     private fun setImage() {
@@ -82,7 +78,11 @@ class AboutFragment : Fragment() {
         Glide.with(this)
             .load(logoImage)
             .error(R.drawable.tax_core_logo_splash)
-            .into(fragment_about_app_image)
+                .into(binding.fragmentAboutAppImage)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

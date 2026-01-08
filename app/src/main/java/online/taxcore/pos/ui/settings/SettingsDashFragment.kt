@@ -12,10 +12,10 @@ import androidx.fragment.app.Fragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.settings_dashboard_fragment.*
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
+import online.taxcore.pos.databinding.SettingsDashboardFragmentBinding
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.ui.dashboard.DashboardActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity.Companion.FRAGMENT_ABOUT
@@ -25,6 +25,9 @@ import online.taxcore.pos.ui.settings.SettingsDetailsActivity.Companion.FRAGMENT
 import javax.inject.Inject
 
 class SettingsDashFragment : Fragment() {
+
+    private var _binding: SettingsDashboardFragmentBinding? = null
+    private val binding get() = _binding!!
 
     @Inject
     lateinit var prefService: PrefService
@@ -38,11 +41,18 @@ class SettingsDashFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View =
-        inflater.inflate(R.layout.settings_dashboard_fragment, container, false)
+    ): View {
+        _binding = SettingsDashboardFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setOnClickListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onResume() {
@@ -57,40 +67,40 @@ class SettingsDashFragment : Fragment() {
         val foreColor =
             if (isAppConfigured) Color.TRANSPARENT else Color.parseColor("#90EEEEEE")
 
-        settingsTaxesButton.isEnabled = isAppConfigured
-        settingsTaxesButton.foreground = ColorDrawable(
+        binding.settingsTaxesButton.isEnabled = isAppConfigured
+        binding.settingsTaxesButton.foreground = ColorDrawable(
             if (isAppConfigured) Color.TRANSPARENT else Color.parseColor("#90EEEEEE")
         )
 
-        settingsCashiersButton.isEnabled = AppSession.isAppConfigured
-        settingsCashiersButton.foreground = ColorDrawable(foreColor)
+        binding.settingsCashiersButton.isEnabled = AppSession.isAppConfigured
+        binding.settingsCashiersButton.foreground = ColorDrawable(foreColor)
 
-        settingsServerButton.isEnabled = true
-        settingsServerButton.foreground = ColorDrawable(Color.TRANSPARENT)
+        binding.settingsServerButton.isEnabled = true
+        binding.settingsServerButton.foreground = ColorDrawable(Color.TRANSPARENT)
 
     }
 
     @SuppressLint("CheckResult")
     private fun setOnClickListeners() {
-        settingsTaxesButton.setOnClickListener {
+        binding.settingsTaxesButton.setOnClickListener {
             baseActivity()?.let { activity ->
                 SettingsDetailsActivity.start(activity, FRAGMENT_TAX)
             }
         }
 
-        settingsCashiersButton.setOnClickListener {
+        binding.settingsCashiersButton.setOnClickListener {
             baseActivity()?.let { activity ->
                 SettingsDetailsActivity.start(activity, FRAGMENT_CASHIERS)
             }
         }
 
-        settingsServerButton.setOnClickListener {
+        binding.settingsServerButton.setOnClickListener {
             baseActivity()?.let { activity ->
                 SettingsDetailsActivity.start(activity, FRAGMENT_SERVER)
             }
         }
 
-        settingsLanguageButton.setOnClickListener {
+        binding.settingsLanguageButton.setOnClickListener {
             val selectedIndex = when (prefService.loadLocale().toLanguageTag()) {
                 "en" -> 0
                 "fr" -> 1
@@ -123,7 +133,7 @@ class SettingsDashFragment : Fragment() {
             }
         }
 
-        settingsAboutButton.setOnClickListener {
+        binding.settingsAboutButton.setOnClickListener {
             baseActivity()?.let { activity ->
                 SettingsDetailsActivity.start(activity, FRAGMENT_ABOUT)
             }

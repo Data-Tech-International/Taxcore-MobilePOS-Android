@@ -1,5 +1,6 @@
 package online.taxcore.pos.ui.invoice
 
+// import online.taxcore.pos.utils.CreatePdf // TODO: Migrate to iText7
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -24,17 +25,20 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
-import com.pawegio.kandroid.toast
-import kotlinx.android.synthetic.main.invoice_preview_dialog.*
 import online.taxcore.pos.BuildConfig
 import online.taxcore.pos.R
 import online.taxcore.pos.constants.PrefConstants
+import online.taxcore.pos.databinding.InvoicePreviewDialogBinding
 import online.taxcore.pos.enums.ExportMimeType
 import online.taxcore.pos.ui.base.BaseActivity
 import online.taxcore.pos.utils.CreatePdf
+import online.taxcore.pos.utils.toast
 import java.io.File
 
 class FiscalInvoiceFragment : DialogFragment() {
+
+    private var _binding: InvoicePreviewDialogBinding? = null
+    private val binding get() = _binding!!
 
     companion object {
         fun showFiscalDialog(
@@ -64,8 +68,10 @@ class FiscalInvoiceFragment : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View =
-        inflater.inflate(R.layout.invoice_preview_dialog, container, false)
+    ): View {
+        _binding = InvoicePreviewDialogBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,25 +82,25 @@ class FiscalInvoiceFragment : DialogFragment() {
         val invoiceFooter = invoiceJournal.split(delimiter).last()
         val invoiceContent = invoiceJournal.replace(invoiceFooter, "")
 
-        dialog_fragment_invoice.typeface = typeface
-        dialog_fragment_invoice.text = invoiceContent
-        dialog_fragment_invoice.gravity = Gravity.CENTER_HORIZONTAL
+        binding.dialogFragmentInvoice.typeface = typeface
+        binding.dialogFragmentInvoice.text = invoiceContent
+        binding.dialogFragmentInvoice.gravity = Gravity.CENTER_HORIZONTAL
 
-        dialog_fragment_invoice_end.text = invoiceFooter
-        dialog_fragment_invoice_end.typeface = typeface
+        binding.dialogFragmentInvoiceEnd.text = invoiceFooter
+        binding.dialogFragmentInvoiceEnd.typeface = typeface
 
         showQrCode()
 
         val invoiceNumber = arguments?.getString("Message")
 
-        fiscalDialogCloseButton.setOnClickListener {
+        binding.fiscalDialogCloseButton.setOnClickListener {
             when (requireArguments().getString("ARG_FRAGMENT_TYPE")) {
                 "copy", "refund" -> activity?.finish()
                 else -> dismiss()
             }
         }
 
-        main_app_bar_share.setOnClickListener {
+        binding.mainAppBarShare.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 invoiceNumber?.let { invoiceNo ->
                     createAndSharePdf(
@@ -131,7 +137,7 @@ class FiscalInvoiceFragment : DialogFragment() {
                 }).check()
         }
 
-        main_app_bar_print.setOnClickListener {
+        binding.mainAppBarPrint.setOnClickListener {
             printInvoice(invoiceNumber!!, invoiceJournal)
             // createWebPrintJob(getBitmapFromView(dialog_fragment_invoice_container))
         }
@@ -139,6 +145,11 @@ class FiscalInvoiceFragment : DialogFragment() {
 
     override fun getTheme(): Int {
         return R.style.MyCustomThemeDialog
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun printInvoice(
@@ -168,7 +179,7 @@ class FiscalInvoiceFragment : DialogFragment() {
         Glide.with(this)
             .asBitmap()
             .load(imageByteArray)
-            .into(dialog_fragment_qr_code)
+            .into(binding.dialogFragmentQrCode)
     }
 
     private fun createAndSharePdf(
@@ -183,7 +194,6 @@ class FiscalInvoiceFragment : DialogFragment() {
 
         val content =
             CreatePdf.write(filePath, invoiceJournal, imageByteArray)
-
         if (content) {
             val uriFromFile = context?.let { it1 ->
                 FileProvider.getUriForFile(

@@ -4,25 +4,35 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.fragment.app.Fragment
-import com.pawegio.kandroid.longToast
-import kotlinx.android.synthetic.main.journal_filters_fragment.*
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.JournalManager
+import online.taxcore.pos.databinding.JournalFiltersFragmentBinding
 import online.taxcore.pos.enums.InvoiceType
 import online.taxcore.pos.enums.TransactionType
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.replaceFragment
 import online.taxcore.pos.utils.hideKeyboard
+import online.taxcore.pos.utils.longToast
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @SuppressLint("ValidFragment")
 class JournalFilterFragment : Fragment() {
+
+    private var _binding: JournalFiltersFragmentBinding? = null
+    private val binding get() = _binding!!
 
     private val TEMPLATE_DATE = "MMM dd yyyy HH:mm"
     private var datePickerDialogFrom: DatePickerDialog? = null
@@ -55,8 +65,10 @@ class JournalFilterFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View =
-        inflater.inflate(R.layout.journal_filters_fragment, container, false)
+    ): View {
+        _binding = JournalFiltersFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,6 +76,11 @@ class JournalFilterFragment : Fragment() {
 
         setOnClickListeners()
         setOnChangeListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -84,39 +101,39 @@ class JournalFilterFragment : Fragment() {
     private fun initField() {
         if (stringDateFrom.isNotEmpty()) {
             dateFrom = getDateFrom()
-            journalFilterFromDateLabel.text = stringDateFrom
+            binding.journalFilterFromDateLabel.text = stringDateFrom
             isFromDateSelected = true
         }
 
         if (stringTimeFrom != "00:00") {
-            journalFilterFromTimeLabel.text = stringTimeFrom
+            binding.journalFilterFromTimeLabel.text = stringTimeFrom
         }
 
         if (stringDateTo.isNotEmpty()) {
             dateTo = getDateTo()
-            journalFilterToDateLabel.text = stringDateTo
+            binding.journalFilterToDateLabel.text = stringDateTo
             isToDateSelected = true
         }
 
         if (stringTimeTo != "23:59") {
-            journalFilterToTimeLabel.text = stringTimeTo
+            binding.journalFilterToTimeLabel.text = stringTimeTo
         }
 
         with(JournalManager) {
-            journalFilterBuyerTinEditText.setText(buyerTin)
-            journalFilterInvoiceNumberInput.setText(invoice)
-            journalFilterInvoiceTypeSpinner.setSelection(invoiceTypePosition)
-            journalFilterTransactionTypeSpinner.setSelection(transactionTypePosition)
+            binding.journalFilterBuyerTinEditText.setText(buyerTin)
+            binding.journalFilterInvoiceNumberInput.setText(invoice)
+            binding.journalFilterInvoiceTypeSpinner.setSelection(invoiceTypePosition)
+            binding.journalFilterTransactionTypeSpinner.setSelection(transactionTypePosition)
         }
     }
 
     private fun setOnClickListeners() {
 
-        journalFilterFromDateLabel.setOnClickListener {
+        binding.journalFilterFromDateLabel.setOnClickListener {
             showFromCalendar()
         }
 
-        journalFilterFromTimeLabel.setOnClickListener {
+        binding.journalFilterFromTimeLabel.setOnClickListener {
             if (isFromDateSelected) {
                 showFromTime()
             } else {
@@ -124,11 +141,11 @@ class JournalFilterFragment : Fragment() {
             }
         }
 
-        journalFilterToDateLabel.setOnClickListener {
+        binding.journalFilterToDateLabel.setOnClickListener {
             showToCalendar()
         }
 
-        journalFilterToTimeLabel.setOnClickListener {
+        binding.journalFilterToTimeLabel.setOnClickListener {
             if (isToDateSelected) {
                 showToTime()
             } else {
@@ -136,23 +153,23 @@ class JournalFilterFragment : Fragment() {
             }
         }
 
-        journalFilterResetButton.setOnClickListener {
+        binding.journalFilterResetButton.setOnClickListener {
             resetAll()
         }
     }
 
     private fun setOnChangeListeners() {
-        journalFilterBuyerTinEditText.onTextChanged {
+        binding.journalFilterBuyerTinEditText.onTextChanged {
             updatedFieldsMap["buyerTin"] = it.isNotEmpty()
             validateFilters()
         }
 
-        journalFilterInvoiceNumberInput.onTextChanged {
+        binding.journalFilterInvoiceNumberInput.onTextChanged {
             updatedFieldsMap["invoiceNo"] = it.isNotEmpty()
             validateFilters()
         }
 
-        journalFilterInvoiceTypeSpinner.onItemSelectedListener =
+        binding.journalFilterInvoiceTypeSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                     updatedFieldsMap["invoiceType"] = false
@@ -170,7 +187,7 @@ class JournalFilterFragment : Fragment() {
                 }
             }
 
-        journalFilterTransactionTypeSpinner.onItemSelectedListener =
+        binding.journalFilterTransactionTypeSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                     updatedFieldsMap["transactionType"] = false
@@ -210,22 +227,22 @@ class JournalFilterFragment : Fragment() {
         stringTimeFrom = "00:00"
         stringTimeTo = "23:59"
 
-        journalFilterBuyerTinEditText.setText("")
-        journalFilterInvoiceNumberInput.setText("")
+        binding.journalFilterBuyerTinEditText.setText("")
+        binding.journalFilterInvoiceNumberInput.setText("")
 
-        journalFilterInvoiceTypeSpinner.setSelection(0)
-        journalFilterTransactionTypeSpinner.setSelection(0)
+        binding.journalFilterInvoiceTypeSpinner.setSelection(0)
+        binding.journalFilterTransactionTypeSpinner.setSelection(0)
 
         datePickerDialogFrom = null
         datePickerDialogTo = null
         timePickerDialog = null
         timePickerDialogFrom = null
 
-        journalFilterFromDateLabel.text = activity?.resources?.getString(R.string.select_date)
-        journalFilterFromTimeLabel.text = activity?.resources?.getString(R.string.select_time)
+        binding.journalFilterFromDateLabel.text = activity?.resources?.getString(R.string.select_date)
+        binding.journalFilterFromTimeLabel.text = activity?.resources?.getString(R.string.select_time)
 
-        journalFilterToDateLabel.text = activity?.resources?.getString(R.string.select_date)
-        journalFilterToTimeLabel.text = activity?.resources?.getString(R.string.select_time)
+        binding.journalFilterToDateLabel.text = activity?.resources?.getString(R.string.select_date)
+        binding.journalFilterToTimeLabel.text = activity?.resources?.getString(R.string.select_time)
 
         JournalManager.resetFilter()
     }
@@ -300,12 +317,12 @@ class JournalFilterFragment : Fragment() {
 
     private fun takeSearchField() {
         with(JournalManager) {
-            buyerTin = journalFilterBuyerTinEditText.text.toString()
-            invoice = journalFilterInvoiceNumberInput.text.toString()
+            buyerTin = binding.journalFilterBuyerTinEditText.text.toString()
+            invoice = binding.journalFilterInvoiceNumberInput.text.toString()
             transactionType = getTransactionType()
             invoiceType = getInvoiceType()
-            transactionTypePosition = journalFilterTransactionTypeSpinner.selectedItemPosition
-            invoiceTypePosition = journalFilterInvoiceTypeSpinner.selectedItemPosition
+            transactionTypePosition = binding.journalFilterTransactionTypeSpinner.selectedItemPosition
+            invoiceTypePosition = binding.journalFilterInvoiceTypeSpinner.selectedItemPosition
             dateFrom = getDateFrom()
             dateTo = getDateTo()
         }
@@ -338,13 +355,13 @@ class JournalFilterFragment : Fragment() {
         }
 
     private fun getInvoiceType(): String = when (val selectedInvoiceTypeIndex =
-        journalFilterInvoiceTypeSpinner.selectedItemPosition) {
+        binding.journalFilterInvoiceTypeSpinner.selectedItemPosition) {
         0 -> ""
         else -> InvoiceType.values()[selectedInvoiceTypeIndex - 1].value
     }
 
     private fun getTransactionType() = when (val selectedTransactionTypeIndex =
-        journalFilterTransactionTypeSpinner.selectedItemPosition) {
+        binding.journalFilterTransactionTypeSpinner.selectedItemPosition) {
         0 -> ""
         else -> TransactionType.values()[selectedTransactionTypeIndex - 1].value
     }
@@ -364,7 +381,7 @@ class JournalFilterFragment : Fragment() {
             isFromDateSelected = true
 
             val formatDate = formatDate(cal.time)
-            journalFilterFromDateLabel?.text = formatDate
+            binding.journalFilterFromDateLabel?.text = formatDate
 
             stringDateFrom = formatDate
 
@@ -385,7 +402,7 @@ class JournalFilterFragment : Fragment() {
             isToDateSelected = true
 
             val formatDate = formatDate(cal.time)
-            journalFilterToDateLabel.text = formatDate
+            binding.journalFilterToDateLabel.text = formatDate
 
             stringDateTo = formatDate
 
@@ -398,7 +415,7 @@ class JournalFilterFragment : Fragment() {
         cal.set(Calendar.MINUTE, minute)
 
         val formatTime = formatTime(cal.time)
-        journalFilterFromTimeLabel?.text = formatTime
+        binding.journalFilterFromTimeLabel?.text = formatTime
 
         stringTimeFrom = formatTime
     }
@@ -409,7 +426,7 @@ class JournalFilterFragment : Fragment() {
         cal.set(Calendar.MINUTE, minute)
 
         val formatTime = formatTime(cal.time)
-        journalFilterToTimeLabel.text = formatTime
+        binding.journalFilterToTimeLabel.text = formatTime
 
         stringTimeTo = formatTime
     }

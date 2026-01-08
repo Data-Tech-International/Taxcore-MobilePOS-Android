@@ -233,6 +233,9 @@
     <string name="dialog_message_confirm_catalog_import">Tu as déjà des articles du catalogue sur ton app - si tu continues avec l\'importation, les articles du catalogue actuel seront définitivement supprimés, y compris tes favoris.\n\nEst-ce que tu veux continuer avec l\'importation ?</string>
     <string name="dialog_message_confirm_journal_import">Tu as déjà des articles du journal sur ton app - si tu continues avec l\'importation, les articles du journal actuel seront définitivement supprimés, y compris tes favoris.\n\nEst-ce que tu veux continuer avec l\'importation ?</string>
 
+    <string name="dialog_title_export_and_clear">Exporter et effacer le journal</string>
+    <string name="dialog_message_export_and_clear_warning">ATTENTION: Ceci est une action destructive!\n\nAprès l\'exportation, TOUTES les entrées du journal seront définitivement supprimées de cet appareil.\n\nCette action est irréversible.\n\nVeux-tu continuer?</string>
+
     <string name="msg_product_already_exists">Ce produit existe déjà</string>
     <string name="msg_configure_application">Pour activer toutes les fonctionnalités dont tu as besoin, tu dois configurer l\'application et installer le certificat approprié.</string>
     <string name="msg_exit_without_configuration">L\'application n\'est pas complètement configurée. Est-ce que tu veux fermer l\'app sans la configurer ?</string>
@@ -350,6 +353,12 @@
     <string name="toast_nothing_to_import">Rien à importer </string>
     <string name="toast_catalog_exported">Catalogue exporté avec succès </string>
     <string name="toast_journal_exported">Journal exporté avec succès </string>
+    <string name="toast_export_failed">Échec de l\'exportation. Mémoire insuffisante.</string>
+    <string name="msg_exporting_journal">Exportation du journal…</string>
+    <string name="msg_export_progress">Exporté %1$d sur %2$d enregistrements</string>
+    <string name="msg_importing_journal">Importation du journal…</string>
+    <string name="msg_import_progress">Importé %1$d sur %2$d enregistrements</string>
+    <string name="msg_reading_file">Lecture du fichier…</string>
     <string name="toast_item_removed_from_fav">Article supprimé des favoris </string>
     <string name="toast_item_added_to_fav">Article ajouté aux favoris </string>
     <string name="toast_item_with_name_removed">Article `%1$s` supprimé </string>
@@ -391,4 +400,19 @@
     <string name="esdc_status_2110">Carte bloquée</string>
     <string name="esdc_status_2210">ES verrouillé</string>
     <string name="esdc_status_2400">Non configuré</string>
+
+    <string name="toast_storage_unavailable">Stockage indisponible</string>
+    <string name="toast_export_file_not_found">Impossible d\'exporter le catalogue. Fichier non trouvé.</string>
+    <string name="toast_invalid_file_format">Format invalide</string>
+
+    <string name="error_wrong_csv_type">Mauvais type de CSV</string>
+    <string name="error_file_not_found">Fichier non trouvé</string>
+    <string name="error_wrong_data_type">Mauvais type de données.</string>
+    <string name="error_invalid_file_content">Contenu du fichier invalide.</string>
+    <string name="error_unable_to_complete">Impossible de terminer l\'opération</string>
+    <string name="error_not_enough_space">Pas assez d\'espace pour exporter le catalogue.</string>
+    <string name="error_unable_to_export">Impossible d\'exporter le catalogue.</string>
+    <string name="error_wrong_json_type">Mauvais type de JSON</string>
+    <string name="error_invalid_json_format">Format JSON invalide</string>
+    <string name="error_unable_to_import_journal">Impossible d\'importer le journal</string>
 </resources>

@@ -2,7 +2,7 @@ package online.taxcore.pos.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.pawegio.kandroid.defaultSharedPreferences
+import android.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import online.taxcore.pos.TaxCoreApp
@@ -16,7 +16,7 @@ class AppModule {
 
     @Provides
     fun provideSharedPreferences(application: TaxCoreApp): SharedPreferences =
-        application.defaultSharedPreferences
+        PreferenceManager.getDefaultSharedPreferences(application)
 
     @Provides
     fun providePrefService(context: Context): PrefService = PrefService(context)

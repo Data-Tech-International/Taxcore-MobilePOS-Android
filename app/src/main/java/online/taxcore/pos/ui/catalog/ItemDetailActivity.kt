@@ -13,28 +13,15 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.pawegio.kandroid.longToast
 import com.vicpin.krealmextensions.queryAndUpdate
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
-import kotlinx.android.synthetic.main.app_bar_main.toolbar
-import kotlinx.android.synthetic.main.item_details_activity.activity_detail_list_vat
-import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_barcode
-import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_input_barcode
-import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_input_name
-import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_input_price
-import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_name
-import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_price
-import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_scroll
-import kotlinx.android.synthetic.main.item_details_activity.activity_detail_plu_vat
-import kotlinx.android.synthetic.main.item_details_activity.invalid_taxes_label
-import kotlinx.android.synthetic.main.item_details_activity.invalid_taxes_list
-import kotlinx.android.synthetic.main.item_details_activity.ll_invalid_taxes
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
 import online.taxcore.pos.data.local.TaxesManager
 import online.taxcore.pos.data.realm.Item
 import online.taxcore.pos.data.realm.TaxesSettings
+import online.taxcore.pos.databinding.ItemDetailsActivityBinding
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.roundTo2DecimalPlaces
 import online.taxcore.pos.extensions.roundToDecimal
@@ -45,10 +32,12 @@ import online.taxcore.pos.ui.common.TaxesCheckedAdapter
 import online.taxcore.pos.ui.invoice.InvoiceFragment
 import online.taxcore.pos.ui.invoice.InvoiceFragment.Companion.BARCODE_EAN_EXTRA
 import online.taxcore.pos.utils.hideKeyboard
-
+import online.taxcore.pos.utils.longToast
 import javax.inject.Inject
 
 class ItemDetailActivity : BaseActivity() {
+
+    private lateinit var binding: ItemDetailsActivityBinding
 
     @Inject
     lateinit var prefService: PrefService
@@ -87,7 +76,8 @@ class ItemDetailActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.item_details_activity)
+        binding = ItemDetailsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initFromBundleExtra()
 
@@ -140,22 +130,21 @@ class ItemDetailActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        toolbar.setNavigationIcon(R.drawable.ic_exit)
-        setSupportActionBar(toolbar)
+        binding.appBarMain.toolbar.setNavigationIcon(R.drawable.ic_exit)
+        setSupportActionBar(binding.appBarMain.toolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.title =
-            if (isInCreateMode) getString(R.string.add_item) else getString(R.string.edit_item)
+        supportActionBar?.title = if (isInCreateMode) getString(R.string.add_item) else getString(R.string.edit_item)
     }
 
     private fun initFields() {
 
         val isAppConfigured = prefService.isAppConfigured()
 
-        activity_detail_plu_input_name.isEnabled = isAppConfigured
-        activity_detail_plu_input_price.isEnabled = isAppConfigured
-        activity_detail_plu_input_barcode.isEnabled = isAppConfigured
+        binding.activityDetailPluInputName.isEnabled = isAppConfigured
+        binding.activityDetailPluInputPrice.isEnabled = isAppConfigured
+        binding.activityDetailPluInputBarcode.isEnabled = isAppConfigured
 
         if (isInEditMode) {
             populateItemFields(item)
@@ -166,7 +155,7 @@ class ItemDetailActivity : BaseActivity() {
         val itemUUID = intent.getStringExtra(EXTRA_ITEM_UUID).orEmpty()
         val barcode = intent.getStringExtra(BARCODE_EAN_EXTRA).orEmpty()
 
-        activity_detail_plu_input_barcode.setText(barcode)
+        binding.activityDetailPluInputBarcode.setText(barcode)
 
         isInCreateMode = itemUUID.isEmpty()
         isInEditMode = itemUUID.isNotEmpty()
@@ -179,9 +168,9 @@ class ItemDetailActivity : BaseActivity() {
     private fun populateItemFields(item: Item?) {
         item?.let {
             oldName = it.name
-            activity_detail_plu_input_name.setText(oldName)
-            activity_detail_plu_input_price.setText(it.price.roundToDecimal())
-            activity_detail_plu_input_barcode.setText(it.barcode)
+            binding.activityDetailPluInputName.setText(oldName)
+            binding.activityDetailPluInputPrice.setText(it.price.roundToDecimal())
+            binding.activityDetailPluInputBarcode.setText(it.barcode)
         }
 
         isNameValid = true
@@ -198,10 +187,10 @@ class ItemDetailActivity : BaseActivity() {
         if (isInCreateMode) {
 
             taxesCheckedAdapter?.setData(appTaxList)
-            activity_detail_plu_vat.visible = appTaxList.isNotEmpty()
+            binding.activityDetailPluVat.visible = appTaxList.isNotEmpty()
 
-            invalid_taxes_label.visibility = View.GONE
-            ll_invalid_taxes.visibility = View.GONE
+            binding.invalidTaxesLabel.visibility = View.GONE
+            binding.llInvalidTaxes.visibility = View.GONE
             return
         }
 
@@ -221,8 +210,8 @@ class ItemDetailActivity : BaseActivity() {
             ?: arrayListOf()
 
         if (invalidTaxItems.isNotEmpty()) {
-            invalid_taxes_label.visibility = View.VISIBLE
-            ll_invalid_taxes.visibility = View.VISIBLE
+            binding.invalidTaxesLabel.visibility = View.VISIBLE
+            binding.llInvalidTaxes.visibility = View.VISIBLE
 
             val invalidTaxSettings = invalidTaxItems.map {
                 val taxSettings = TaxesSettings()
@@ -237,40 +226,39 @@ class ItemDetailActivity : BaseActivity() {
             invalidTaxesCheckedAdapter?.setData(invalidTaxSettings)
 
         } else {
-            invalid_taxes_label.visibility = View.GONE
-            ll_invalid_taxes.visibility = View.GONE
+            binding.invalidTaxesLabel.visibility = View.GONE
+            binding.llInvalidTaxes.visibility = View.GONE
         }
 
         taxesCheckedAdapter?.setData(appliedTaxItems.toMutableList())
-        activity_detail_plu_vat.visible = true
+        binding.activityDetailPluVat.visible = true
     }
 
     private fun initTaxesAdapter() {
-        activity_detail_list_vat.layoutManager = LinearLayoutManager(this)
+        binding.activityDetailListVat.layoutManager = LinearLayoutManager(this)
         taxesCheckedAdapter = TaxesCheckedAdapter {
             validateInputForm()
         }
-        activity_detail_list_vat.adapter = taxesCheckedAdapter
+        binding.activityDetailListVat.adapter = taxesCheckedAdapter
 
-        invalid_taxes_list.layoutManager = LinearLayoutManager(this)
+        binding.invalidTaxesList.layoutManager = LinearLayoutManager(this)
         invalidTaxesCheckedAdapter = TaxesCheckedAdapter {
             validateInputForm()
         }
-        invalid_taxes_list.adapter = invalidTaxesCheckedAdapter
+        binding.invalidTaxesList.adapter = invalidTaxesCheckedAdapter
     }
 
     private fun setOnBarcodeInputChangeHandler() {
-        activity_detail_plu_input_barcode.onTextChanged {
+        binding.activityDetailPluInputBarcode.onTextChanged {
 
             updatedFieldsMap["barcode"] = (it != item?.barcode)
 
             isBarcodeValid = it.isEmpty() || it.length > 7
 
             if (isBarcodeValid) {
-                activity_detail_plu_barcode.isErrorEnabled = false
+                binding.activityDetailPluBarcode.isErrorEnabled = false
             } else {
-                activity_detail_plu_barcode.error =
-                    getString(R.string.error_minimum_eight_characters)
+                binding.activityDetailPluBarcode.error = getString(R.string.error_minimum_eight_characters)
             }
 
             validateInputForm()
@@ -278,9 +266,8 @@ class ItemDetailActivity : BaseActivity() {
     }
 
     private fun setOnPriceChangeHandler() {
-        activity_detail_plu_input_price.filters =
-            arrayOf<InputFilter>(DecimalDigitsInputFilter(12, 2))
-        activity_detail_plu_input_price.onTextChanged {
+        binding.activityDetailPluInputPrice.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(12, 2))
+        binding.activityDetailPluInputPrice.onTextChanged {
 
             if (isNumber(it)) {
                 updatedFieldsMap["price"] =
@@ -290,24 +277,24 @@ class ItemDetailActivity : BaseActivity() {
 
             isPriceValid = it.isNotEmpty() && isNumber(it)
             if (isPriceValid) {
-                activity_detail_plu_price.isErrorEnabled = false
+                binding.activityDetailPluPrice.isErrorEnabled = false
             } else {
-                activity_detail_plu_price.error = getString(R.string.error_unit_price)
+                binding.activityDetailPluPrice.error = getString(R.string.error_unit_price)
             }
             validateInputForm()
         }
     }
 
     private fun setOnNameInputChangeHandler() {
-        activity_detail_plu_input_name.onTextChanged {
+        binding.activityDetailPluInputName.onTextChanged {
             updatedFieldsMap["name"] = (it != item?.name)
 
             isNameValid = it.isNotEmpty() && it.length < 2048
 
             if (isNameValid) {
-                activity_detail_plu_name.isErrorEnabled = false
+                binding.activityDetailPluName.isErrorEnabled = false
             } else {
-                activity_detail_plu_name.error = getString(R.string.error_minimum_one_character)
+                binding.activityDetailPluName.error = getString(R.string.error_minimum_one_character)
             }
             validateInputForm()
         }
@@ -349,9 +336,7 @@ class ItemDetailActivity : BaseActivity() {
         }
     }
 
-    private fun isFormValid() =
-        hasTaxLabelApplied() && isPriceValid && isNameValid && isBarcodeValid
-
+    private fun isFormValid() = hasTaxLabelApplied() && isPriceValid && isNameValid && isBarcodeValid
     private fun isFormUpdated(): Boolean = updatedFieldsMap.any { item -> item.value }
 
     private fun hasTaxLabelApplied(): Boolean {
@@ -361,8 +346,7 @@ class ItemDetailActivity : BaseActivity() {
 
         if (isInEditMode) {
             val appliedLabelsList = appliedTaxes?.toList()?.map { it.code } as Collection<String>
-            val appliedInvalidLabelsList =
-                appliedInvalidTaxes?.toList()?.map { it.code } as Collection<String>
+            val appliedInvalidLabelsList = appliedInvalidTaxes?.toList()?.map { it.code } as Collection<String>
             val itemLabelsList = item?.tax?.toList()?.map { it.code } as Collection<String>
 
             updatedFieldsMap["appliedTaxes"] =
@@ -374,7 +358,7 @@ class ItemDetailActivity : BaseActivity() {
 
     private fun saveItem() {
 
-        val itemName = activity_detail_plu_input_name.text.toString()
+        val itemName = binding.activityDetailPluInputName.text.toString()
 
         val existingItem = Item().queryFirst { equalTo("name", itemName) }
 
@@ -407,9 +391,9 @@ class ItemDetailActivity : BaseActivity() {
 
     private fun updateItem() {
         var isListAlreadyCleared = false
-        val itemName = activity_detail_plu_input_name.text.toString()
-        val itemBarcode = activity_detail_plu_input_barcode.text.toString()
-        val itemPrice = activity_detail_plu_input_price.text.toString()
+        val itemName = binding.activityDetailPluInputName.text.toString()
+        val itemBarcode = binding.activityDetailPluInputBarcode.text.toString()
+        val itemPrice = binding.activityDetailPluInputPrice.text.toString()
         val itemInFavorites = (favoriteMenuItem?.actionView as CheckBox).isChecked
 
         val existingItem = Item().queryFirst { equalTo("uuid", item?.uuid) }
@@ -452,17 +436,16 @@ class ItemDetailActivity : BaseActivity() {
 
         hideKeyboard()
 
-
-        activity_detail_plu_scroll?.let {
+        findViewById<View>(android.R.id.content)?.let {
             Snackbar.make(it, R.string.toast_item_updated, Snackbar.LENGTH_SHORT)
                 .show()
         }
     }
 
     private fun createItem(): Item {
-        val itemName = activity_detail_plu_input_name.text.toString()
-        val itemBarcode = activity_detail_plu_input_barcode.text.toString()
-        val itemPrice = activity_detail_plu_input_price.text.toString()
+        val itemName = binding.activityDetailPluInputName.text.toString()
+        val itemBarcode = binding.activityDetailPluInputBarcode.text.toString()
+        val itemPrice = binding.activityDetailPluInputPrice.text.toString()
         val itemInFavorites = (favoriteMenuItem?.actionView as CheckBox).isChecked
 
         val newItem = Item()

@@ -10,7 +10,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileNotFoundException
-import java.util.*
+import java.util.UUID
 
 enum class ErrorType {
     REQUEST_INVALID,

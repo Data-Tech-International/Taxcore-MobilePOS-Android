@@ -4,13 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import kotlinx.android.synthetic.main.secundary_activity.*
 import online.taxcore.pos.R
+import online.taxcore.pos.databinding.SecundaryActivityBinding
 import online.taxcore.pos.extensions.addFragment
 import online.taxcore.pos.ui.base.BaseActivity
 
 class JournalActivity : BaseActivity() {
 
+    private lateinit var binding: SecundaryActivityBinding
     private val journalDashFragment by lazy { JournalDashFragment() }
 
     companion object {
@@ -29,7 +30,8 @@ class JournalActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.secundary_activity)
+        binding = SecundaryActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initToolbar()
 
@@ -37,13 +39,13 @@ class JournalActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(fragmentToolbar)
+        setSupportActionBar(binding.fragmentToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        fragmentToolbar.title = getString(R.string.title_journal)
+        binding.fragmentToolbar.title = getString(R.string.title_journal)
     }
 
     private fun setActiveFragment() {

@@ -1,14 +1,19 @@
 package online.taxcore.pos.ui.catalog
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vicpin.krealmextensions.queryAll
-import kotlinx.android.synthetic.main.catalog_filters_fragment.*
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.CatalogManager
 import online.taxcore.pos.data.realm.TaxesSettings
+import online.taxcore.pos.databinding.CatalogFiltersFragmentBinding
 import online.taxcore.pos.extensions.baseActivity
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.replaceFragment
@@ -16,6 +21,9 @@ import online.taxcore.pos.ui.common.TaxesCheckedAdapter
 import online.taxcore.pos.utils.hideKeyboard
 
 class CatalogFilterFragment : Fragment() {
+
+    private var _binding: CatalogFiltersFragmentBinding? = null
+    private val binding get() = _binding!!
 
     private var confirmFilterItem: MenuItem? = null
     private var taxesCheckedAdapter: TaxesCheckedAdapter? = null
@@ -25,8 +33,10 @@ class CatalogFilterFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.catalog_filters_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = CatalogFiltersFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,6 +46,11 @@ class CatalogFilterFragment : Fragment() {
 
         setOnClickListeners()
         setOnInputChangeListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onResume() {
@@ -59,35 +74,37 @@ class CatalogFilterFragment : Fragment() {
             baseActivity()?.onBackPressed()
             true
         }
+
         R.id.actionConfirmFilter -> {
             applySearchFilter()
             true
         }
+
         else -> super.onOptionsItemSelected(item)
     }
 
     private fun initFields() {
 
         with(CatalogManager) {
-            catalogFilterItemNameInput.setText(this.itemName.trim())
-            catalogFilterUnitPriceInput.setText(this.unitPrice.trim())
-            catalogFilterGTINInput.setText(this.gtinNum.trim())
+            binding.catalogFilterItemNameInput.setText(this.itemName.trim())
+            binding.catalogFilterUnitPriceInput.setText(this.unitPrice.trim())
+            binding.catalogFilterGTINInput.setText(this.gtinNum.trim())
         }
 
         validateFilters()
     }
 
     private fun initTaxesAdapter() {
-        catalogFilterTaxesRecyclerView.layoutManager = LinearLayoutManager(baseActivity())
+        binding.catalogFilterTaxesRecyclerView.layoutManager = LinearLayoutManager(baseActivity())
         taxesCheckedAdapter = TaxesCheckedAdapter {
             validateFilters()
         }
-        catalogFilterTaxesRecyclerView.adapter = taxesCheckedAdapter
+        binding.catalogFilterTaxesRecyclerView.adapter = taxesCheckedAdapter
     }
 
     private fun setOnClickListeners() {
 
-        catalogFilterResetButton.setOnClickListener {
+        binding.catalogFilterResetButton.setOnClickListener {
             resetFilterFields()
         }
     }
@@ -108,11 +125,11 @@ class CatalogFilterFragment : Fragment() {
 
     private fun resetFilterFields() {
 
-        catalogFilterResetButton.isEnabled = false
+        binding.catalogFilterResetButton.isEnabled = false
 
-        catalogFilterItemNameInput.setText("")
-        catalogFilterGTINInput.setText("")
-        catalogFilterUnitPriceInput.setText("")
+        binding.catalogFilterItemNameInput.setText("")
+        binding.catalogFilterGTINInput.setText("")
+        binding.catalogFilterUnitPriceInput.setText("")
 
         val taxesSettingsList = TaxesSettings().queryAll().toMutableList()
         taxesCheckedAdapter?.setData(taxesSettingsList)
@@ -121,15 +138,15 @@ class CatalogFilterFragment : Fragment() {
     }
 
     private fun setOnInputChangeListeners() {
-        catalogFilterItemNameInput.onTextChanged {
+        binding.catalogFilterItemNameInput.onTextChanged {
             validateFilters()
         }
 
-        catalogFilterGTINInput.onTextChanged {
+        binding.catalogFilterGTINInput.onTextChanged {
             validateFilters()
         }
 
-        catalogFilterUnitPriceInput.onTextChanged {
+        binding.catalogFilterUnitPriceInput.onTextChanged {
             validateFilters()
         }
     }
@@ -140,9 +157,9 @@ class CatalogFilterFragment : Fragment() {
     }
 
     private fun validateFilters() {
-        val itemName = catalogFilterItemNameInput.text.toString().trim()
-        val unitPrice = catalogFilterUnitPriceInput.text.toString().trim()
-        val gtinNumber = catalogFilterGTINInput.text.toString().trim()
+        val itemName = binding.catalogFilterItemNameInput.text.toString().trim()
+        val unitPrice = binding.catalogFilterUnitPriceInput.text.toString().trim()
+        val gtinNumber = binding.catalogFilterGTINInput.text.toString().trim()
 
         val isSearchEnabled = itemName.isNotBlank() or
                 unitPrice.isNotEmpty() or
@@ -150,7 +167,7 @@ class CatalogFilterFragment : Fragment() {
                 hasTaxLabelApplied()
 
         confirmFilterItem?.isEnabled = isSearchEnabled
-        catalogFilterResetButton.isEnabled = isSearchEnabled
+        binding.catalogFilterResetButton.isEnabled = isSearchEnabled
     }
 
     private fun applySearchFilter() {
@@ -159,9 +176,9 @@ class CatalogFilterFragment : Fragment() {
             ?: emptyArray()
 
         with(CatalogManager) {
-            itemName = catalogFilterItemNameInput.text.toString()
-            unitPrice = catalogFilterUnitPriceInput.text.toString()
-            gtinNum = catalogFilterGTINInput.text.toString()
+            itemName = binding.catalogFilterItemNameInput.text.toString()
+            unitPrice = binding.catalogFilterUnitPriceInput.text.toString()
+            gtinNum = binding.catalogFilterGTINInput.text.toString()
             this.appliedTaxes = appliedTaxes
         }
 

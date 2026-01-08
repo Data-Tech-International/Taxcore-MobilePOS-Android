@@ -7,8 +7,7 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
-import com.pawegio.kandroid.longToast
-import kotlinx.android.synthetic.main.splash_activity.*
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -19,11 +18,13 @@ import online.taxcore.pos.data.local.CertManager
 import online.taxcore.pos.data.local.TaxesManager
 import online.taxcore.pos.data.models.StatusResponse
 import online.taxcore.pos.data.services.AppService
+import online.taxcore.pos.databinding.SplashActivityBinding
 import online.taxcore.pos.helpers.AlertDialogHelper
 import online.taxcore.pos.ui.base.BaseActivity
 import online.taxcore.pos.ui.dashboard.DashboardActivity
 import online.taxcore.pos.utils.TCUtil
 import online.taxcore.pos.utils.isOffline
+import online.taxcore.pos.utils.longToast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,21 +33,24 @@ import java.io.IOException
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity() {
 
+    private lateinit var binding: SplashActivityBinding
     lateinit var prefService: PrefService
     private var hasCert: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.splash_activity)
+        binding = SplashActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // This is needed since on some devices encrypted storage
-        // is not working properly. cache and data clean is needed
-        // to instantiate pref service
+        // PrefService has internal recovery for corrupted EncryptedSharedPreferences.
+        // This outer try-catch is a last-resort fallback for edge cases like
+        // MasterKeys.getOrCreate() failing before internal recovery can handle it.
         prefService = try {
             PrefService(this)
-        } catch (ex: java.lang.Exception) {
-            this.cacheDir.deleteRecursively()
-            this.dataDir.deleteRecursively()
+        } catch (ex: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(ex)
+            cacheDir.deleteRecursively()
+            dataDir.deleteRecursively()
             PrefService(this)
         }
 
@@ -84,7 +88,7 @@ class SplashActivity : BaseActivity() {
 
     private fun startAppConfig() {
 
-        splashLoadingBar.visibility = View.VISIBLE
+        binding.splashLoadingBar.visibility = View.VISIBLE
 
         val isConfigured = prefService.isAppConfigured()
         val hasCert = prefService.hasCertInstalled()
@@ -113,7 +117,7 @@ class SplashActivity : BaseActivity() {
             APIClient.vsdc(certAuthority)
 
         } catch (err: Error) {
-            longToast(R.string.error_wrong_pass_or_file)
+            longToast(getString(R.string.error_wrong_pass_or_file))
             return null
         }
     }
@@ -124,7 +128,7 @@ class SplashActivity : BaseActivity() {
 
             if (apiServer == null) {
                 runOnUiThread {
-                    splashLoadingBar.visibility = View.GONE
+                    binding.splashLoadingBar.visibility = View.GONE
                     DashboardActivity.start(this@SplashActivity, true)
                 }
                 return
@@ -153,7 +157,7 @@ class SplashActivity : BaseActivity() {
                     prefService.removeConfiguration()
                 }
 
-                longToast(R.string.error_general)
+                longToast(getString(R.string.error_general))
                 DashboardActivity.start(this@SplashActivity, null)
             }
         }
@@ -174,7 +178,7 @@ class SplashActivity : BaseActivity() {
                         prefService.setAppConfigured(false)
                     }
 
-                    longToast(R.string.error_general)
+                        longToast(getString(R.string.error_general))
 
                     DashboardActivity.start(this@SplashActivity, null)
                 }
@@ -206,6 +210,6 @@ class SplashActivity : BaseActivity() {
             .load(logoImage)
             .transition(withCrossFade(factory))
             .error(R.drawable.tax_core_logo_splash)
-            .into(splashLogoImageView)
+            .into(binding.splashLogoImageView)
     }
 }

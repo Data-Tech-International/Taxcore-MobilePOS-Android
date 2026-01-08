@@ -7,8 +7,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.InputType
 import android.util.Patterns
+import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -29,28 +32,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.pawegio.kandroid.longToast
-import kotlinx.android.synthetic.main.dashboard_activity.catalogCardButton
-import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcEnvLabel
-import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcLocationLayout
-import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcLocationName
-import kotlinx.android.synthetic.main.dashboard_activity.dashHeaderEsdcUidLabel
-import kotlinx.android.synthetic.main.dashboard_activity.dashboard
-import kotlinx.android.synthetic.main.dashboard_activity.dashboardChangeCertButton
-import kotlinx.android.synthetic.main.dashboard_activity.dashboardConfigureButton
-import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderCertInfoLayout
-import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderEsdcLayout
-import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderImageView
-import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderLocationNameTextView
-import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderNoConfigLayout
-import kotlinx.android.synthetic.main.dashboard_activity.dashboardHeaderUIDTextView
-import kotlinx.android.synthetic.main.dashboard_activity.invoiceCardButton
-import kotlinx.android.synthetic.main.dashboard_activity.journalCardButton
-import kotlinx.android.synthetic.main.dashboard_activity.settingsCardButton
-import kotlinx.android.synthetic.main.dialog_cert_pass_layout.view.certPassInput
-import kotlinx.android.synthetic.main.dialog_loading.loadingDialogText
-import kotlinx.android.synthetic.main.dialog_loading.view.loadingDialogText
-import kotlinx.android.synthetic.main.dialog_pac_layout.view.pacInputView
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
 import online.taxcore.pos.data.PrefService
@@ -61,6 +42,10 @@ import online.taxcore.pos.data.realm.Cert
 import online.taxcore.pos.data.services.DownloadService
 import online.taxcore.pos.data.services.ErrorType
 import online.taxcore.pos.data.services.SdcService
+import online.taxcore.pos.databinding.DashboardActivityBinding
+import online.taxcore.pos.databinding.DialogCertPassLayoutBinding
+import online.taxcore.pos.databinding.DialogLoadingBinding
+import online.taxcore.pos.databinding.DialogPacLayoutBinding
 import online.taxcore.pos.enums.InvoiceActivityType
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.visible
@@ -73,11 +58,14 @@ import online.taxcore.pos.ui.settings.SettingsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity
 import online.taxcore.pos.ui.settings.SettingsDetailsActivity.Companion.FRAGMENT_SDC_CONFIGURE
 import online.taxcore.pos.utils.isOffline
+import online.taxcore.pos.utils.longToast
 import java.io.IOException
 import java.util.Locale
 import javax.inject.Inject
 
 class DashboardActivity : BaseActivity() {
+
+    private lateinit var binding: DashboardActivityBinding
 
     @Inject
     lateinit var prefService: PrefService
@@ -102,13 +90,14 @@ class DashboardActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.dashboard_activity)
+        binding = DashboardActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         //FIXME: This is questionable
         val showSnackbar = intent.extras?.getBoolean("snackbar")
         showSnackbar?.let {
             if (it) {
-                dashboard?.let { view ->
+                findViewById<View>(android.R.id.content)?.let { view ->
                     Snackbar.make(
                         view,
                         R.string.previously_selected_certificate_not_exist,
@@ -125,38 +114,42 @@ class DashboardActivity : BaseActivity() {
         initHeader()
         setClickListeners()
         askPermission()
+        setupBackPressedCallback()
     }
 
     private var doubleBackToExitPressedOnce = false
 
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
+    private fun setupBackPressedCallback() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (!isAppConfigured) {
+                    showAppNotConfiguredDialog(
+                        titleText = R.string.title_finish_configuration,
+                        messageText = R.string.msg_exit_without_configuration,
+                        negativeBtnText = R.string.btn_close,
+                        onNotNow = {
+                            AppSession.resetSessionCredentials()
+                            finishAffinity()
+                        }
+                    )
+                    return
+                }
 
-        if (!isAppConfigured) {
-            showAppNotConfiguredDialog(titleText = R.string.title_finish_configuration,
-                messageText = R.string.msg_exit_without_configuration,
-                negativeBtnText = R.string.btn_close,
-                onNotNow = {
+                if (doubleBackToExitPressedOnce) {
                     AppSession.resetSessionCredentials()
-                    finishAffinity()
-                })
-            return
-        }
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    return
+                }
 
-        if (doubleBackToExitPressedOnce) {
-            AppSession.resetSessionCredentials()
-            @Suppress("DEPRECATION")
-            super.onBackPressed()
-            return
-        }
+                doubleBackToExitPressedOnce = true
+                longToast(getString(R.string.exit_app))
 
-        this.doubleBackToExitPressedOnce = true
-        longToast(getString(R.string.exit_app))
-
-        @Suppress("DEPRECATION")
-        Handler().postDelayed({
-            doubleBackToExitPressedOnce = false
-        }, 3000)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    doubleBackToExitPressedOnce = false
+                }, 3000)
+            }
+        })
     }
 
     override fun onResume() {
@@ -174,9 +167,9 @@ class DashboardActivity : BaseActivity() {
         val useVSDCServer = prefService.useVSDCServer()
 
         if (isAppConfigured.not()) {
-            dashboardHeaderNoConfigLayout.visible = true
-            dashboardHeaderCertInfoLayout.visible = false
-            dashboardHeaderEsdcLayout.visible = false
+            binding.dashboardHeaderNoConfigLayout.visible = true
+            binding.dashboardHeaderCertInfoLayout.visible = false
+            binding.dashboardHeaderEsdcLayout.visible = false
             return
         }
 
@@ -186,59 +179,60 @@ class DashboardActivity : BaseActivity() {
         Glide.with(this)
             .load(envLogo)
             .optionalFitCenter()
+            .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.AUTOMATIC)
             .transition(DrawableTransitionOptions.withCrossFade(factory))
             .error(R.drawable.logo_text)
-            .into(dashboardHeaderImageView)
+            .into(binding.dashboardHeaderImageView)
 
         if (hasCert && useVSDCServer) {
-            dashboardHeaderNoConfigLayout.visible = false
-            dashboardHeaderEsdcLayout.visible = false
-            dashboardHeaderCertInfoLayout.visible = true
+            binding.dashboardHeaderNoConfigLayout.visible = false
+            binding.dashboardHeaderEsdcLayout.visible = false
+            binding.dashboardHeaderCertInfoLayout.visible = true
 
             val certData = prefService.loadCertData()
 
-            dashboardHeaderUIDTextView.text = certData.serialNumber
-            dashboardHeaderLocationNameTextView.text = certData.organisationUnit
+            binding.dashboardHeaderUIDTextView.text = certData.serialNumber
+            binding.dashboardHeaderLocationNameTextView.text = certData.organisationUnit
 
         } else if (useESDCServer) {
-            dashboardHeaderNoConfigLayout.visible = false
-            dashboardHeaderCertInfoLayout.visible = false
-            dashboardHeaderEsdcLayout.visible = true
+            binding.dashboardHeaderNoConfigLayout.visible = false
+            binding.dashboardHeaderCertInfoLayout.visible = false
+            binding.dashboardHeaderEsdcLayout.visible = true
 
             val envData = prefService.loadEnvData()
             val locationName = prefService.loadLocation(envData.uid)
-            dashHeaderEsdcLocationLayout.visible = locationName.isNotEmpty()
-            dashHeaderEsdcLocationName.text = locationName
+            binding.dashHeaderEsdcLocationLayout.visible = locationName.isNotEmpty()
+            binding.dashHeaderEsdcLocationName.text = locationName
 
-            dashHeaderEsdcUidLabel.text = envData.uid
-            dashHeaderEsdcEnvLabel.text = envData.esdcEnvName
+            binding.dashHeaderEsdcUidLabel.text = envData.uid
+            binding.dashHeaderEsdcEnvLabel.text = envData.esdcEnvName
         } else {
-            dashboardHeaderNoConfigLayout.visible = true
+            binding.dashboardHeaderNoConfigLayout.visible = true
         }
     }
 
     private fun setClickListeners() {
-        invoiceCardButton.setOnClickListener {
+        binding.invoiceCardButton.setOnClickListener {
             onNewInvoice()
         }
 
-        catalogCardButton.setOnClickListener {
+        binding.catalogCardButton.setOnClickListener {
             CatalogActivity.start(this, "")
         }
 
-        journalCardButton.setOnClickListener {
+        binding.journalCardButton.setOnClickListener {
             JournalActivity.start(this)
         }
 
-        settingsCardButton.setOnClickListener {
+        binding.settingsCardButton.setOnClickListener {
             SettingsActivity.start(this)
         }
 
-        dashboardConfigureButton.setOnClickListener {
+        binding.dashboardConfigureButton.setOnClickListener {
             handleOnConfigureClick()
         }
 
-        dashboardChangeCertButton.setOnClickListener {
+        binding.dashboardChangeCertButton.setOnClickListener {
             handleOnConfigureClick()
         }
     }
@@ -324,7 +318,8 @@ class DashboardActivity : BaseActivity() {
     private fun fetchConfig(pac: String, clientAuthority: ClientAuthority, certName: String) {
         val configDialog = createLoadingDialog()
 
-        SdcService.fetchVsdcConfiguration(clientAuthority, pac, onStart = {
+        SdcService.fetchVsdcConfiguration(
+            clientAuthority, pac, onStart = {
             configDialog.show()
         }, onSuccessEnv = {
             prefService.saveEnvData(it)
@@ -336,13 +331,15 @@ class DashboardActivity : BaseActivity() {
             prefService.saveActiveCertName(certName)
 
             initHeader()
-
-            longToast(R.string.toast_configuration_changed)
-        }, onError = {
-            longToast(R.string.error_provide_valid_pac)
-        }, onEnd = {
-            configDialog.cancel()
-        })
+            longToast(getString(R.string.toast_configuration_changed))
+        },
+            onError = {
+                longToast(getString(R.string.error_provide_valid_pac))
+            },
+            onEnd = {
+                configDialog.cancel()
+            }
+        )
     }
 
     @SuppressLint("CheckResult")
@@ -392,7 +389,7 @@ class DashboardActivity : BaseActivity() {
 
                         fetchConfig(pacInput, clientAuthority, cert.name)
                     } catch (ex: Error) {
-                        longToast(R.string.error_wrong_pass_or_file)
+                        longToast(getString(R.string.error_wrong_pass_or_file))
                     }
                 }
             }
@@ -436,21 +433,28 @@ class DashboardActivity : BaseActivity() {
 
         val configDialog = createLoadingDialog(R.string.btn_download)
 
-        DownloadService.downloadCert(url, cacheDir, onStart = {
-            configDialog.show()
-        }, onSuccess = { pfx, p12File ->
-            configDialog.getCustomView().loadingDialogText.text =
-                getString(R.string.msg_file_downloaded)
-            showCertPassInputDialog(pfx, p12File)
-        }, onError = { errorType, _ ->
-            when (errorType) {
-                ErrorType.INVALID_OR_USED_LINK -> longToast(R.string.msg_nothing_to_download)
-                ErrorType.NO_CERT_FILE_FOUND -> longToast(R.string.error_no_cert_files_found)
-                else -> longToast(R.string.msg_failed_try_again)
+        DownloadService.downloadCert(
+            url,
+            cacheDir,
+            onStart = {
+                configDialog.show()
+            },
+            onSuccess = { pfx, p12File ->
+                val dialogBinding = DialogLoadingBinding.bind(configDialog.getCustomView())
+                dialogBinding.loadingDialogText.text = getString(R.string.msg_file_downloaded)
+                showCertPassInputDialog(pfx, p12File)
+            },
+            onError = { errorType, _ ->
+                when (errorType) {
+                    ErrorType.INVALID_OR_USED_LINK -> longToast(getString(R.string.msg_nothing_to_download))
+                    ErrorType.NO_CERT_FILE_FOUND -> longToast(getString(R.string.error_no_cert_files_found))
+                    else -> longToast(getString(R.string.msg_failed_try_again))
+                }
+            },
+            onEnd = {
+                configDialog.cancel()
             }
-        }, onEnd = {
-            configDialog.cancel()
-        })
+        )
     }
 
     private fun showCertPassInputDialog(pfx: String, certName: String) {
@@ -467,7 +471,7 @@ class DashboardActivity : BaseActivity() {
                     fetchConfig(pacInput, clientAuthority, certName)
                 }
             } catch (e: IOException) {
-                longToast(R.string.error_wrong_pass_or_file)
+                longToast(getString(R.string.error_wrong_pass_or_file))
             }
         }
     }
@@ -485,17 +489,19 @@ class DashboardActivity : BaseActivity() {
             @Suppress("DEPRECATION")
             neutralButton(R.string.paste_and_continue) {
                 val clipboardText = getClipboardText()
-                getCustomView().pacInputView.setText(clipboardText)
+                val dialogBinding = DialogPacLayoutBinding.bind(getCustomView())
+                dialogBinding.pacInputView.setText(clipboardText)
             }
 
             negativeButton(R.string.cancel) {
                 dismiss()
             }
 
-            getCustomView().pacInputView.onTextChanged { inputText ->
+            val dialogBinding = DialogPacLayoutBinding.bind(getCustomView())
+            dialogBinding.pacInputView.onTextChanged { inputText ->
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PAC_INPUT_LENGTH)
                 if (inputText.length == PAC_INPUT_LENGTH) {
-                    val inputPac = this.getCustomView().pacInputView.text.toString()
+                    val inputPac = dialogBinding.pacInputView.text.toString()
                         .uppercase(Locale.getDefault())
                     callback(inputPac)
                     dismiss()
@@ -517,17 +523,19 @@ class DashboardActivity : BaseActivity() {
             @Suppress("DEPRECATION")
             neutralButton(R.string.paste_and_continue) {
                 val clipboardText = getClipboardText()
-                getCustomView().certPassInput.setText(clipboardText)
+                val dialogBinding = DialogCertPassLayoutBinding.bind(getCustomView())
+                dialogBinding.certPassInput.setText(clipboardText)
             }
 
             negativeButton(R.string.cancel) {
                 dismiss()
             }
 
-            getCustomView().certPassInput.onTextChanged { inputText ->
+            val dialogBinding = DialogCertPassLayoutBinding.bind(getCustomView())
+            dialogBinding.certPassInput.onTextChanged { inputText ->
                 setActionButtonEnabled(WhichButton.POSITIVE, inputText.length == PASS_INPUT_LENGTH)
                 if (inputText.length == PASS_INPUT_LENGTH) {
-                    val inputPass = this.getCustomView().certPassInput.text.toString()
+                    val inputPass = dialogBinding.certPassInput.text.toString()
                         .uppercase(Locale.getDefault())
                     callback(inputPass)
                     dismiss()
@@ -547,7 +555,9 @@ class DashboardActivity : BaseActivity() {
 
     private fun createLoadingDialog(@StringRes stringId: Int = R.string.loading_please_wait): MaterialDialog =
         MaterialDialog(this).apply {
-            customView(R.layout.dialog_loading).loadingDialogText.text = getString(stringId)
+            customView(R.layout.dialog_loading)
+            val dialogBinding = DialogLoadingBinding.bind(getCustomView())
+            dialogBinding.loadingDialogText.text = getString(stringId)
 
             cancelable(false)  // calls setCancelable on the underlying dialog
             cancelOnTouchOutside(false)  // calls setCanceledOnTouchOutside on the underlying dialog

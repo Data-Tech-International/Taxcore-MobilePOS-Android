@@ -14,7 +14,6 @@ import io.realm.RealmConfiguration
 import online.taxcore.pos.di.DaggerAppComponent
 import javax.inject.Inject
 
-
 class TaxCoreApp : Application(), HasActivityInjector {
 
     @Inject
@@ -39,7 +38,7 @@ class TaxCoreApp : Application(), HasActivityInjector {
         Realm.init(this)
         val config = RealmConfiguration.Builder()
             .name("taxcore3.realm")
-            .schemaVersion(2)
+            .schemaVersion(3)
             .allowQueriesOnUiThread(true)
             .allowWritesOnUiThread(true)
             .build()
@@ -52,6 +51,7 @@ class TaxCoreApp : Application(), HasActivityInjector {
             .application(this).build().inject(this)
     }
 
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
     private fun initCalligraphy() {
         ViewPump.init(
             ViewPump.builder()

@@ -16,8 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/primary"
+            android:fitsSystemWindows="true"
             android:gravity="center_horizontal"
-            android:minHeight="300dp"
+            android:minHeight="400dp"
             android:orientation="vertical"
             android:paddingBottom="70dp">
 
@@ -206,12 +207,13 @@
             android:layout_below="@id/dashboardHeaderLayout"
             android:layout_marginTop="-70dp"
             android:clipToPadding="false"
-            android:gravity="center_horizontal"
+            android:gravity="center"
             android:orientation="vertical">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/xsmall"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
 

@@ -4,17 +4,23 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.realm.Realm
 import io.realm.Sort
-import kotlinx.android.synthetic.main.journal_fragment.*
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.JournalManager
 import online.taxcore.pos.data.realm.Journal
+import online.taxcore.pos.databinding.JournalFragmentBinding
 import online.taxcore.pos.events.ShowFiscalInvoicedialog
 import online.taxcore.pos.events.ShowInvoiceActivity
 import online.taxcore.pos.extensions.baseActivity
@@ -28,11 +34,17 @@ import org.greenrobot.eventbus.ThreadMode
 
 class JournalListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
+    private var _binding: JournalFragmentBinding? = null
+    private val binding get() = _binding!!
+
     private var isFilterMode: Boolean = false
 
     private var journalAdapter: JournalAdapter? = null
 
     private var sortJournalsMenuItem: MenuItem? = null
+
+    private lateinit var realm: Realm
+    private var journalResults: List<Journal>? = null
 
     override fun onStart() {
         super.onStart()
@@ -50,10 +62,12 @@ class JournalListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.journal_fragment, container, false)
+        _binding = JournalFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        realm = Realm.getDefaultInstance()
         initUI()
         initJournalRecyclerView()
     }
@@ -63,17 +77,26 @@ class JournalListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         updateJournalData()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        journalResults = null
+        if (::realm.isInitialized && !realm.isClosed) {
+            realm.close()
+        }
+        _binding = null
+    }
+
     private fun initUI() {
         arguments?.getBoolean("isSearch")?.let {
             isFilterMode = it
-            filterFab.visible = it
+            binding.filterFab.visible = it
         }
 
-        filterFab.setOnClickListener {
+        binding.filterFab.setOnClickListener {
             replaceFragment(R.id.baseFragment, JournalFilterFragment())
         }
 
-        journalTryAgainButton.setOnClickListener {
+        binding.journalTryAgainButton.setOnClickListener {
             replaceFragment(R.id.baseFragment, JournalFilterFragment())
         }
     }
@@ -81,8 +104,8 @@ class JournalListFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private fun initJournalRecyclerView() {
         journalAdapter = JournalAdapter()
 
-        journalRecyclerView.layoutManager = LinearLayoutManager(context)
-        journalRecyclerView.adapter = journalAdapter
+        binding.journalRecyclerView.layoutManager = LinearLayoutManager(context)
+        binding.journalRecyclerView.adapter = journalAdapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -107,12 +130,13 @@ class JournalListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         throw UnsupportedOperationException("not implemented")
     }
 
-    private fun getJournalItems(sort: Sort = Sort.DESCENDING): MutableList<Journal> {
-        return if (isFilterMode) {
-            JournalManager.loadFilteredItems(sort)
+    private fun getJournalItems(sort: Sort = Sort.DESCENDING): List<Journal> {
+        journalResults = if (isFilterMode) {
+            JournalManager.queryFilteredItems(realm, sort)
         } else {
-            JournalManager.loadJournalItems(sort)
+            JournalManager.queryJournalItems(realm, sort)
         }
+        return journalResults!!
     }
 
     private fun updateJournalData() {
@@ -123,10 +147,10 @@ class JournalListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         journalItems.isEmpty().let { empty ->
             sortJournalsMenuItem?.isVisible = empty.not()
 
-            filterFab.visible = empty.not() and isFilterMode
+            binding.filterFab.visible = empty.not() and isFilterMode
 
-            journalNoResultsLayout.visible = empty
-            journalRecyclerView.visible = empty.not()
+            binding.journalNoResultsLayout.visible = empty
+            binding.journalRecyclerView.visible = empty.not()
         }
     }
 

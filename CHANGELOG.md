@@ -13,6 +13,38 @@ All notable changes to this project will be documented in this file.
 
 - **TBD** Configuration response error handling
 
+## [3.5.1] - 2025-12-16
+
+### Added
+
+- Added progress dialogs to journal import/export operations
+- Secret export and clear journal option (5-second long press on export button)
+- Added search filter to item selection bottom sheet
+- Added drag handle and clear button to item search dialog
+
+### Fixed
+
+- Fixed recovery for corrupted EncryptedSharedPreferences
+- Fixed `OutOfMemoryError` when loading large journal lists by implementing lazy loading
+- Fixed `OutOfMemoryError` during journal export by implementing streaming JSON writer
+
+## [3.5.0] - 2025-10-16
+
+### Added
+
+- Support for Android 16+ (API 36)
+- View Binding support for all activities and fragments
+
+### Changed
+
+- Enhanced file management utilities for Android scoped storage
+- Improved PDF creation utilities
+- Updated dependencies to latest versions
+- Migrated from Kotlin synthetic extensions to View Binding
+- Updated Gradle to version 8.13
+- Updated Kotlin to version 2.1.0
+- Optimized imports across the project
+
 ## [3.4.0] - 2024-07-22
 
 ### Added

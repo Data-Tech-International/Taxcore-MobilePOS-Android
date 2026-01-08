@@ -1,30 +1,37 @@
 package online.taxcore.pos.data
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.security.keystore.KeyGenParameterSpec
 import android.util.Base64
+import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import online.taxcore.pos.constants.PrefConstants
 import online.taxcore.pos.data.models.CertData
 import online.taxcore.pos.data.models.EnvData
 import online.taxcore.pos.data.models.EnvResponse
 import online.taxcore.pos.data.models.StatusResponse
+import java.io.File
+import java.security.KeyStore
 import java.security.cert.X509Certificate
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import androidx.core.content.edit
 
 class PrefService(context: Context) {
 
-    private val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
-    private val mainKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+    companion object {
+        private const val TAG = "PrefService"
+        private const val ANDROID_KEYSTORE = "AndroidKeyStore"
+    }
 
-    private val encryptedSharedPreferences =
-        EncryptedSharedPreferences.create(
-            PrefConstants.SP_SECURED_NAME_KEY,
-            mainKeyAlias,
-            context,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+    private val keyGenParameterSpec: KeyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+    private val mainKeyAlias: String = MasterKeys.getOrCreate(keyGenParameterSpec)
+
+    private val encryptedSharedPreferences: SharedPreferences =
+        createEncryptedSharedPreferences(context)
 
     private val sharedPreferences = context.getSharedPreferences(
         PrefConstants.SP_NAME_KEY,
@@ -43,12 +50,12 @@ class PrefService(context: Context) {
     ): CertData {
         val certData = CertData.extract(cert)
 
-        sharedPreferences.edit().apply {
+        sharedPreferences.edit {
             putBoolean(PrefConstants.USE_VSDC_SERVER, true)
-        }.apply()
+        }
 
         // Secretly Save app config from certificate
-        encryptedSharedPreferences.edit().apply {
+        encryptedSharedPreferences.edit {
             putString(
                 PrefConstants.VSDC_ENDPOINT_URL,
                 encodeString(certData.vsdcEndpoint)
@@ -66,7 +73,7 @@ class PrefService(context: Context) {
                 PrefConstants.CERT_SUBJECT,
                 encodeString(certData.subject)
             )
-        }.apply()
+        }
 
         return certData
     }
@@ -88,7 +95,7 @@ class PrefService(context: Context) {
     fun saveActiveCertName(name: String) = saveSecureString(PrefConstants.CERT_ALIAS_VALUE, name)
     fun loadActiveCertName() = loadSecureString(PrefConstants.CERT_ALIAS_VALUE)
     fun removeActiveCertName() {
-        encryptedSharedPreferences.edit().remove(PrefConstants.CERT_ALIAS_VALUE).apply()
+        encryptedSharedPreferences.edit { remove(PrefConstants.CERT_ALIAS_VALUE) }
     }
 
     fun loadCertCountry() = loadSecureString(PrefConstants.ENV_COUNTRY)
@@ -107,10 +114,10 @@ class PrefService(context: Context) {
     }
 
     fun setUseVsdcServer(useVsdc: Boolean = true) {
-        sharedPreferences.edit().apply {
+        sharedPreferences.edit {
             putBoolean(PrefConstants.USE_VSDC_SERVER, useVsdc)
             putBoolean(PrefConstants.USE_ESDC_SERVER, !useVsdc)
-        }.apply()
+        }
     }
 
     fun useVSDCServer(): Boolean {
@@ -145,17 +152,17 @@ class PrefService(context: Context) {
     }
 
     fun setUseEsdcServer(useEsdc: Boolean = true) {
-        sharedPreferences.edit().apply {
+        sharedPreferences.edit {
             putBoolean(PrefConstants.IS_APP_CONFIGURED, true)
             putBoolean(PrefConstants.USE_ESDC_SERVER, useEsdc)
             putBoolean(PrefConstants.USE_VSDC_SERVER, !useEsdc)
-        }.apply()
+        }
     }
 
     fun saveEnvData(envData: EnvResponse, isEsdc: Boolean = false) {
 
         // Secretly Save app config from certificate
-        encryptedSharedPreferences.edit().apply {
+        encryptedSharedPreferences.edit {
             putString(PrefConstants.ENV_COUNTRY, encodeString(envData.country))
             putString(PrefConstants.ENV_LOGO_URL, encodeString(envData.logo))
             if (isEsdc) {
@@ -171,16 +178,16 @@ class PrefService(context: Context) {
                 putString(PrefConstants.ENV_API_ADDRESS, encodeString(envData.endpoints.taxCoreApi))
                 putString(PrefConstants.ENV_NAME, encodeString(envData.environmentName))
             }
-        }.apply()
+        }
     }
 
     fun saveStatusData(statusData: StatusResponse) {
         setAppConfigured()
 
-        encryptedSharedPreferences.edit().apply {
+        encryptedSharedPreferences.edit {
             putString(PrefConstants.ENV_UID, encodeString(statusData.uid))
             putString(PrefConstants.ENV_API_ADDRESS, encodeString(statusData.taxCoreApi))
-        }.apply()
+        }
     }
 
     fun loadEnvData(): EnvData {
@@ -204,7 +211,7 @@ class PrefService(context: Context) {
     }
 
     fun setLanguage(locale: String) {
-        sharedPreferences.edit().putString(PrefConstants.APP_LOCALE, locale).apply()
+        sharedPreferences.edit { putString(PrefConstants.APP_LOCALE, locale) }
     }
 
     // ENV
@@ -220,11 +227,11 @@ class PrefService(context: Context) {
     }
 
     fun setAppConfigured(configured: Boolean = true) {
-        sharedPreferences.edit().putBoolean(PrefConstants.IS_APP_CONFIGURED, configured).apply()
+        sharedPreferences.edit { putBoolean(PrefConstants.IS_APP_CONFIGURED, configured) }
     }
 
     fun saveCredentialsTime() {
-        sharedPreferences.edit().putLong(PrefConstants.LAST_CREDENTIALS_TIME, Date().time).apply()
+        sharedPreferences.edit { putLong(PrefConstants.LAST_CREDENTIALS_TIME, Date().time) }
     }
 
     fun getCredentialsTime(): Long {
@@ -241,11 +248,11 @@ class PrefService(context: Context) {
     }
 
     fun removeConfiguration() {
-        sharedPreferences.edit().apply {
+        sharedPreferences.edit {
             remove(PrefConstants.IS_APP_CONFIGURED)
-        }.apply()
+        }
 
-        encryptedSharedPreferences.edit().apply {
+        encryptedSharedPreferences.edit {
             remove(PrefConstants.CERT_GLOBAL_PAC)
             remove(PrefConstants.CERT_ALIAS_VALUE)
             remove(PrefConstants.CERT_TIN_OID)
@@ -257,14 +264,14 @@ class PrefService(context: Context) {
             remove(PrefConstants.ENV_NAME)
             remove(PrefConstants.ENV_ESDC_NAME)
             remove(PrefConstants.ENV_ESDC_API_URL)
-        }.apply()
+        }
     }
 
     // Secure pref helpers
 
     private fun saveSecureString(key: String, value: String) {
         val encodedValue = encodeString(value)
-        encryptedSharedPreferences.edit().putString(key, encodedValue).apply()
+        encryptedSharedPreferences.edit { putString(key, encodedValue) }
     }
 
     private fun loadSecureString(key: String): String {
@@ -281,6 +288,70 @@ class PrefService(context: Context) {
 
     private fun encodeString(value: String): String {
         return Base64.encodeToString(value.toByteArray(), Base64.DEFAULT)
+    }
+
+    private fun createEncryptedSharedPreferences(context: Context): SharedPreferences {
+        return try {
+            EncryptedSharedPreferences.create(
+                PrefConstants.SP_SECURED_NAME_KEY,
+                mainKeyAlias,
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to create EncryptedSharedPreferences, clearing corrupted data", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+            clearCorruptedEncryptedPreferences(context)
+
+            // Regenerate master key and retry after clearing corrupted data
+            val newMasterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+            EncryptedSharedPreferences.create(
+                PrefConstants.SP_SECURED_NAME_KEY,
+                newMasterKeyAlias,
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        }
+    }
+
+    private fun clearCorruptedEncryptedPreferences(context: Context) {
+        try {
+            // Clear the encrypted SharedPreferences file
+            val sharedPrefsFile = File(
+                context.applicationInfo.dataDir + "/shared_prefs",
+                PrefConstants.SP_SECURED_NAME_KEY + ".xml"
+            )
+            if (sharedPrefsFile.exists()) {
+                sharedPrefsFile.delete()
+                Log.d(TAG, "Deleted corrupted SharedPreferences file")
+            }
+
+            // Clear the keyset from Android Keystore
+            try {
+                val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
+                keyStore.load(null)
+                if (keyStore.containsAlias(mainKeyAlias)) {
+                    keyStore.deleteEntry(mainKeyAlias)
+                    Log.d(TAG, "Deleted corrupted key from Android Keystore")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to clear key from Keystore", e)
+                FirebaseCrashlytics.getInstance().recordException(e)
+            }
+
+            // Mark app as not configured since encrypted data is lost
+            context.getSharedPreferences(PrefConstants.SP_NAME_KEY, Context.MODE_PRIVATE)
+                .edit {
+                    putBoolean(PrefConstants.IS_APP_CONFIGURED, false)
+                }
+            Log.d(TAG, "Marked app as not configured due to data loss")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error clearing corrupted encrypted preferences", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
 }

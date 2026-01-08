@@ -1,6 +1,10 @@
 package online.taxcore.pos.data.local
 
-import com.vicpin.krealmextensions.*
+import com.vicpin.krealmextensions.count
+import com.vicpin.krealmextensions.deleteAll
+import com.vicpin.krealmextensions.query
+import com.vicpin.krealmextensions.queryAll
+import com.vicpin.krealmextensions.saveAll
 import io.realm.Case
 import io.realm.Realm
 import io.realm.kotlin.where

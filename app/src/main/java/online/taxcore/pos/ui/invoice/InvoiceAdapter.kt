@@ -3,20 +3,18 @@ package online.taxcore.pos.ui.invoice
 import android.content.Context
 import android.text.InputFilter
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 import com.google.android.material.chip.Chip
-import kotlinx.android.synthetic.main.dialog_qty_input.view.*
-import kotlinx.android.synthetic.main.invoice_card_item.view.*
 import online.taxcore.pos.R
 import online.taxcore.pos.data.local.InvoiceManager
 import online.taxcore.pos.data.realm.Item
+import online.taxcore.pos.databinding.DialogQtyInputBinding
+import online.taxcore.pos.databinding.InvoiceCardItemBinding
 import online.taxcore.pos.extensions.onTextChanged
 import online.taxcore.pos.extensions.roundLocalized
 import online.taxcore.pos.extensions.roundToDecimal
@@ -35,10 +33,10 @@ class InvoiceAdapter(
     override fun getItemCount() = invoiceList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InvoiceItemViewHolder {
-        val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.invoice_card_item, parent, false)
-
-        return InvoiceItemViewHolder(view)
+        val binding = InvoiceCardItemBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return InvoiceItemViewHolder(binding)
     }
 
     override fun onBindViewHolder(holderItem: InvoiceItemViewHolder, position: Int) {
@@ -47,18 +45,18 @@ class InvoiceAdapter(
 
         holderItem.bind(currentItem, validTaxes)
 
-        holderItem.itemView.invoiceItemRemoveButton.visible = invoiceType != "copy"
-        holderItem.itemView.invoiceEditQtyButton.visible = invoiceType != "copy"
+        holderItem.binding.invoiceItemRemoveButton.visible = invoiceType != "copy"
+        holderItem.binding.invoiceEditQtyButton.visible = invoiceType != "copy"
 
-        holderItem.itemView.invoiceItemRemoveButton.setOnClickListener {
+        holderItem.binding.invoiceItemRemoveButton.setOnClickListener {
             openConfirmRemoveItemDialog(ctx, currentItem, position, onItemRemoved)
         }
 
-        holderItem.itemView.invoiceEditQtyButton.setOnClickListener {
+        holderItem.binding.invoiceEditQtyButton.setOnClickListener {
             openEditQuantityDialog(ctx, currentItem, position)
         }
 
-        holderItem.itemView.invoiceItemTitleLabel.setOnClickListener {
+        holderItem.binding.invoiceItemTitleLabel.setOnClickListener {
             openItemName(ctx, currentItem)
         }
     }
@@ -89,10 +87,11 @@ class InvoiceAdapter(
         MaterialDialog(ctx).show {
             title(text = context.getString(R.string.title_enter_quantity))
 
-            customView(R.layout.dialog_qty_input)
+            val dialogBinding = DialogQtyInputBinding.inflate(LayoutInflater.from(ctx))
+            customView(view = dialogBinding.root)
 
-            val qtyLayout = getCustomView().dialogQtyInputLayout
-            val qtyInput = getCustomView().dialogQtyInput
+            val qtyLayout = dialogBinding.dialogQtyInputLayout
+            val qtyInput = dialogBinding.dialogQtyInput
 
             qtyInput.setText(quantityText)
             qtyInput.setSelection(quantityText.length)
@@ -101,7 +100,7 @@ class InvoiceAdapter(
             setActionButtonEnabled(WhichButton.POSITIVE, false)
 
             // Add input listener
-            getCustomView().dialogQtyInput.onTextChanged { inputText ->
+            dialogBinding.dialogQtyInput.onTextChanged { inputText ->
                 val isInputValid = try {
                     inputText.toDouble() >= 0.001
                 } catch (e: NumberFormatException) {
@@ -122,7 +121,7 @@ class InvoiceAdapter(
             negativeButton(R.string.btn_close)
             positiveButton(R.string.dialog_button_save) {
 
-                val quantity = getCustomView().dialogQtyInput.text.toString().toDouble()
+                val quantity = dialogBinding.dialogQtyInput.text.toString().toDouble()
 
                 // reset quantity
                 currentItem.quantity = quantity
@@ -159,32 +158,32 @@ class InvoiceAdapter(
 
 }
 
-class InvoiceItemViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
+class InvoiceItemViewHolder(val binding: InvoiceCardItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Item, validTaxes: List<String>) {
 
         val inflater = itemView.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        itemView.invoiceItemTaxLabelsChipGroup.removeAllViews()
+        binding.invoiceItemTaxLabelsChipGroup.removeAllViews()
 
         item.tax.forEach { tax ->
-            val chipView = inflater.inflate(R.layout.chip_tax_label, itemView.invoiceItemTaxLabelsChipGroup, false) as Chip
+            val chipView = inflater.inflate(R.layout.chip_tax_label, binding.invoiceItemTaxLabelsChipGroup, false) as Chip
             chipView.text = tax.code
             if (validTaxes.contains(tax.code).not()) {
                 chipView.setChipBackgroundColorResource(R.color.colorRedis)
             }
 
-            itemView.invoiceItemTaxLabelsChipGroup.addView(chipView)
-            itemView.invoiceItemTaxLabelsChipGroup.chipSpacingHorizontal = 0
+            binding.invoiceItemTaxLabelsChipGroup.addView(chipView)
+            binding.invoiceItemTaxLabelsChipGroup.chipSpacingHorizontal = 0
         }
 
         val totalPrice = (item.price * item.quantity).roundLocalized()
         val quantity = item.quantity.roundLocalized(3)
         val itemEan = item.barcode.ifEmpty { "n/a" }
 
-        itemView.invoiceItemTitleLabel.text = item.name
-        itemView.invoiceItemBarcodeLabel.text = "EAN: $itemEan"
-        itemView.invoiceItemQtyLabel.text = quantity
-        itemView.invoiceItemTotalPriceLabel.text = totalPrice
+        binding.invoiceItemTitleLabel.text = item.name
+        binding.invoiceItemBarcodeLabel.text = "EAN: $itemEan"
+        binding.invoiceItemQtyLabel.text = quantity
+        binding.invoiceItemTotalPriceLabel.text = totalPrice
     }
 
 }
