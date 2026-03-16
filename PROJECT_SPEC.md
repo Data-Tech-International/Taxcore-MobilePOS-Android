@@ -216,13 +216,13 @@ The application communicates with two types of fiscal servers.
 
 Base URL: extracted from the X.509 certificate OID extension (`*.*.7`).
 
-Authentication: mutual TLS with client certificate + PAC passed in URL path.
+Authentication: mutual TLS with client certificate + PAC passed as HTTP header (`PAC: <value>`).
 
 | Method | Path | Auth | Request Body | Response Body | Description |
 |--------|------|------|-------------|--------------|-------------|
-| POST | `api/v3/invoices` | mTLS + PAC header | `InvoiceRequest` | `InvoiceResponse` | Submit fiscal invoice |
-| GET | `api/v3/status` | mTLS + PAC header | — | `StatusResponse` | Fetch tax rates and status |
-| GET | `api/v3/environment-parameters` | mTLS + PAC header | — | `EnvResponse` | Fetch environment configuration |
+| POST | `api/v3/invoices` | mTLS + `PAC` header | `InvoiceRequest` | `InvoiceResponse` | Submit fiscal invoice |
+| GET | `api/v3/status` | mTLS + `PAC` header | — | `StatusResponse` | Fetch tax rates and status |
+| GET | `api/v3/environment-parameters` | mTLS + `PAC` header | — | `EnvResponse` | Fetch environment configuration |
 
 ### 5.2 ESDC (Electronic SDC) Endpoints
 
@@ -236,7 +236,7 @@ Authentication: PIN code verified separately.
 | GET | `api/v3/status` | None | — | `StatusResponse` | Fetch tax rates and status |
 | GET | `api/v3/environment-parameters` | None | — | `EnvResponse` | Fetch environment configuration |
 | GET | `api/v3/attention` | None | — | — (HTTP 200) | Health check / ping |
-| POST | `api/v3/pin/verify` | None | PIN string | Status code | Verify PIN code |
+| POST | `api/v3/pin` | None | PIN string (body) | Status code string | Verify PIN code |
 
 ### 5.3 Invoice Request Schema
 
@@ -276,18 +276,18 @@ Authentication: PIN code verified separately.
 ```json
 {
   "requestedBy": "string | null",
-  "sdcDateTime": "string (ISO 8601)",
-  "invoiceNumber": "string",
-  "journal": "string (monospace receipt text)",
+  "sdcDateTime": "string | null (ISO 8601)",
+  "invoiceNumber": "string | null",
+  "journal": "string | null (monospace receipt text)",
   "messages": "string | null",
-  "verificationQRCode": "string (Base64 image)",
+  "verificationQRCode": "string | null (Base64 image)",
   "verificationUrl": "string (URL)",
   "invoiceCounter": "string | null",
   "invoiceCounterExtension": "string | null",
   "totalCounter": 0,
-  "transactionTypeCounter": 0,
+  "transactionTypeCounter": "integer | null",
   "totalAmount": 0.00,
-  "taxGroupRevision": 0,
+  "taxGroupRevision": "integer | null",
   "taxItems": [
     {
       "label": "string",
@@ -296,9 +296,27 @@ Authentication: PIN code verified separately.
       "amount": 0.0
     }
   ],
+  "items": [
+    {
+      "itemId": "string | null",
+      "invoiceId": "string | null",
+      "barcode": "string | null",
+      "name": "string | null",
+      "quantity": 0.0,
+      "unitPrice": 0.0,
+      "totalAmount": 0.0,
+      "taxLabels": ["string"]
+    }
+  ],
   "encryptedInternalData": "string | null",
   "signature": "string | null",
-  "signedBy": "string | null"
+  "signedBy": "string | null",
+  "businessName": "string",
+  "tin": "string",
+  "locationName": "string",
+  "address": "string",
+  "district": "string",
+  "mrc": "string"
 }
 ```
 
@@ -306,8 +324,10 @@ Authentication: PIN code verified separately.
 
 ```json
 {
+  "sdcDateTime": "string",
+  "supportedLanguages": ["string"],
   "uid": "string",
-  "taxCoreApiUrl": "string (URL)",
+  "taxCoreApi": "string (URL)",
   "currentTaxRates": {
     "validFrom": "string (ISO 8601)",
     "groupId": 0,
@@ -325,9 +345,12 @@ Authentication: PIN code verified separately.
       }
     ]
   },
-  "gsc": ["string (status/error codes)"]
+  "allTaxRates": ["(same structure as currentTaxRates, array of all historical rates)"],
+  "gsc": ["string (status/error codes — codes starting with '2' indicate errors)"]
 }
 ```
+
+**Tax label mapping**: When `categoryType` equals the amount-per-quantity category type, the tax `value` display is the currency symbol; otherwise it is `"%"`.
 
 ### 5.6 Environment Response Schema
 
@@ -355,12 +378,20 @@ Authentication: PIN code verified separately.
 
 ```json
 {
-  "Message": "string",
+  "Message": "string | null",
   "MessageDetails": "string | null"
 }
 ```
 
-### 5.8 File Download Endpoint
+> Note: Field names use PascalCase (`Message`, `MessageDetails`) as returned by the server.
+
+### 5.8 JSON Serialization Convention
+
+- All request/response models use **camelCase** field names by default (e.g., `invoiceType`, `totalAmount`).
+- Exception: `ErrorResponse` uses **PascalCase** (`Message`, `MessageDetails`) — mapped via explicit annotations.
+- JSON serialization must include `null` values (`serializeNulls` mode) for hash computation.
+
+### 5.9 File Download Endpoint
 
 Used for certificate provisioning.
 
@@ -386,10 +417,12 @@ invoiceTotal = Σ (item.quantity × item.unitPrice)   for all items
 
 Before submitting an invoice, the client computes an integrity hash:
 
-1. Serialize the `InvoiceRequest` to JSON (with `hash` field set to `null`).
-2. Compute the **MD5** hash of the JSON string.
-3. Set the `hash` field to the hex-encoded MD5 digest.
-4. Send the complete request.
+1. Set the `hash` field of the `InvoiceRequest` to `null`.
+2. Serialize the `InvoiceRequest` to JSON with **null values included** (serialize-nulls mode).
+3. Compute the **MD5** hash of the UTF-8 bytes of the JSON string.
+4. Convert the digest to a lowercase hex string (e.g., `"%02x"` per byte).
+5. Assign the hex string to the `hash` field.
+6. Send the complete request (with hash populated).
 
 ### 6.3 Invoice Types
 
@@ -547,15 +580,15 @@ User taps "Sign Invoice"
   VSDC Flow:
     → Check cached PAC (valid within 15 minutes?)
     → If expired: show PAC input dialog (6 characters, supports clipboard paste)
-    → Build InvoiceRequest with MD5 hash
-    → POST to VSDC endpoint with mutual TLS
+    → Build InvoiceRequest with MD5 hash (see §6.2)
+    → POST to VSDC endpoint with mutual TLS + PAC HTTP header
     → On success: show fiscal dialog → save to journal → reset invoice
 
   ESDC Flow:
     → Check cached PIN (valid within 15 minutes?)
     → If expired: show PIN input dialog (4 digits, supports clipboard paste)
-    → Verify PIN via API endpoint
-    → If PIN response status ≠ "0100": show error, return to dialog
+    → Verify PIN via `POST api/v3/pin` endpoint
+    → If PIN response status ≠ `"0100"`: show error, return to dialog
     → Build InvoiceRequest
     → POST to ESDC endpoint
     → On success: show fiscal dialog → save to journal → reset invoice
