@@ -190,8 +190,17 @@ Extracted from an X.509 certificate:
 | `organisationUnit` | `OU=` from subject | Organization unit |
 | `organisationName` | `O=` from subject | Organization name |
 | `tinOid` | OID extension `*.*.6` | Taxpayer ID extracted from certificate |
-| `countryName` | Derived from TIN OID | Country name mapped from OID country code |
+| `countryName` | Derived from TIN OID | Country name mapped from OID country code (see mapping below) |
 | `vsdcEndpoint` | OID extension `*.*.7` | VSDC server URL embedded in certificate |
+
+**OID Country Code → Country Name Mapping**:
+
+| OID Y Value | Country Code | Country Name | Currency Symbol |
+|-------------|-------------|--------------|-----------------|
+| `2` | FJ | Fiji | FJ$ |
+| `5` | US | Washington State, USA | US$ |
+| `6` | WS | Samoa | WS$ |
+| `8` | RS | Serbia | RSD |
 
 ### 4.8 Environment Data (derived, cached)
 
@@ -588,7 +597,7 @@ User taps "Sign Invoice"
     → Check cached PIN (valid within 15 minutes?)
     → If expired: show PIN input dialog (4 digits, supports clipboard paste)
     → Verify PIN via `POST api/v3/pin` endpoint
-    → If PIN response status ≠ `"0100"`: show error, return to dialog
+    → If PIN response status ≠ `"0100"` (success/valid PIN): show error, return to dialog
     → Build InvoiceRequest
     → POST to ESDC endpoint
     → On success: show fiscal dialog → save to journal → reset invoice
@@ -814,6 +823,8 @@ All sensitive configuration data must be encrypted at rest:
 | Configuration flag | No |
 
 Encryption: AES-256 with separate key/value encryption schemes (AES-256-SIV for keys, AES-256-GCM for values).
+
+> **Implementation Note**: The current Android implementation uses the Android Keystore for master key storage with `MasterKey.KeyScheme.AES256_GCM`. On other platforms, use the platform-native secure key storage (e.g., OS keychain, hardware security module) to protect the master encryption key. The IV/nonce generation and key derivation are handled by the encryption library and should follow industry best practices (random IV per encryption operation, no IV reuse).
 
 ### 8.2 Certificate Handling
 
