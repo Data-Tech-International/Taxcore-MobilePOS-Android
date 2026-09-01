@@ -1,5 +1,7 @@
 package online.taxcore.pos.utils
 
+import android.util.Log
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.itextpdf.text.*
 import com.itextpdf.text.pdf.BaseFont
 import com.itextpdf.text.pdf.PdfPCell
@@ -28,11 +30,32 @@ object CreatePdf {
             val delimiter = "========================================\r\n"
             val invoiceHeader = invoiceJournal.split(delimiter).first()
 
+            // Header line count varies per taxpayer; drop/take instead of subList
+            // so short headers don't throw IndexOutOfBoundsException
             val headerElements = invoiceHeader.split("\r\n".toRegex())
+                .dropLastWhile { it.isEmpty() }
 
-            val headerStart = headerElements.first()
-            val companyHeader = headerElements.subList(1, 6).joinToString("\r\n") { it.trim() }
-            val headerInfo = headerElements.subList(6, headerElements.size - 1).joinToString("\r\n")
+            // [DEBUG-pdf] temporary diagnostics: which journal shape reaches the PDF parser
+            val delimiterHits = invoiceJournal.split(delimiter).size - 1
+            val debugMsg = "[DEBUG-pdf] len=${invoiceJournal.length}" +
+                " crlf=${invoiceJournal.contains("\r\n")}" +
+                " lfOnly=${!invoiceJournal.contains("\r\n") && invoiceJournal.contains("\n")}" +
+                " delimiterHits=$delimiterHits" +
+                " headerLines=${headerElements.size}"
+            Log.d("CreatePdf", debugMsg)
+            if (delimiterHits == 0 || headerElements.size < 6) {
+                // journal content only on the malformed path, so receipt data
+                // isn't sent to Crashlytics for every print
+                val first120 = invoiceJournal.take(120)
+                    .replace("\r", "\\r").replace("\n", "\\n")
+                FirebaseCrashlytics.getInstance().log("$debugMsg first120='$first120'")
+                FirebaseCrashlytics.getInstance()
+                    .recordException(IllegalStateException("Malformed invoice journal: $debugMsg"))
+            }
+
+            val headerStart = headerElements.firstOrNull().orEmpty()
+            val companyHeader = headerElements.drop(1).take(5).joinToString("\r\n") { it.trim() }
+            val headerInfo = headerElements.drop(6).joinToString("\r\n")
 
             val invoiceFooter = invoiceJournal.split(delimiter).last()
             val invoiceMain = invoiceJournal

@@ -10,3 +10,5 @@
 *.aab
 *.apk
 google-services.json
+
+.worktrees

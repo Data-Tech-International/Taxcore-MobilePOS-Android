@@ -13,6 +13,16 @@ All notable changes to this project will be documented in this file.
 
 - **TBD** Configuration response error handling
 
+## [3.5.2] - 2026-09-01
+
+### Fixed
+
+- Fixed crash when printing invoices whose journal header has fewer lines than expected (e.g. proforma receipts)
+
+### Added
+
+- Temporary diagnostic logging of journal format during PDF printing to identify malformed journal payloads
+
 ## [3.5.1] - 2025-12-16
 
 ### Added
