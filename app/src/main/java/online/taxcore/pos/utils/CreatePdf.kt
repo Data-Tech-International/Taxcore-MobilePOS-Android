@@ -30,20 +30,28 @@ object CreatePdf {
             val delimiter = "========================================\r\n"
             val invoiceHeader = invoiceJournal.split(delimiter).first()
 
-            // [DEBUG-pdf] temporary diagnostics: which journal shape reaches the PDF parser
-            val debugMsg = "[DEBUG-pdf] len=${invoiceJournal.length}" +
-                " crlf=${invoiceJournal.contains("\r\n")}" +
-                " lfOnly=${!invoiceJournal.contains("\r\n") && invoiceJournal.contains("\n")}" +
-                " delimiterHits=${invoiceJournal.split(delimiter).size - 1}" +
-                " headerLines=${invoiceHeader.split("\r\n".toRegex()).size}" +
-                " first120='${invoiceJournal.take(120).replace("\r", "\\r").replace("\n", "\\n")}'"
-            Log.d("CreatePdf", debugMsg)
-            FirebaseCrashlytics.getInstance().log(debugMsg)
-
             // Header line count varies per taxpayer; drop/take instead of subList
             // so short headers don't throw IndexOutOfBoundsException
             val headerElements = invoiceHeader.split("\r\n".toRegex())
                 .dropLastWhile { it.isEmpty() }
+
+            // [DEBUG-pdf] temporary diagnostics: which journal shape reaches the PDF parser
+            val delimiterHits = invoiceJournal.split(delimiter).size - 1
+            val debugMsg = "[DEBUG-pdf] len=${invoiceJournal.length}" +
+                " crlf=${invoiceJournal.contains("\r\n")}" +
+                " lfOnly=${!invoiceJournal.contains("\r\n") && invoiceJournal.contains("\n")}" +
+                " delimiterHits=$delimiterHits" +
+                " headerLines=${headerElements.size}"
+            Log.d("CreatePdf", debugMsg)
+            if (delimiterHits == 0 || headerElements.size < 6) {
+                // journal content only on the malformed path, so receipt data
+                // isn't sent to Crashlytics for every print
+                val first120 = invoiceJournal.take(120)
+                    .replace("\r", "\\r").replace("\n", "\\n")
+                FirebaseCrashlytics.getInstance().log("$debugMsg first120='$first120'")
+                FirebaseCrashlytics.getInstance()
+                    .recordException(IllegalStateException("Malformed invoice journal: $debugMsg"))
+            }
 
             val headerStart = headerElements.firstOrNull().orEmpty()
             val companyHeader = headerElements.drop(1).take(5).joinToString("\r\n") { it.trim() }
