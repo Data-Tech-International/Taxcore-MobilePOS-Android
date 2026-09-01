@@ -10,3 +10,6 @@
 *.aab
 *.apk
 google-services.json
+!CLAUDE.md
+
+.worktrees
