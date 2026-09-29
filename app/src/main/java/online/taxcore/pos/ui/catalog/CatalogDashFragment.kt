@@ -33,11 +33,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.karumi.dexter.listener.single.PermissionListener
 import dagger.android.support.AndroidSupportInjection
 import online.taxcore.pos.AppSession
 import online.taxcore.pos.R
@@ -244,11 +241,7 @@ class CatalogDashFragment : Fragment() {
         }
 
         binding.catalogExportButton.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startCatalogExport()
-            } else {
-                attemptCatalogExport()
-            }
+            startCatalogExport()
         }
 
         binding.catalogImportButton.setOnClickListener {
@@ -260,27 +253,6 @@ class CatalogDashFragment : Fragment() {
                 attemptCatalogImport()
             }
         }
-    }
-
-    private fun attemptCatalogExport() {
-        Dexter.withContext(activity)
-            .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse) {/* ... */
-                    startCatalogExport()
-                }
-
-                override fun onPermissionDenied(response: PermissionDeniedResponse) {/* ... */
-                    toast(getString(R.string.denied_permission))
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest,
-                    token: PermissionToken
-                ) {/* ... */
-                    token.continuePermissionRequest()
-                }
-            }).check()
     }
 
     @SuppressLint("CheckResult")

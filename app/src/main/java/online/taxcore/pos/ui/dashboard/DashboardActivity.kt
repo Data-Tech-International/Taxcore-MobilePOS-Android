@@ -295,8 +295,6 @@ class DashboardActivity : BaseActivity() {
 
     private fun askPermission() {
         Dexter.withContext(this).withPermissions(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA
         ).withListener(object : MultiplePermissionsListener {
             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {}
