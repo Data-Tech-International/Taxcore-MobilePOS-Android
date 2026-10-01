@@ -13,6 +13,13 @@ All notable changes to this project will be documented in this file.
 
 - **TBD** Configuration response error handling
 
+## [3.5.3] - 2026-09-29
+
+### Removed
+
+- Removed unused READ_MEDIA_IMAGES, READ_MEDIA_VIDEO and READ_MEDIA_AUDIO permissions that blocked Google Play uploads under the Photo and Video Permissions policy
+- Removed unnecessary storage permission prompts before export and invoice sharing
+
 ## [3.5.2] - 2026-09-01
 
 ### Fixed

@@ -31,11 +31,8 @@ import com.vicpin.krealmextensions.deleteAll
 import io.realm.Realm
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.karumi.dexter.listener.single.PermissionListener
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -140,11 +137,7 @@ class JournalDashFragment : Fragment() {
         }
 
         binding.journalExportButton.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startJournalExport()
-            } else {
-                attemptJournalExport()
-            }
+            startJournalExport()
         }
 
         // Secret long press (5 seconds) to export and clear journal
@@ -152,11 +145,7 @@ class JournalDashFragment : Fragment() {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     secretExportRunnable = Runnable {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            startJournalExportAndClear()
-                        } else {
-                            attemptJournalExportAndClear()
-                        }
+                        startJournalExportAndClear()
                     }
                     secretExportHandler.postDelayed(secretExportRunnable!!, SECRET_HOLD_DURATION)
                     false
@@ -217,25 +206,6 @@ class JournalDashFragment : Fragment() {
         }
     }
 
-    private fun attemptJournalExport() {
-        Dexter.withContext(activity).withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse) {/* ... */
-                    startJournalExport()
-                }
-
-                override fun onPermissionDenied(response: PermissionDeniedResponse) {/* ... */
-                    toast(getString(R.string.denied_permission))
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest, token: PermissionToken
-                ) {/* ... */
-                    token.continuePermissionRequest()
-                }
-            }).check()
-    }
-
     private fun startJournalExport() {
         MaterialDialog(requireContext()).show {
             title(R.string.title_export_journal)
@@ -255,25 +225,6 @@ class JournalDashFragment : Fragment() {
                 dismiss()
             }
         }
-    }
-
-    private fun attemptJournalExportAndClear() {
-        Dexter.withContext(activity).withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                    startJournalExportAndClear()
-                }
-
-                override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                    toast(getString(R.string.denied_permission))
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest, token: PermissionToken
-                ) {
-                    token.continuePermissionRequest()
-                }
-            }).check()
     }
 
     private fun startJournalExportAndClear() {

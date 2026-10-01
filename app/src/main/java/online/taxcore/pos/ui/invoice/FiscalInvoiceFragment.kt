@@ -1,12 +1,10 @@
 package online.taxcore.pos.ui.invoice
 
 // import online.taxcore.pos.utils.CreatePdf // TODO: Migrate to iText7
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
-import android.os.Build
 import android.os.Bundle
 import android.print.PrintManager
 import android.util.Base64
@@ -19,12 +17,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
 import online.taxcore.pos.BuildConfig
 import online.taxcore.pos.R
 import online.taxcore.pos.constants.PrefConstants
@@ -32,7 +24,6 @@ import online.taxcore.pos.databinding.InvoicePreviewDialogBinding
 import online.taxcore.pos.enums.ExportMimeType
 import online.taxcore.pos.ui.base.BaseActivity
 import online.taxcore.pos.utils.CreatePdf
-import online.taxcore.pos.utils.toast
 import java.io.File
 
 class FiscalInvoiceFragment : DialogFragment() {
@@ -101,40 +92,9 @@ class FiscalInvoiceFragment : DialogFragment() {
         }
 
         binding.mainAppBarShare.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                invoiceNumber?.let { invoiceNo ->
-                    createAndSharePdf(
-                        invoiceNo,
-                        invoiceJournal
-                    )
-
-                }
-                return@setOnClickListener
+            invoiceNumber?.let { invoiceNo ->
+                createAndSharePdf(invoiceNo, invoiceJournal)
             }
-
-            Dexter.withContext(activity)
-                .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withListener(object : PermissionListener {
-                    override fun onPermissionGranted(response: PermissionGrantedResponse) {/* ... */
-                        invoiceNumber?.let { it1 ->
-                            createAndSharePdf(
-                                it1,
-                                invoiceJournal
-                            )
-                        }
-                    }
-
-                    override fun onPermissionDenied(response: PermissionDeniedResponse) {/* ... */
-                        toast(getString(R.string.denied_permission))
-                    }
-
-                    override fun onPermissionRationaleShouldBeShown(
-                        permission: PermissionRequest,
-                        token: PermissionToken
-                    ) {/* ... */
-                        token.continuePermissionRequest()
-                    }
-                }).check()
         }
 
         binding.mainAppBarPrint.setOnClickListener {
